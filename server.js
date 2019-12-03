@@ -12,9 +12,6 @@ const methodOverride = require('method-override')
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
 
-
-
-
 const initializePassport = require('./passport-config')
 initializePassport(
   passport,
@@ -73,10 +70,6 @@ app.delete('/logout', (req, res) => {
   res.redirect('/login')
 })
 
-app.get('/', function(req, res){
-  res.sendFile(__dirname + '/index.html');
-});
-
 io.on('connection', function(socket){
     socket.on('chat message', function(msg){
       io.emit('chat message', msg);
@@ -98,7 +91,58 @@ function checkNotAuthenticated(req, res, next) {
   next()
 }
 
+var path = require('path');
+var server = http;
+
+app.set('port', 3000);
+app.use('/static', express.static(__dirname + '/static'));
+
+// Routing
+app.get('/views/', function(request, response) {
+  response.sendFile(path.join(__dirname, 'index.ejs'));
+});
+
+// Starts the server.
+
+// Add the WebSocket handlers
+io.on('connection', function(socket) {
+});
+
+setInterval(function() {
+    io.sockets.emit('message', 'hi!');
+  }, 1000);
+
+  var players = {};
+io.on('connection', function(socket) {
+  socket.on('new player', function() {
+    players[socket.id] = {
+      x: 300,
+      y: 300
+    };
+  });
+  
+  socket.on('movement', function(data) {
+    var player = players[socket.id] || {};
+    if (data.left) {
+      player.x -= 5;
+    }
+    if (data.up) {
+      player.y -= 5;
+    }
+    if (data.right) {
+      player.x += 5;
+    }
+    if (data.down) {
+      player.y += 5;
+    }
+  });
+});
+
+setInterval(function() {
+  io.sockets.emit('state', players);
+}, 1000 / 60);
 
 http.listen(3000, function(){
   console.log('listening on *:3000');
 });
+
