@@ -116,11 +116,16 @@ setInterval(function() {
 io.on('connection', function(socket) {
   socket.on('new player', function() {
     players[socket.id] = {
-      x: 300,
-      y: 300
+    x: 300,
+    y: 300
     };
+    console.log(players);
   });
   
+  socket.on('disconnect', function(){
+    delete players[socket.id];
+  });
+
   socket.on('movement', function(data) {
     var player = players[socket.id] || {};
     if (data.left) {
