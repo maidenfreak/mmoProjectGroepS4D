@@ -51,9 +51,6 @@ setInterval(function() {
   socket.emit('movement', movement);
 }, 1000 / 60);
 
-function checkcollision(){
-  
-  };
 
 
   var canvas = document.getElementById('canvas');
@@ -65,15 +62,6 @@ socket.on('state', function(players) {
   context.fillStyle = 'green';
   for (var id in players) {
     var player = players[id];
-    if (player.x<10){
-      player.x=10;}
-    else if (player.y<10){
-      player.y=10;}
-    else  if (player.y>canvas.height-10){
-      player.y=canvas.height-10;}
-    else  if (player.x>canvas.width-10){
-      player.x=canvas.width-10;}
-    
     context.beginPath();
     context.arc(player.x, player.y, 10, 0, 2 * Math.PI);
     context.font = "20px Arial";
