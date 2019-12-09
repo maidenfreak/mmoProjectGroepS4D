@@ -109,7 +109,7 @@ app.get('/views/', function(request, response) {
 // Starts the server.
 
 // Add the WebSocket handlers
-const players = [];
+const players = {};
 const playersInLobby = [];
 io.on('connection', function(socket) {
   socket.on('chat message', function(msg){
