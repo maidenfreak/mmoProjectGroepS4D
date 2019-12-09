@@ -51,21 +51,33 @@ setInterval(function() {
   socket.emit('movement', movement);
 }, 1000 / 60);
 
+function checkcollision(){
+  
+  };
+
+
   var canvas = document.getElementById('canvas');
-canvas.width = 800;
-canvas.height = 600;
+canvas.width = 640;
+canvas.height = 480;
 var context = canvas.getContext('2d');
 socket.on('state', function(players) {
-  context.clearRect(0, 0, 800, 600);
+  context.clearRect(0, 0, 640, 480);
   context.fillStyle = 'green';
-  context.fillTextStyle = 'red';
   for (var id in players) {
     var player = players[id];
+    if (player.x<10){
+      player.x=10;}
+    else if (player.y<10){
+      player.y=10;}
+    else  if (player.y>canvas.height-10){
+      player.y=canvas.height-10;}
+    else  if (player.x>canvas.width-10){
+      player.x=canvas.width-10;}
+    
     context.beginPath();
     context.arc(player.x, player.y, 10, 0, 2 * Math.PI);
     context.font = "20px Arial";
-    
-    context.fillText(playername, player.x, player.y, 100);
     context.fill();
+    
   }
 });
