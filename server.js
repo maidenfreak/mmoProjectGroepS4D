@@ -34,7 +34,11 @@ app.use(passport.session())
 app.use(methodOverride('_method'))
 
 app.get('/', checkAuthenticated, (req, res) => {
-  res.render('index.ejs', { name: req.user.name })
+  res.render('lobby.ejs', { name: req.user.name })
+})
+
+app.get('/index', checkAuthenticated, (req, res) =>{
+  res.render('index.ejs', {name: req.user.name} )
 })
 
 app.get('/login', checkNotAuthenticated, (req, res) => {
@@ -70,12 +74,6 @@ app.delete('/logout', (req, res) => {
   res.redirect('/login')
 })
 
-io.on('connection', function(socket){
-    socket.on('chat message', function(msg){
-      io.emit('chat message', msg);
-    });
-  });
-
 function checkAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
     return next()
@@ -89,6 +87,12 @@ function checkNotAuthenticated(req, res, next) {
     return res.redirect('/')
   }
   next()
+}
+
+function checkGameStarted(req, res, next){
+  if(req.gameStarted()){
+    return res.redirect('/index.ejs')
+  }
 }
 
 var path = require('path');
@@ -105,21 +109,36 @@ app.get('/views/', function(request, response) {
 // Starts the server.
 
 // Add the WebSocket handlers
+const players = [];
+const playersInLobby = [];
 io.on('connection', function(socket) {
-});
+  socket.on('chat message', function(msg){
+    io.emit('chat message', msg);
+  });
 
-setInterval(function() {
-    io.sockets.emit('message', 'hi!');
-  }, 1000);
-
-  var players = {};
-io.on('connection', function(socket) {
   socket.on('new player', function() {
     players[socket.id] = {
     x: 300,
     y: 300
     };
     console.log(players);
+    console.log(users);
+  });
+
+  socket.on('playerLobby', function(playername){
+    var test = false;
+
+    for(i=0; i<playersInLobby.length; i++){
+      if(playersInLobby[i] == playername){
+        test = true;
+      }
+    }
+    if(test == true){
+      return console.log('you are already in the lobby!')
+    }else{
+      playersInLobby.push(playername);
+      io.emit('playerLobby', playername);
+    }
   });
   
   socket.on('disconnect', function(){
