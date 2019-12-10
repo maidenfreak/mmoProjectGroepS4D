@@ -157,16 +157,32 @@ io.on('connection', function(socket) {
   socket.on('movement', function(data) {
     var player = players[socket.id] || {};
     if (data.left && player.x>10) {
-      player.x -= 5;
+      if(data.up || data.down){
+      player.x-=1.41}
+      else{
+      player.x -= 2;
+      }
     }
     if (data.up && player.y>10) {
-      player.y -= 5;
+      if(data.left || data.right){
+        player.y-=1.41}
+        else{
+        player.y -= 2;
+        }
     }
     if (data.right && player.x<630) {
-      player.x += 5;
+      if(data.up || data.down){
+        player.x+=1.41}
+        else{
+        player.x += 2;
+        }
     }
-    if (data.down && player.y<470) {
-      player.y += 5;
+    if (data.down && player.y<630) {
+      if(data.left || data.right){
+        player.y+=1.41}
+        else{
+        player.y += 2;
+        }
     }
   });
 });
