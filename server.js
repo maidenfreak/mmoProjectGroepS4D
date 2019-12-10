@@ -118,8 +118,9 @@ io.on('connection', function(socket) {
 
   socket.on('new player', function() {
     players[socket.id] = {
-    x: 300,
-    y: 300
+    team: 3,
+    x: 315,
+    y: 315
     };
     console.log(players);
     console.log(users);

@@ -59,10 +59,10 @@ setInterval(function() {
 
   var canvas = document.getElementById('canvas');
 canvas.width = 640;
-canvas.height = 480;
+canvas.height = 640;
 var context = canvas.getContext('2d');
 socket.on('state', function(players) {
-  context.clearRect(0, 0, 640, 480);
+  context.clearRect(0, 0, 640, 640);
   context.fillStyle = 'green';
   for (var id in players) {
     var player = players[id];
