@@ -75,20 +75,12 @@
 
           function joinedLobby(){
             $(function () {
-              //var socket = io();
               socket.emit('playerLobby', '<%= name %>');
-              // socket.on('playerLobbies', function(allPlayers){
-              //   for (i = 0; i<allPlayers.length; i++){
-              //     $('#players').append($('<li>').text(allPlayers[i]));
-              //   }
-              //   //$('#players').append($('<li>').text(playername));
-              // });
             });
           }
           
           function startTheGame(){
             $(function () {
-              //var socket = io();
               socket.emit('startGameServer');
             });
           }
@@ -116,8 +108,7 @@
                 $('#messages').append($('<li>').text(msg));
               });
             });
-          </script>
-      
+          </script> 
     </div>
   </div>
   </div>
