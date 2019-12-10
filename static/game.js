@@ -68,7 +68,6 @@ socket.on('state', function(players) {
     var player = players[id];
     context.beginPath();
     context.arc(player.x, player.y, 10, 0, 2 * Math.PI);
-    context.font = "20px Arial";
     context.fill();
     
   }
