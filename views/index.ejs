@@ -1,27 +1,25 @@
 <style>
 #chat{
 float: left;
-height: 480px;
+height: 640px;
 width: 260px;
 }
 #game{ width: 640px;
-height: 480px;
+height: 640px;
 float: left;
 }
+body { margin: 0px;}
 </style>
-<div>
-<h1>Hi <%= name %></h1>
-<form action="/logout?_method=DELETE" method="DELETE">
-  <button type="submit">Log Out</button>
-</form>
-</div>
-<div>
+<div style="width: 100%; text-align: center;">
+<div style="display: inline-block;">
+  <button onclick="socket.emit('new player1');">Team1</button>
+  <button onclick="socket.emit('new player2');">Team2</button>
 <div id="game">
     <head>
         <style>
           canvas {
             width: 640px;
-            height: 480px;
+            height: 640px;
             border: 1px solid black;
           }
         </style>
@@ -41,12 +39,10 @@ float: left;
 <div id="chat">
   
       <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font: 13px Helvetica, Arial; }
-        #form { background: #000; position: fixed; bottom: 126; width: 260px; }
-        form input { background: #cacaca; border: 0; padding: 10px; width: 260px;}
-        #messages { list-style-type: none; margin: 0; padding: 0; }
-        #messages li { padding: 5px 10px; }
+        #form { background: #000; width: 260px; margin: 2px;}
+        form input { background: #dddddd; border: 0; padding: 10px; width: 260px;}
+        #messages { list-style-type: none; margin: 0; padding: 0; height:604px ; overflow: auto;}
+        #messages li { padding: 5px 10px; text-align:left ;}
         #messages li:nth-child(odd) { background: #eee; }
       </style>
     </head>
@@ -74,4 +70,5 @@ float: left;
         </script>
     </body>
   </div>
+</div>
 </div>
