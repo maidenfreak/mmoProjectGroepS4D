@@ -69,6 +69,8 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
   }
 })
 
+app.use(express.static(__dirname + '/views'));
+
 app.delete('/logout', (req, res) => {
   req.logOut()
   res.redirect('/login')
