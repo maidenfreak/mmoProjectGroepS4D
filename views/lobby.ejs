@@ -39,32 +39,50 @@
           </script>
       </body>
     </div>
-    <div id='yolo'>
+    <div>
         <head>
             <title>Lobby</title>
             <script src="/socket.io/socket.io.js"></script>
         </head>
         <body>
-            <button id="startButton" type="button" onclick="location.assign('index')">Start</button>
+          <h2>There are currently xxx people connected</h2>
+            <button id="startButton" type="button" onclick="startTheGame()">Start</button>
             <br>
             <button id="joinButton" type="button" onclick="joinedLobby()">Join</button>
             <br>
             <ul id="players"></ul>
         </body>
-        <script src="../static/game.js"></script>
         <script src="/socket.io/socket.io.js"></script>
         <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
         <script>
           var playername='<%= name %>';
+          var socket = io();
+
+          socket.on('playerLobbies', function(allPlayers){
+            for (i = 0; i<allPlayers.length; i++){
+                  $('#players').append($('<li>').text(allPlayers[i]));
+            }
+          });
 
           function joinedLobby(){
             $(function () {
-              var socket = io();
+              //var socket = io();
               socket.emit('playerLobby', '<%= name %>');
-              socket.on('playerLobby', function(playername){
-                $('#players').append($('<li>').text(playername));
-              });
+              // socket.on('playerLobbies', function(allPlayers){
+              //   for (i = 0; i<allPlayers.length; i++){
+              //     $('#players').append($('<li>').text(allPlayers[i]));
+              //   }
+              //   //$('#players').append($('<li>').text(playername));
+              // });
+            });
+          }
+          
+          function startTheGame(){
+            $(function () {
+              //var socket = io();
+              socket.emit('startGameServer');
             });
           }
         </script>
     </div>
+    <script src="../static/game.js"></script>

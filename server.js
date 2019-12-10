@@ -125,19 +125,27 @@ io.on('connection', function(socket) {
     console.log(users);
   });
 
+  socket.on('startGameServer', function(){
+    if(playersInLobby.length > 1){
+      console.log(playersInLobby.length);
+      io.emit('startGame');
+      playersInLobby.length = 0;
+    }
+  });
+
   socket.on('playerLobby', function(playername){
-    var test = false;
+    var playerAlreadyInLobby = false;
 
     for(i=0; i<playersInLobby.length; i++){
       if(playersInLobby[i] == playername){
-        test = true;
+        playerAlreadyInLobby = true;
       }
     }
-    if(test == true){
+    if(playerAlreadyInLobby == true){
       return console.log('you are already in the lobby!')
     }else{
       playersInLobby.push(playername);
-      io.emit('playerLobby', playername);
+      io.emit('playerLobbies', playersInLobby);
     }
   });
   

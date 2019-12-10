@@ -3,6 +3,10 @@ socket.on('message', function(data) {
   console.log(data);
 });
 
+socket.on('startGame', function() {
+  location.assign('index');
+});
+
 socket.on('name', function(data) {
   // data is a parameter containing whatever data was sent
 });
