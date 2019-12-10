@@ -1,57 +1,66 @@
 <style>
-  div { width: 50%;
-        float: left;
+  #chat{
+  float: left;
+  height: 640px;
+  width: 260px;
   }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font: 13px Helvetica, Arial; }
-  form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
-  form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
-  button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
-  #messages { list-style-type: none; margin: 0; padding: 0; }
-  #players {list-style-type: none; margin: 0; padding: 0; }
-  #messages li { padding: 5px 10px; }
-  #messages li:nth-child(odd) { background: #eee; }
+  #game{ width: 640px;
+  height: 640px;
+  float: left;
+  border-right: 1px solid black;
+  }
+  body { margin: 0px;
+  }
+  #form { background: #000; 
+  width: 260px; 
+  margin: 0px;
+  }
+  form input { background: #dddddd; 
+  border: 0; 
+  padding: 10px; 
+  width: 260px;
+  }
+  #messages { list-style-type: none; 
+  margin: 0; 
+  padding: 0; 
+  height:604px ; 
+  overflow: auto;
+  }
+  #messages li { padding: 5px 10px; 
+  text-align:left ;
+  }
+  #messages li:nth-child(odd) { background: #eee; 
+  }
+  #players {list-style-type: none; 
+  margin: 0; 
+  padding: 0; 
+  }
+  canvas {width: 640px;
+  height: 640px;
+  }
+  #content {width: 100%; 
+  text-align: center;
+  }
+  #wrapper {display: inline-block; 
+  margin-top:10px; 
+  border: 1px solid black;
+  }
 </style>
+<body>
+<div id="content">
+<div id="wrapper">
+<div id="game">
 <h1>Lobby</h1>
-<div><h1>Hi <%= name %></h1>
-      </head>
-      <body>
-        <ul id="messages"></ul>
-        <form action="">
-          <input id="m" autocomplete="off" value=""/><button>Send</button>
-        </form>
-        <script src="/socket.io/socket.io.js"></script>
-        <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
-        <script>
-          var playername='<%= name %>';
-            $(function () {
-              var socket = io();
-              $('form').submit(function(e){
-                e.preventDefault(); // prevents page reloading
-                socket.emit('chat message', '<%= name %>: '+$('#m').val());
-                $('#m').val('');
-                return false;
-              });
-              socket.on('chat message', function(msg){
-                $('#messages').append($('<li>').text(msg));
-              });
-            });
-          </script>
-      </body>
-    </div>
-    <div>
-        <head>
-            <title>Lobby</title>
+<h1>Hi <%= name %></h1>
             <script src="/socket.io/socket.io.js"></script>
-        </head>
-        <body>
+
           <h2>There are currently xxx people connected</h2>
             <button id="startButton" type="button" onclick="startTheGame()">Start</button>
             <br>
             <button id="joinButton" type="button" onclick="joinedLobby()">Join</button>
             <br>
             <ul id="players"></ul>
-        </body>
+
         <script src="/socket.io/socket.io.js"></script>
         <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
         <script>
@@ -86,3 +95,30 @@
         </script>
     </div>
     <script src="../static/game.js"></script>
+    <div id="chat">
+        <ul id="messages"></ul>
+        <form action="" id="form">
+          <input id="m" autocomplete="off" value=""/>
+        </form>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+        <script>
+          var playername='<%= name %>';
+            $(function () {
+              var socket = io();
+              $('form').submit(function(e){
+                e.preventDefault(); // prevents page reloading
+                socket.emit('chat message', '<%= name %>: '+$('#m').val());
+                $('#m').val('');
+                return false;
+              });
+              socket.on('chat message', function(msg){
+                $('#messages').append($('<li>').text(msg));
+              });
+            });
+          </script>
+      
+    </div>
+  </div>
+  </div>
+</body>
