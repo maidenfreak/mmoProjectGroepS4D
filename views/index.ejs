@@ -1,47 +1,43 @@
 <link href="style.css" rel="stylesheet" type="text/css">
 <body>
 <div id="content">
-<div id="wrapper">
-<div id="game">
+  <div id="wrapper">
+    <div id="game">
     <button id="leaveButton" type="button" onclick=joinedLobby()>Leave</button>
-        <script src="/socket.io/socket.io.js"></script>
-        <canvas id="canvas"></canvas>
-        <script src="../static/game.js"></script>
-</div>
-<div id="chat">
-  <div id="chattitle"><h1>Chat</h1></div>
-    </head>
+    <canvas id="canvas"></canvas>        
+  </div>
+  <div id="chat">
+    <div id="chattitle"><h1>Chat</h1></div>
       <ul id="messages"></ul>
       <form action="" id="form">
         <input id="m" autocomplete="off" value=""/>
       </form>
-      <script src="/socket.io/socket.io.js"></script>
-      <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
-      <script>
-        var playername='<%= name %>';
-          $(function () {
-            var socket = io();
-            $('form').submit(function(e){
-              e.preventDefault(); // prevents page reloading
-              socket.emit('chat message', '<%= name %>: '+$('#m').val());
-              $('#m').val('');
-              return false;
-            });
-            socket.on('chat message', function(msg){
-              $('#messages').append($('<li>').text(msg));
-            });
-          });
-          function joinedLobby(){
-            $(function () {
-              socket.emit('playerLobby', '<%= name %>', 'false');
-              location.assign('/');
-              
-      //socket.emit('connectedPeopleLobby');
-    });
-  }
-          
-        </script>
+    </div>
   </div>
 </div>
-</div>
 </body>
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+<script src="../static/game.js"></script>
+<script>
+  var playername='<%= name %>';
+    $(function () {
+      var socket = io();
+      $('form').submit(function(e){
+        e.preventDefault(); // prevents page reloading
+        socket.emit('chat message', '<%= name %>: '+$('#m').val());
+        $('#m').val('');
+        return false;
+      });
+      socket.on('chat message', function(msg){
+        $('#messages').append($('<li>').text(msg));
+      });
+    });
+
+    function joinedLobby(){
+      $(function () {
+        socket.emit('playerLobby', '<%= name %>', 'false');
+        location.assign('/');
+      });
+    }
+</script>
