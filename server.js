@@ -9,6 +9,9 @@ const flash = require('express-flash')
 const session = require('express-session')
 const methodOverride = require('method-override')
 
+const players = {};
+const playersInLobby = [];
+
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
 
@@ -34,7 +37,7 @@ app.use(passport.session())
 app.use(methodOverride('_method'))
 
 app.get('/', checkAuthenticated, (req, res) => {
-  res.render('lobby.ejs', { name: req.user.name })
+  res.render('lobby.ejs', { name: req.user.name})
 })
 
 app.get('/index', checkAuthenticated, (req, res) =>{
@@ -111,8 +114,6 @@ app.get('/views/', function(request, response) {
 // Starts the server.
 
 // Add the WebSocket handlers
-const players = {};
-const playersInLobby = [];
 io.on('connection', function(socket) {
   socket.on('chat message', function(msg){
     io.emit('chat message', msg);
@@ -136,7 +137,12 @@ io.on('connection', function(socket) {
     }
   });
 
-  socket.on('playerLobby', function(playername){
+  socket.on('connectedPeopleLobby', function(){
+    var amountOfPlayers = playersInLobby.length;
+    io.emit('connectedPeopleLobbyReturn', amountOfPlayers);
+  });
+
+  socket.on('playerLobby', function(playername, joined){
     var playerAlreadyInLobby = false;
 
     for(i=0; i<playersInLobby.length; i++){
@@ -144,10 +150,15 @@ io.on('connection', function(socket) {
         playerAlreadyInLobby = true;
       }
     }
-    if(playerAlreadyInLobby == true){
-      return console.log('you are already in the lobby!')
-    }else{
-      playersInLobby.push(playername);
+    if(joined == 'true'){
+      if(playerAlreadyInLobby == true){
+        return console.log('you are already in the lobby!');
+      }else{
+        playersInLobby.push(playername);
+        io.emit('playerLobbies', playersInLobby);
+      }
+    }
+    else if(joined == 'false'){
       io.emit('playerLobbies', playersInLobby);
     }
   });
