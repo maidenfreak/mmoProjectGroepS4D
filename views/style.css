@@ -1,6 +1,7 @@
     #chat{float: left;
     height: 640px;
     width: 260px;
+    background-color: white;
     }
     #chattitle{border-bottom: 1px solid black;
     }
@@ -8,8 +9,13 @@
     height: 640px;
     float: left;
     border-right: 1px solid black;
+    background-color: white;
     }
     body { margin: 0px;
+        background-image: url('background.gif');
+        background-position: center; /* Center the image */
+  background-repeat: no-repeat; /* Do not repeat the image */
+  background-size: cover;
     }
     #form { background: #000; 
     width: 260px; 
@@ -21,6 +27,7 @@
     width: 260px;
     }
     #messages { list-style-type: none; 
+        background-color: white;
     margin: 0; 
     padding: 0; 
     height:524px ; 
