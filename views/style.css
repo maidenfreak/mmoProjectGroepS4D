@@ -1,7 +1,8 @@
-    #chat{
-    float: left;
+    #chat{float: left;
     height: 640px;
     width: 260px;
+    }
+    #chattitle{border-bottom: 1px solid black;
     }
     #game{ width: 640px;
     height: 640px;
@@ -22,7 +23,7 @@
     #messages { list-style-type: none; 
     margin: 0; 
     padding: 0; 
-    height:604px ; 
+    height:524px ; 
     overflow: auto;
     }
     #messages li { padding: 5px 10px; 
