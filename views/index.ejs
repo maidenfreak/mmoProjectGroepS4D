@@ -3,6 +3,7 @@
 <div id="content">
 <div id="wrapper">
 <div id="game">
+    <button id="leaveButton" type="button" onclick=joinedLobby()>Leave</button>
         <script src="/socket.io/socket.io.js"></script>
         <canvas id="canvas"></canvas>
         <script src="../static/game.js"></script>
@@ -30,6 +31,15 @@
               $('#messages').append($('<li>').text(msg));
             });
           });
+          function joinedLobby(){
+            $(function () {
+              socket.emit('playerLobby', '<%= name %>', 'false');
+              location.assign('/');
+              
+      //socket.emit('connectedPeopleLobby');
+    });
+  }
+          
         </script>
   </div>
 </div>
