@@ -52,4 +52,5 @@
     margin-top:10px; 
     border: 1px solid black;
     }
-    #leaveButton {position: absolute;}
+    #leaveButton {position: relative;
+    float: left !important;}
