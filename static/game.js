@@ -3,14 +3,6 @@ socket.on('message', function(data) {
   console.log(data);
 });
 
-socket.on('startGame', function() {
-  location.assign('index');
-});
-
-socket.on('name', function(data) {
-  // data is a parameter containing whatever data was sent
-});
-
 var movement = {
     up: false,
     down: false,
@@ -50,14 +42,12 @@ var movement = {
     }
   });
 
-  socket.emit('new player');
+socket.emit('new player');
 setInterval(function() {
   socket.emit('movement', movement);
 }, 1000 / 60);
 
-
-
-  var canvas = document.getElementById('canvas');
+var canvas = document.getElementById('canvas');
 canvas.width = 640;
 canvas.height = 640;
 var context = canvas.getContext('2d');
@@ -68,7 +58,6 @@ socket.on('state', function(players) {
     var player = players[id];
     context.beginPath();
     context.arc(player.x, player.y, 10, 0, 2 * Math.PI);
-    context.fill();
-    
+    context.fill();  
   }
 });

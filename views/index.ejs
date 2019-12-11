@@ -36,6 +36,7 @@
 
     function joinedLobby(){
       $(function () {
+        socket.emit('leaveGame');
         socket.emit('playerLobby', '<%= name %>', 'false');
         location.assign('/');
       });

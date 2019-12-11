@@ -119,6 +119,7 @@ io.on('connection', function(socket) {
     io.emit('chat message', msg);
   });
 
+  //creates a new player
   socket.on('new player', function() {
     players[socket.id] = {
     team: 3,
@@ -131,7 +132,6 @@ io.on('connection', function(socket) {
 
   socket.on('startGameServer', function(){
     if(playersInLobby.length > 1){
-      console.log(playersInLobby.length);
       io.emit('startGame');
       playersInLobby.length = 0;
     }
@@ -164,6 +164,10 @@ io.on('connection', function(socket) {
   });
   
   socket.on('disconnect', function(){
+    delete players[socket.id];
+  });
+
+  socket.on('leaveGame', function(){
     delete players[socket.id];
   });
 
