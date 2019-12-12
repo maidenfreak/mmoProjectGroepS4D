@@ -12,6 +12,8 @@ const methodOverride = require('method-override')
 const players = {};
 const playersInLobby = [];
 
+const bullets = [];
+
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
 
@@ -202,13 +204,48 @@ io.on('connection', function(socket) {
         }
     }
   });
+//Maakt aan de hand van de meegegeven gegevens een bullet en stopt deze in een array.
+  socket.on('shoot-bullet', function(data, targetX, targetY){
+    var player = players[socket.id] || {};
+    if(players[socket.id] == undefined) return;
+    var newBullet = data;
+    newBullet.x = player.x
+    newBullet.y = player.y
+    newBullet.targetX = targetX;
+    newBullet.targetY = targetY;
+    var yolo = calculateBulletSpeed(newBullet);
+    newBullet.xSpeed = yolo[0];
+    newBullet.ySpeed = yolo[1];
+    bullets.push(newBullet);
+  })
 });
 
 setInterval(function() {
-  io.sockets.emit('state', players);
+  io.sockets.emit('state', players, bullets);
 }, 1000 / 60);
 
 http.listen(3000, function(){
   console.log('listening on *:3000');
 });
+
+function calculateBulletSpeed(bullet){
+    var vx = bullet.targetX - bullet.x
+    var vy = bullet.targetY - bullet.y
+    var dist = Math.sqrt(vx * vx + vy * vy)
+    var dx = vx / dist
+    var dy = vy / dist
+    dx *= 10
+    dy *= 10  
+  return [dx, dy]
+}
+
+function serverGameLoop(){
+  for(var i = 0; i < bullets.length; i++){
+    var bullet = bullets[i]
+    bullet.x += bullet.xSpeed
+    bullet.y += bullet.ySpeed
+  }
+}
+
+setInterval(serverGameLoop, 16);
 
