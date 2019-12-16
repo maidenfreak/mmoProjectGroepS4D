@@ -1,100 +1,55 @@
-if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config()
-}
-
-const express = require('express')
-const app = express()
-const passport = require('passport')
-const flash = require('express-flash')
-const session = require('express-session')
-const methodOverride = require('method-override')
-
-const players = {};
-const playersInLobby = [];
-
-const bullets = [];
-
+const express = require('express');
+const exphbs = require('express-handlebars');
+const mongoose = require('mongoose');
+const app = express();
+const passport = require('passport');
+const flash = require('connect-flash');
+const morgan = require('morgan');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const session = require('express-session');
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
-
-const initializePassport = require('./passport-config')
-initializePassport(
-  passport,
-  email => users.find(user => user.email === email),
-  id => users.find(user => user.id === id)
-)
-
-const users = []
+var players = {};
+const playersInLobby = [];
+const bullets = [];
+require('dotenv').config();
 
 app.set('view-engine', 'ejs')
 app.use(express.urlencoded({ extended: false }))
-app.use(flash())
-app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false
-}))
-app.use(passport.initialize())
-app.use(passport.session())
-app.use(methodOverride('_method'))
+app.use(morgan('dev'));
+app.use(cookieParser());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json())
 
-app.get('/', checkAuthenticated, (req, res) => {
-  res.render('lobby.ejs', { name: req.user.name})
-})
+mongoose.connect('mongodb://localhost:27017/mmodb');
 
-app.get('/index', checkAuthenticated, (req, res) =>{
-  res.render('index.ejs', {name: req.user.name} )
-})
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function() {
+    console.log('connected');
+});
 
-app.get('/login', checkNotAuthenticated, (req, res) => {
-  res.render('login.ejs')
-})
+app.use(session({secret : 'ilearnnodejs'}));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(flash());
 
-app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
-  successRedirect: '/',
-  failureRedirect: '/login',
-  failureFlash: true
-}))
+require('./config/passport')(passport);
+require('./routes/index')(app,passport);
+io.on('connection', function(socket) {
+});
 
-app.get('/register', checkNotAuthenticated, (req, res) => {
-  res.render('register.ejs')
-})
-
-app.post('/register', checkNotAuthenticated, async (req, res) => {
-  try {
-    users.push({
-      id: Date.now().toString(),
-      name: req.body.name,
-      email: req.body.email,
-      password: req.body.password
-    })
-    res.redirect('/login')
-  } catch {
-    res.redirect('/register')
-  }
-})
-
+io.on('connection', function(socket) {
+  socket.on('chat message', function(msg){
+    io.emit('chat message', msg);
+  });
 app.use(express.static(__dirname + '/views'));
 
 app.delete('/logout', (req, res) => {
   req.logOut()
   res.redirect('/login')
 })
-
-function checkAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next()
-  }
-
-  res.redirect('/login')
-}
-
-function checkNotAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    return res.redirect('/')
-  }
-  next()
-}
 
 function checkGameStarted(req, res, next){
   if(req.gameStarted()){
@@ -113,14 +68,6 @@ app.get('/views/', function(request, response) {
   response.sendFile(path.join(__dirname, 'index.ejs'));
 });
 
-// Starts the server.
-
-// Add the WebSocket handlers
-io.on('connection', function(socket) {
-  socket.on('chat message', function(msg){
-    io.emit('chat message', msg);
-  });
-
   //creates a new player
   socket.on('new player', function() {
     players[socket.id] = {
@@ -128,8 +75,7 @@ io.on('connection', function(socket) {
     x: 315,
     y: 315
     };
-    console.log(players);
-    console.log(users);
+
   });
 
   socket.on('startGameServer', function(){
@@ -242,7 +188,7 @@ function calculateBulletSpeed(bullet){
 function serverGameLoop(){
   for(var i = 0; i < bullets.length; i++){
     var bullet = bullets[i]
-    if(bullet.x >= 0 && bullet.x <= 640){
+   if(bullet.x >= 0 && bullet.x <= 640){
       bullet.x += bullet.xSpeed
     }
     else {
@@ -264,4 +210,3 @@ function serverGameLoop(){
 }
 
 setInterval(serverGameLoop, 16);
-

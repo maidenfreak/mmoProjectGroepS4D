@@ -79,7 +79,6 @@ socket.on('state', function(players, bullets) {
     context.arc(player.x, player.y, 10, 0, 2 * Math.PI);
     context.fill();  
   }
-
   for (var id in bullets) {
     var bullet = bullets[id];
     context.beginPath();
