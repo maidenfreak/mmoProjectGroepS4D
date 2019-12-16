@@ -1,5 +1,4 @@
 const express = require('express');
-const exphbs = require('express-handlebars');
 const mongoose = require('mongoose');
 const app = express();
 const passport = require('passport');
@@ -30,7 +29,9 @@ db.once('open', function() {
     console.log('connected');
 });
 
-app.use(session({secret : 'ilearnnodejs'}));
+app.use(session({secret : 'mmosecretnodekey',
+  resave: false,
+  saveUninitialized: false}));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
