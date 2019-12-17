@@ -65,6 +65,11 @@ var movement = {
   });
 
 socket.emit('new player');
+
+setInterval(function() {
+  socket.emit('checkBullets');
+}, 1000 / 60);
+
 setInterval(function() {
   socket.emit('movement', movement, objects);
 }, 1000 / 60);
@@ -99,6 +104,10 @@ socket.on('state', function(players, bullets) {
     var player = players[id];
     context.beginPath();
     context.arc(player.x, player.y, 10, 0, 2 * Math.PI);
+
+        
+    context.font = "20px Arial";
+    context.fillText(player.hp, player.x, player.y, 100);
     context.fill();  
   }
 

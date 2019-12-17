@@ -74,7 +74,8 @@ app.get('/views/', function(request, response) {
     players[socket.id] = {
     team: 3,
     x: 315,
-    y: 315
+    y: 315,
+    hp: 100
     };
 
   });
@@ -158,8 +159,18 @@ app.get('/views/', function(request, response) {
     var player = players[socket.id] || {};
     if(players[socket.id] == undefined) return;
     var newBullet = data;
-    newBullet.x = player.x
-    newBullet.y = player.y
+    if(targetX > player.x){
+      newBullet.x = player.x + 11
+    }
+    if(targetX < player.x){
+      newBullet.x = player.x - 11
+    }
+    if(targetY > player.y){
+      newBullet.y = player.y + 11
+    }      
+    if(targetY < player.y){
+      newBullet.y = player.y - 11
+    }
     newBullet.targetX = targetX;
     newBullet.targetY = targetY;
     var bulletSpeed = calculateBulletSpeed(newBullet);
@@ -167,6 +178,16 @@ app.get('/views/', function(request, response) {
     newBullet.ySpeed = bulletSpeed[1];
     bullets.push(newBullet);
   })
+
+  socket.on('checkBullets', function(){
+    var player = players[socket.id] || {};
+    for(var i = 0; i < bullets.length; i++){
+       var bullet = bullets[i]
+       if(bullet.x >= player.x - 10 && bullet.x <= player.x + 10 && bullet.y >= player.y - 10 && bullet.y <= player.y + 10){
+         player.hp -= 10;
+       } 
+     }
+   })
 });
 
 setInterval(function() {
