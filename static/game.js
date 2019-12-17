@@ -12,8 +12,14 @@ class object {
     this.y = y;
     this.width = width;
     this.height = height;
+    this.position = "position";
   }
   pushToArray(){
+    if(this.width > this.height){
+      this.position = "horizontal"
+    }else{
+      this.position = "vertical"
+    }
     objects.push(this);
     console.log(objects);
   }

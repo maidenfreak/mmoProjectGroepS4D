@@ -122,30 +122,28 @@ app.get('/views/', function(request, response) {
 
   socket.on('movement', function(data, objectArray) {
     var player = players[socket.id] || {};
-    var validMove = checkValidMove(player, objectArray, data);
-    console.log(validMove);
-    if (data.left && player.x>=10){// validMove != 3) {
+    if (data.left && player.x>=10 && checkCollisionLeft(player, objectArray, data) == false) {
       if(data.up || data.down){
-      player.x-=1.41}
-      else{
-      player.x -= 2;
+        player.x-=1.41
+      } else {
+        player.x -= 2;
       }
     }
-    if (data.up && player.y>=10){// && validMove != 4) {
+    if (data.up && player.y>=10 && checkCollisionUp(player, objectArray, data) == false) {
       if(data.left || data.right){
         player.y-=1.41}
         else{
         player.y -= 2;
         }
     }
-    if (data.right && player.x<=630){ //&& validMove != 1) {
+    if (data.right && player.x<=630 && checkCollisionRight(player, objectArray, data) == false) {
       if(data.up || data.down){
         player.x+=1.41}
         else{
         player.x += 2;
         }
     }
-    if (data.down && player.y<=630){// && validMove != 2) {
+    if (data.down && player.y<=630 && checkCollisionDown(player, objectArray, data) == false) {
       if(data.left || data.right){
         player.y+=1.41}
         else{
@@ -177,46 +175,73 @@ http.listen(3000, function(){
   console.log('listening on *:3000');
 });
 
-function checkValidMove(player, objectArray, data){
+function checkCollisionRight(player, objectArray, data){
   for(i=0; i<objectArray.length; i++){
-    if(data.right){
+    if(data.right && objectArray[i].position == "vertical"){
       if(player.x + 10 >= objectArray[i].x && player.x + 10 <= objectArray[i].x + objectArray[i].width){
-        if(player.y - 10 >= objectArray[i].y && player.y + 10 <= objectArray[i].y + objectArray[i].height){
+        if(player.y - 10 <= objectArray[i].y && player.y + 10 >= objectArray[i].y + objectArray[i].height || player.y - 10 >= objectArray[i].y && player.y + 10 <= objectArray[i].y + objectArray[i].height){
           console.log(111);
-          player.x-=2;
-          return 1;
+          return true;
         }
-      }
-    }
-    else if(data.down){
-      if(player.y + 10 >= objectArray[i].y && player.y + 10 <= objectArray[i].y + objectArray[i].height){
-        if(player.x - 10 >= objectArray[i].x && player.x + 10 <= objectArray[i].x + objectArray[i].width){
-          console.log(222);
-          player.y-=2;
-          return 2;
-        }
-      }
-    }
-    else if(data.left){
-      if(player.x - 10 >= objectArray[i].x && player.x - 10 <= objectArray[i].x + objectArray[i].width){
-        if(player.y - 10 >= objectArray[i].y && player.y + 10 <= objectArray[i].y + objectArray[i].height){
-          console.log(333);
-          player.x+=2;
-          return 3;
-        }
-      }
-    }
-    else if(data.up){   
-      if(player.y - 10 >= objectArray[i].y && player.y - 10 <= objectArray[i].y + objectArray[i].height){
-        if(player.x - 10 >= objectArray[i].x && player.x + 10 <= objectArray[i].x + objectArray[i].width){
-          console.log(444);
-          player.y+=2;
-          return 4;
+        else if(player.y - 10 >= objectArray[i].y && player.y - 10 <= objectArray[i].y + objectArray[i].height || player.y + 9 >= objectArray[i].y && player.y + 9 <= objectArray[i].y + objectArray[i].height){
+          console.log(111);
+          return true;
         }
       }
     }
   }
-  return 5;
+  return false;
+}
+function checkCollisionDown(player, objectArray, data){
+  for(i=0; i<objectArray.length; i++){
+    if(data.down && objectArray[i].position == "horizontal"){
+      if(player.y + 10 >= objectArray[i].y && player.y + 10 <= objectArray[i].y + objectArray[i].height){
+        if(player.x - 10 <= objectArray[i].x && player.x + 10 >= objectArray[i].x + objectArray[i].width || player.x - 10 >= objectArray[i].x && player.x + 10 <= objectArray[i].x + objectArray[i].width){
+          console.log(222);
+          return true;
+        }
+        else if(player.x - 10 >= objectArray[i].x && player.x - 10 <= objectArray[i].x + objectArray[i].width || player.x + 9 >= objectArray[i].x && player.x + 9 <= objectArray[i].x + objectArray[i].width){
+          console.log(222);
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+}
+function checkCollisionLeft(player, objectArray, data){
+  for(i=0; i<objectArray.length; i++){
+    if(data.left && objectArray[i].position == "vertical"){
+      if(player.x - 10 >= objectArray[i].x && player.x - 10 <= objectArray[i].x + objectArray[i].width){
+        if(player.y - 10 >= objectArray[i].y && player.y + 10 <= objectArray[i].y + objectArray[i].height || player.y - 10 <= objectArray[i].y && player.y + 10 >= objectArray[i].y + objectArray[i].height){
+          console.log(333);
+          return true;
+        }
+        else if(player.y - 10 >= objectArray[i].y && player.y - 10 <= objectArray[i].y + objectArray[i].height || player.y + 9 >= objectArray[i].y && player.y + 9 <= objectArray[i].y + objectArray[i].height){
+          console.log(333);
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+}
+function checkCollisionUp(player, objectArray, data){
+  for(i=0; i<objectArray.length; i++){
+    if(data.up && objectArray[i].position == "horizontal"){   
+      if(player.y - 10 >= objectArray[i].y && player.y - 10 <= objectArray[i].y + objectArray[i].height){
+        if(player.x - 10 <= objectArray[i].x && player.x + 10 >= objectArray[i].x + objectArray[i].width || player.x - 10 >= objectArray[i].x && player.x + 10 <= objectArray[i].x + objectArray[i].width){
+          console.log(444);
+          return true;
+        }
+        else if(player.x - 10 >= objectArray[i].x && player.x - 10 <= objectArray[i].x + objectArray[i].width || player.x + 9 >= objectArray[i].x && player.x + 9 <= objectArray[i].x + objectArray[i].width){
+          console.log(444);
+          return true;
+        }
+      }
+    }
+  }
+  return false;
 }
 
 function calculateBulletSpeed(bullet){
