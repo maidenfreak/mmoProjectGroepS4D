@@ -122,30 +122,30 @@ app.get('/views/', function(request, response) {
 
   socket.on('movement', function(data, objectArray) {
     var player = players[socket.id] || {};
-    var validMove = checkValidMove(player, objectArray);
+    var validMove = checkValidMove(player, objectArray, data);
     console.log(validMove);
-    if (data.left && player.x>10 && validMove != 1) {
+    if (data.left && player.x>=10 && validMove != 3) {
       if(data.up || data.down){
       player.x-=1.41}
       else{
       player.x -= 2;
       }
     }
-    if (data.up && player.y>10 && validMove != 2) {
+    if (data.up && player.y>=10 && validMove != 4) {
       if(data.left || data.right){
         player.y-=1.41}
         else{
         player.y -= 2;
         }
     }
-    if (data.right && player.x<630 && validMove != 3) {
+    if (data.right && player.x<=630 && validMove != 1) {
       if(data.up || data.down){
         player.x+=1.41}
         else{
         player.x += 2;
         }
     }
-    if (data.down && player.y<630 && validMove != 4) {
+    if (data.down && player.y<=630 && validMove != 2) {
       if(data.left || data.right){
         player.y+=1.41}
         else{
@@ -177,26 +177,38 @@ http.listen(3000, function(){
   console.log('listening on *:3000');
 });
 
-function checkValidMove(player, objectArray){
+function checkValidMove(player, objectArray, data){
   for(i=0; i<objectArray.length; i++){
-    if(player.x + 10 >= objectArray[i].x && player.x + 10 <= objectArray[i].x + objectArray[i].width){
-      if(player.y - 10 >= objectArray[i].y && player.y - 10 <= objectArray[i].y + objectArray[i].height){
-        console.log(111);
-        return 1;
-      }
-      else if(player.y + 10 >= objectArray[i].y && player.y + 10 <= objectArray[i].y + objectArray[i].height){
-        console.log(222);
-        return 2;
+    if(data.right){
+      if(player.x + 10 >= objectArray[i].x && player.x + 10 <= objectArray[i].x + objectArray[i].width){
+        if(player.y - 10 >= objectArray[i].y && player.y - 10 <= objectArray[i].y + objectArray[i].height && data.right){
+          console.log(111);
+          return 1;
+        }
       }
     }
-    else if(player.x - 10 >= objectArray[i].x && player.x - 10 <= objectArray[i].x + objectArray[i].width){
-      if(player.y - 10 >= objectArray[i].y && player.y - 10 <= objectArray[i].y + objectArray[i].height){
-        console.log(333);
-        return 3;
+    if(data.down){
+      if(player.x + 10 >= objectArray[i].x && player.x + 10 <= objectArray[i].x + objectArray[i].width){
+        if(player.y + 10 >= objectArray[i].y && player.y + 10 <= objectArray[i].y + objectArray[i].height && data.down){
+          console.log(222);
+          return 2;
+        }
       }
-      else if(player.y + 10 >= objectArray[i].y && player.y + 10 <= objectArray[i].y + objectArray[i].height){
-        console.log(444);
-        return 4;
+    }
+    else if(data.left){
+      if(player.x - 10 >= objectArray[i].x && player.x - 10 <= objectArray[i].x + objectArray[i].width){
+        if(player.y + 10 >= objectArray[i].y && player.y + 10 <= objectArray[i].y + objectArray[i].height && data.left){
+          console.log(333);
+          return 3;
+        }
+      }
+    }
+    else if(data.up){
+      if(player.x - 10 >= objectArray[i].x && player.x - 10 <= objectArray[i].x + objectArray[i].width){
+        if(player.y - 10 >= objectArray[i].y && player.y - 10 <= objectArray[i].y + objectArray[i].height && data.up){
+          console.log(444);
+          return 4;
+        }
       }
     }
   }
