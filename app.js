@@ -12,6 +12,8 @@ var io = require('socket.io')(http);
 var players = {};
 const playersInLobby = [];
 const bullets = [];
+var typeplayers = ["militant", "grenadier", "guerrilla", "observer", "vigilante" ,"breacher", "separatist", "charger" ];
+var teamconfig = [];
 require('dotenv').config();
 
 app.set('view-engine', 'ejs')
@@ -69,24 +71,157 @@ app.get('/views/', function(request, response) {
   response.sendFile(path.join(__dirname, 'index.ejs'));
 });
 
+ class character {
+    constructor(id, name, score){
+        this.name = name;
+        this.score = 0;
+    }
+
+    //Methode om score te getten
+
+}
+
+//rebels subclass welke erft van character class.
+class rebels extends character {
+    constructor(id, name, teamscore ,score, color, teamname){
+        super(id, name, score)
+        this.teamscore = 0;
+        this.color = "red";
+        this.teamname = "rebels";
+    }
+}
+        //rebels 1
+        class militant extends rebels {
+            constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname){
+                super(id, name, teamscore, score, color, teamname)
+                this.hp = 150;
+                this.x = 100;
+                this.y = 100;
+                this.weapondamage = 20;
+            }
+        }
+        //rebels 2
+        class guerrilla extends rebels {
+             constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname){
+                super(id, name, teamscore, score, color, teamname)
+                this.hp = 100;
+                this.x = 130;
+                this.y = 100;
+                this.weapondamage = 20;
+            }        }
+        //rebels 3
+        class vigilante extends rebels {
+             constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname){
+                super(id, name, teamscore, score, color, teamname)
+                this.hp = 200;
+                this.x = 100;
+                this.y = 130;
+                this.weapondamage = 40;
+            }        }
+        //rebels 4
+        class separatist extends rebels {
+             constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname){
+                super(id, name, teamscore, score, color, teamname)
+                this.hp = 240;
+                this.x = 130;
+                this.y = 130;
+                this.weapondamage = 20;
+            }        }
+
+
+//swat subclass welke erft van character class.
+class swat extends character {
+    constructor(id, name, teamscore, score, color, teamname){
+        super(id, name, score)
+        this.teamscore = 0;
+        this.color = "blue";
+        this.teamname = "swat";
+    }
+        
+}
+        //swat 1
+        class grenadier extends swat {
+            constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname){
+                super(id, name, teamscore, score, color, teamname)
+                this.hp = 150;
+                this.x = 500;
+                this.y = 500;
+                this.weapondamage = 20;
+            }
+    
+        }
+        //swat 2
+        class breacher extends swat {
+           constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname){
+                super(id, name, teamscore, score, color, teamname)
+                this.hp = 200;
+                this.x = 530;
+                this.y = 500;
+                this.weapondamage = 40;
+            }
+        }
+        //swat 3
+        class observer extends swat {
+            constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname){
+                super(id, name, teamscore, score, color, teamname)
+                this.hp = 100;
+                this.x = 500;
+                this.y = 530;
+                this.weapondamage = 20;
+            }        }
+        //swat 4
+        class charger extends swat {
+            constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname){
+                super(id, name, teamscore, score, color, teamname)
+                this.hp = 240;
+                this.x = 530;
+                this.y = 530;
+                this.weapondamage = 20;
+            }        }
+   
+  
   //creates a new player
-  socket.on('new player', function() {
-    players[socket.id] = {
-    team: 3,
-    x: 315,
-    y: 315,
-    hp: 100,
-    isDead: false
-    };
+  socket.on('new player', function( playertype, name) {
 
+if(playertype == "militant"){players[socket.id] = new militant(socket.id, name)}
+else if(playertype == "guerrilla"){players[socket.id] = new guerrilla(socket.id, name)}
+else if(playertype == "vigilante"){players[socket.id] = new vigilante(socket.id, name)}
+else if(playertype == "seperatist"){players[socket.id] = new seperatist(socket.id, name)}
+else if(playertype == "grenadier"){players[socket.id] = new grenadier(socket.id, name)}
+else if(playertype == "breacher"){players[socket.id] = new breacher(socket.id, name)}
+else if(playertype == "observer"){players[socket.id] = new observer(socket.id, name)}
+else if(playertype == "charger"){players[socket.id] = new charger(socket.id, name)}
   });
+    
+  function randomFunc(myArr) {      
+            var l = myArr.length, temp, index;  
+            while (l > 0) {  
+               index = Math.floor(Math.random() * l);  
+               l--;  
+               temp = myArr[l];          
+               myArr[l] = myArr[index];          
+               myArr[index] = temp;      
+            }    
+            return myArr;    
+         }     
 
-  socket.on('startGameServer', function(){
+socket.on('startGameServer', function(){
+    hussledArray = randomFunc(playersInLobby)     
+    teamconfig =  typeplayers.reduce(function(teamconfig, field, index) {
+      teamconfig[hussledArray[index]] = field;
+      return teamconfig;
+    }, {})
+
     if(playersInLobby.length > 1){
       io.emit('startGame');
       playersInLobby.length = 0;
     }
   });
+
+  socket.on('teamconfig', function(){
+     io.emit('teamconfigReturn', teamconfig);
+  });
+  
 
   socket.on('connectedPeopleLobby', function(){
     var amountOfPlayers = playersInLobby.length;
@@ -130,28 +265,28 @@ app.get('/views/', function(request, response) {
       player.y = -30
     }
 
-    if (data.left && player.x>=10 && checkCollisionLeft(player, objectArray, data) == false) {
+    if (data.left && player.x>=10 && checkCollisionLeft(player, objectArray, 9) == false) {
       if(data.up || data.down){
         player.x-=1.41
       } else {
         player.x -= 2;
       }
     }
-    if (data.up && player.y>=10 && checkCollisionUp(player, objectArray, data) == false) {
+    if (data.up && player.y>=10 && checkCollisionUp(player, objectArray, 9) == false) {
       if(data.left || data.right){
         player.y-=1.41}
         else{
         player.y -= 2;
         }
     }
-    if (data.right && player.x<=630 && checkCollisionRight(player, objectArray, data) == false) {
+    if (data.right && player.x<=630 && checkCollisionRight(player, objectArray, 9) == false) {
       if(data.up || data.down){
         player.x+=1.41}
         else{
         player.x += 2;
         }
     }
-    if (data.down && player.y<=630 && checkCollisionDown(player, objectArray, data) == false) {
+    if (data.down && player.y<=630 && checkCollisionDown(player, objectArray, 9) == false) {
       if(data.left || data.right){
         player.y+=1.41}
         else{
@@ -184,14 +319,28 @@ app.get('/views/', function(request, response) {
     bullets.push(newBullet);
   })
 
-  socket.on('checkBullets', function(){
+  socket.on('checkBullets', function(objectArray){
     var player = players[socket.id] || {};
     for(var i = 0; i < bullets.length; i++){
        var bullet = bullets[i]
        if(bullet.x >= player.x - 10 && bullet.x <= player.x + 10 && bullet.y >= player.y - 10 && bullet.y <= player.y + 10){
          player.hp -= 10;
          bullet.isHit = true
-       } 
+        }
+
+       if(bullet.x >= 0 && bullet.x <= 640 && checkCollisionLeft(bullet, objectArray, 2) == false && checkCollisionRight(bullet, objectArray, 2) == false){
+        bullet.x += bullet.xSpeed
+       }
+       else {
+        bullet.x = -10
+      }
+
+      if(bullet.y >= 0 && bullet.y <= 640 && checkCollisionUp(bullet, objectArray, 2) == false && checkCollisionDown(bullet, objectArray, 2) == false){
+        bullet.y += bullet.ySpeed
+      }
+      else {
+        bullet.y = -10
+      }
      }
    })
 });
@@ -204,15 +353,15 @@ http.listen(3000, function(){
   console.log('listening on *:3000');
 });
 
-function checkCollisionRight(player, objectArray, data){
+function checkCollisionRight(player, objectArray, radius){
   for(i=0; i<objectArray.length; i++){
-    if(data.right && objectArray[i].position == "vertical"){
-      if(player.x + 10 >= objectArray[i].x && player.x + 10 <= objectArray[i].x + objectArray[i].width){
-        if(player.y - 10 <= objectArray[i].y && player.y + 10 >= objectArray[i].y + objectArray[i].height || player.y - 10 >= objectArray[i].y && player.y + 10 <= objectArray[i].y + objectArray[i].height){
+    if(objectArray[i].position == "vertical"){
+      if(player.x + radius >= objectArray[i].x && player.x + radius <= objectArray[i].x + objectArray[i].width){
+        if(player.y - radius <= objectArray[i].y && player.y + radius >= objectArray[i].y + objectArray[i].height || player.y - radius >= objectArray[i].y && player.y + radius <= objectArray[i].y + objectArray[i].height){
           console.log(111);
           return true;
         }
-        else if(player.y - 10 >= objectArray[i].y && player.y - 10 <= objectArray[i].y + objectArray[i].height || player.y + 9 >= objectArray[i].y && player.y + 9 <= objectArray[i].y + objectArray[i].height){
+        else if(player.y - radius >= objectArray[i].y && player.y - radius <= objectArray[i].y + objectArray[i].height || player.y + radius >= objectArray[i].y && player.y + radius <= objectArray[i].y + objectArray[i].height){
           console.log(111);
           return true;
         }
@@ -221,15 +370,15 @@ function checkCollisionRight(player, objectArray, data){
   }
   return false;
 }
-function checkCollisionDown(player, objectArray, data){
+function checkCollisionDown(player, objectArray, radius){
   for(i=0; i<objectArray.length; i++){
-    if(data.down && objectArray[i].position == "horizontal"){
-      if(player.y + 10 >= objectArray[i].y && player.y + 10 <= objectArray[i].y + objectArray[i].height){
-        if(player.x - 10 <= objectArray[i].x && player.x + 10 >= objectArray[i].x + objectArray[i].width || player.x - 10 >= objectArray[i].x && player.x + 10 <= objectArray[i].x + objectArray[i].width){
+    if(objectArray[i].position == "horizontal"){
+      if(player.y + radius >= objectArray[i].y && player.y + radius <= objectArray[i].y + objectArray[i].height){
+        if(player.x - radius <= objectArray[i].x && player.x + radius >= objectArray[i].x + objectArray[i].width || player.x - radius >= objectArray[i].x && player.x + radius <= objectArray[i].x + objectArray[i].width){
           console.log(222);
           return true;
         }
-        else if(player.x - 10 >= objectArray[i].x && player.x - 10 <= objectArray[i].x + objectArray[i].width || player.x + 9 >= objectArray[i].x && player.x + 9 <= objectArray[i].x + objectArray[i].width){
+        else if(player.x - radius >= objectArray[i].x && player.x - radius <= objectArray[i].x + objectArray[i].width || player.x + radius >= objectArray[i].x && player.x + radius <= objectArray[i].x + objectArray[i].width){
           console.log(222);
           return true;
         }
@@ -238,15 +387,15 @@ function checkCollisionDown(player, objectArray, data){
   }
   return false;
 }
-function checkCollisionLeft(player, objectArray, data){
+function checkCollisionLeft(player, objectArray, radius){
   for(i=0; i<objectArray.length; i++){
-    if(data.left && objectArray[i].position == "vertical"){
-      if(player.x - 10 >= objectArray[i].x && player.x - 10 <= objectArray[i].x + objectArray[i].width){
-        if(player.y - 10 >= objectArray[i].y && player.y + 10 <= objectArray[i].y + objectArray[i].height || player.y - 10 <= objectArray[i].y && player.y + 10 >= objectArray[i].y + objectArray[i].height){
+    if(objectArray[i].position == "vertical"){
+      if(player.x - radius >= objectArray[i].x && player.x - radius <= objectArray[i].x + objectArray[i].width){
+        if(player.y - radius >= objectArray[i].y && player.y + radius <= objectArray[i].y + objectArray[i].height || player.y - radius <= objectArray[i].y && player.y + radius >= objectArray[i].y + objectArray[i].height){
           console.log(333);
           return true;
         }
-        else if(player.y - 10 >= objectArray[i].y && player.y - 10 <= objectArray[i].y + objectArray[i].height || player.y + 9 >= objectArray[i].y && player.y + 9 <= objectArray[i].y + objectArray[i].height){
+        else if(player.y - radius >= objectArray[i].y && player.y - radius <= objectArray[i].y + objectArray[i].height || player.y + radius >= objectArray[i].y && player.y + radius <= objectArray[i].y + objectArray[i].height){
           console.log(333);
           return true;
         }
@@ -255,15 +404,15 @@ function checkCollisionLeft(player, objectArray, data){
   }
   return false;
 }
-function checkCollisionUp(player, objectArray, data){
+function checkCollisionUp(player, objectArray, radius){
   for(i=0; i<objectArray.length; i++){
-    if(data.up && objectArray[i].position == "horizontal"){   
-      if(player.y - 10 >= objectArray[i].y && player.y - 10 <= objectArray[i].y + objectArray[i].height){
-        if(player.x - 10 <= objectArray[i].x && player.x + 10 >= objectArray[i].x + objectArray[i].width || player.x - 10 >= objectArray[i].x && player.x + 10 <= objectArray[i].x + objectArray[i].width){
+    if(objectArray[i].position == "horizontal"){   
+      if(player.y - radius >= objectArray[i].y && player.y - radius <= objectArray[i].y + objectArray[i].height){
+        if(player.x - radius <= objectArray[i].x && player.x + radius >= objectArray[i].x + objectArray[i].width || player.x - radius >= objectArray[i].x && player.x + radius <= objectArray[i].x + objectArray[i].width){
           console.log(444);
           return true;
         }
-        else if(player.x - 10 >= objectArray[i].x && player.x - 10 <= objectArray[i].x + objectArray[i].width || player.x + 9 >= objectArray[i].x && player.x + 9 <= objectArray[i].x + objectArray[i].width){
+        else if(player.x - radius >= objectArray[i].x && player.x - radius <= objectArray[i].x + objectArray[i].width || player.x + radius >= objectArray[i].x && player.x + radius <= objectArray[i].x + objectArray[i].width){
           console.log(444);
           return true;
         }
@@ -279,30 +428,15 @@ function calculateBulletSpeed(bullet){
     var dist = Math.sqrt(vx * vx + vy * vy)
     var dx = vx / dist
     var dy = vy / dist
-    dx *= 10
-    dy *= 10  
+    dx *= 3
+    dy *= 3  
   return [dx, dy]
 }
 
 function serverGameLoop(){
-  for(var i = 0; i < bullets.length; i++){
-    var bullet = bullets[i]
-   if(bullet.x >= 0 && bullet.x <= 640){
-      bullet.x += bullet.xSpeed
-    }
-    else {
-      bullet.x = 0
-    }
-    if(bullet.y >= 0 && bullet.y <= 640){
-      bullet.y += bullet.ySpeed
-    }
-    else {
-      bullet.y = 0
-    }
-  }
 
   for( var i = bullets.length - 1; i >= 0; i--){
-    if(bullets[i].x === 0 || bullets[i].y === 0 || bullets[i].isHit === true){
+    if(bullets[i].x === -10 || bullets[i].y === -10 || bullets[i].isHit === true){
       bullets.splice(i,1);
     } 
   }

@@ -93,10 +93,8 @@ var movement = {
     }
   });
 
-socket.emit('new player');
-
 setInterval(function() {
-  socket.emit('checkBullets');
+  socket.emit('checkBullets', objects);
 }, 1000 / 60);
 
 setInterval(function() {
@@ -116,23 +114,24 @@ function getCursorPosition(canvas, event){
 }
 
 //Wanneer er geklikt wordt geeft deze de coordinaten van de muis.
-setInterval(function() {
-  canvas.onclick = function(event){
-    var values = getCursorPosition(canvas, event)
-    var x = values[0];
-    var y = values[1];
-    var coords = "x" + x + "y" + y;
-    socket.emit('shoot-bullet', {x: 300, y: 300, speedY: 5, isHit: false},x,y);
-  };
-}, 16);
+    canvas.onclick = function(event){
+      var values = getCursorPosition(canvas, event)
+      var x = values[0];
+      var y = values[1];
+      var coords = "x" + x + "y" + y;
+      socket.emit('shoot-bullet', {x: 300, y: 300, speedY: 5, isHit: false},x,y);
+    }
+
 
 socket.on('state', function(players, bullets) {
   context.clearRect(0, 0, 640, 640);
-  context.fillStyle = 'green';
+  
   for (var id in players) {
     var player = players[id];
     checkRoom(player, roomsArray);
-    context.beginPath();
+    context.fillStyle = player.color
+    context.beginPath();        
+
     context.font = "20px Arial";
     if(player.hp > 0){
       context.arc(player.x, player.y, 10, 0, 2 * Math.PI);
