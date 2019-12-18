@@ -99,7 +99,7 @@ setInterval(function() {
     var x = values[0];
     var y = values[1];
     var coords = "x" + x + "y" + y;
-    socket.emit('shoot-bullet', {x: 300, y: 300, speedY: 5},x,y);
+    socket.emit('shoot-bullet', {x: 300, y: 300, speedY: 5, isHit: false},x,y);
   };
 }, 16);
 
@@ -109,11 +109,14 @@ socket.on('state', function(players, bullets) {
   for (var id in players) {
     var player = players[id];
     context.beginPath();
-    context.arc(player.x, player.y, 10, 0, 2 * Math.PI);
+    
 
         
     context.font = "20px Arial";
-    context.fillText(player.hp, player.x, player.y, 100);
+    if(player.hp > 0){
+      context.arc(player.x, player.y, 10, 0, 2 * Math.PI);
+      context.fillText(player.hp, player.x, player.y, 100);
+    }    
     context.fill();  
   }
 
@@ -124,7 +127,7 @@ socket.on('state', function(players, bullets) {
   for (var id in bullets) {
     var bullet = bullets[id];
     context.beginPath();
-    context.arc(bullet.x, bullet.y, 5, 0, 2 * Math.PI);
+    context.arc(bullet.x, bullet.y, 2, 0, 2 * Math.PI);
     context.fill();
   }
 });

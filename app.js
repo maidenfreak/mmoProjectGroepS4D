@@ -75,7 +75,8 @@ app.get('/views/', function(request, response) {
     team: 3,
     x: 315,
     y: 315,
-    hp: 100
+    hp: 100,
+    isDead: false
     };
 
   });
@@ -123,6 +124,12 @@ app.get('/views/', function(request, response) {
 
   socket.on('movement', function(data, objectArray) {
     var player = players[socket.id] || {};
+
+    if(player.hp == 0){
+      player.x = -30
+      player.y = -30
+    }
+
     if (data.left && player.x>=10 && checkCollisionLeft(player, objectArray, data) == false) {
       if(data.up || data.down){
         player.x-=1.41
@@ -183,6 +190,7 @@ app.get('/views/', function(request, response) {
        var bullet = bullets[i]
        if(bullet.x >= player.x - 10 && bullet.x <= player.x + 10 && bullet.y >= player.y - 10 && bullet.y <= player.y + 10){
          player.hp -= 10;
+         bullet.isHit = true
        } 
      }
    })
@@ -294,7 +302,7 @@ function serverGameLoop(){
   }
 
   for( var i = bullets.length - 1; i >= 0; i--){
-    if(bullets[i].x === 0 || bullets[i].y === 0){
+    if(bullets[i].x === 0 || bullets[i].y === 0 || bullets[i].isHit === true){
       bullets.splice(i,1);
     } 
   }
