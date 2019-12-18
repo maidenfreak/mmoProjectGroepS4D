@@ -102,9 +102,11 @@ function getCursorPosition(canvas, event){
 
 socket.on('state', function(players, bullets) {
   context.clearRect(0, 0, 640, 640);
-  context.fillStyle = 'green';
+  
   for (var id in players) {
+
     var player = players[id];
+    context.fillStyle = player.color
     context.beginPath();        
     context.font = "20px Arial";
     if(player.hp > 0){
