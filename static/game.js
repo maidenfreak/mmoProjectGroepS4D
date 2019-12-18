@@ -70,8 +70,6 @@ var movement = {
     }
   });
 
-socket.emit('new player');
-
 setInterval(function() {
   socket.emit('checkBullets', objects);
 }, 1000 / 60);

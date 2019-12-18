@@ -12,6 +12,8 @@ var io = require('socket.io')(http);
 var players = {};
 const playersInLobby = [];
 const bullets = [];
+var typeplayers = ["militant", "grenadier", "guerrilla", "observer", "vigilante" ,"breacher", "separatist", "charger" ];
+var teamconfig = [];
 require('dotenv').config();
 
 app.set('view-engine', 'ejs')
@@ -69,24 +71,153 @@ app.get('/views/', function(request, response) {
   response.sendFile(path.join(__dirname, 'index.ejs'));
 });
 
+ class character {
+    constructor(id, name, score){
+        this.name = name;
+        this.score = 0;
+    }
+
+    //Methode om score te getten
+
+}
+
+//rebels subclass welke erft van character class.
+class rebels extends character {
+    constructor(id, name, teamscore ,score){
+        super(id, name, score)
+        this.teamscore = 0;
+    }
+}
+        //rebels 1
+        class militant extends rebels {
+            constructor(id,name, hp, score, x, y, weapondamage, teamscore){
+                super(id, name, teamscore, score)
+                this.hp = 150;
+                this.x = 100;
+                this.y = 100;
+                this.weapondamage = 20;
+            }
+        }
+        //rebels 2
+        class guerrilla extends rebels {
+             constructor(id,name, hp, score, x, y, weapondamage, teamscore){
+                super(id, name, teamscore, score)
+                this.hp = 100;
+                this.x = 130;
+                this.y = 100;
+                this.weapondamage = 20;
+            }        }
+        //rebels 3
+        class vigilante extends rebels {
+             constructor(id,name, hp, score, x, y, weapondamage, teamscore){
+                super(id, name, teamscore, score)
+                this.hp = 200;
+                this.x = 100;
+                this.y = 130;
+                this.weapondamage = 40;
+            }        }
+        //rebels 4
+        class separatist extends rebels {
+             constructor(id,name, hp, score, x, y, weapondamage, teamscore){
+                super(id, name, teamscore, score)
+                this.hp = 240;
+                this.x = 130;
+                this.y = 130;
+                this.weapondamage = 20;
+            }        }
+
+
+//swat subclass welke erft van character class.
+class swat extends character {
+    constructor(id, name, teamscore, score){
+        super(id, name, score)
+        this.teamscore = 0;
+    }
+        
+}
+        //swat 1
+        class grenadier extends swat {
+            constructor(id,name, hp, score, x, y, weapondamage, teamscore){
+                super(id, name, teamscore, score)
+                this.hp = 150;
+                this.x = 500;
+                this.y = 500;
+                this.weapondamage = 20;
+            }
+    
+        }
+        //swat 2
+        class breacher extends swat {
+           constructor(id,name, hp, score, x, y, weapondamage, teamscore){
+                super(id, name, teamscore, score)
+                this.hp = 200;
+                this.x = 530;
+                this.y = 500;
+                this.weapondamage = 40;
+            }
+        }
+        //swat 3
+        class observer extends swat {
+            constructor(id,name, hp, score, x, y, weapondamage, teamscore){
+                super(id, name, teamscore, score)
+                this.hp = 100;
+                this.x = 500;
+                this.y = 530;
+                this.weapondamage = 20;
+            }        }
+        //swat 4
+        class charger extends swat {
+            constructor(id,name, hp, score, x, y, weapondamage, teamscore){
+                super(id, name, teamscore, score)
+                this.hp = 240;
+                this.x = 530;
+                this.y = 530;
+                this.weapondamage = 20;
+            }        }
+   
+  
   //creates a new player
-  socket.on('new player', function() {
-    players[socket.id] = {
-    team: 3,
-    x: 315,
-    y: 315,
-    hp: 100,
-    isDead: false
-    };
+  socket.on('new player', function( playertype, name) {
 
+if(playertype == "militant"){players[socket.id] = new militant(socket.id, name)}
+else if(playertype == "guerrilla"){players[socket.id] = new guerrilla(socket.id, name)}
+else if(playertype == "vigilante"){players[socket.id] = new vigilante(socket.id, name)}
+else if(playertype == "seperatist"){players[socket.id] = new seperatist(socket.id, name)}
+else if(playertype == "grenadier"){players[socket.id] = new grenadier(socket.id, name)}
+else if(playertype == "breacher"){players[socket.id] = new breacher(socket.id, name)}
+else if(playertype == "observer"){players[socket.id] = new observer(socket.id, name)}
+else if(playertype == "charger"){players[socket.id] = new charger(socket.id, name)}
   });
+    
+  function randomFunc(myArr) {      
+            var l = myArr.length, temp, index;  
+            while (l > 0) {  
+               index = Math.floor(Math.random() * l);  
+               l--;  
+               temp = myArr[l];          
+               myArr[l] = myArr[index];          
+               myArr[index] = temp;      
+            }    
+            return myArr;    
+         }     
 
-  socket.on('startGameServer', function(){
+socket.on('startGameServer', function(){
+    hussledArray = randomFunc(playersInLobby)     
+    teamconfig =  typeplayers.reduce(function(teamconfig, field, index) {
+      teamconfig[hussledArray[index]] = field;
+      return teamconfig;
+    }, {})
+
     if(playersInLobby.length > 1){
       io.emit('startGame');
       playersInLobby.length = 0;
     }
   });
+
+  socket.on('teamconfig', function(){
+     io.emit('teamconfigReturn', teamconfig);
+  });
+  
 
   socket.on('connectedPeopleLobby', function(){
     var amountOfPlayers = playersInLobby.length;

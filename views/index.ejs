@@ -24,6 +24,11 @@
 <script src="../static/game.js"></script>
 <script>
   var playername='<%= name %>';
+      socket.emit('teamconfig');
+      socket.on("teamconfigReturn", function (teamconfig) {
+        classname = teamconfig[playername];
+        socket.emit('new player' , classname, playername);
+    });
     $(function () {
       var socket = io();
       $('form').submit(function(e){
