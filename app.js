@@ -130,28 +130,28 @@ app.get('/views/', function(request, response) {
       player.y = -30
     }
 
-    if (data.left && player.x>=10 && checkCollisionLeft(player, objectArray, data) == false) {
+    if (data.left && player.x>=10 && checkCollisionLeft(player, objectArray) == false) {
       if(data.up || data.down){
         player.x-=1.41
       } else {
         player.x -= 2;
       }
     }
-    if (data.up && player.y>=10 && checkCollisionUp(player, objectArray, data) == false) {
+    if (data.up && player.y>=10 && checkCollisionUp(player, objectArray) == false) {
       if(data.left || data.right){
         player.y-=1.41}
         else{
         player.y -= 2;
         }
     }
-    if (data.right && player.x<=630 && checkCollisionRight(player, objectArray, data) == false) {
+    if (data.right && player.x<=630 && checkCollisionRight(player, objectArray) == false) {
       if(data.up || data.down){
         player.x+=1.41}
         else{
         player.x += 2;
         }
     }
-    if (data.down && player.y<=630 && checkCollisionDown(player, objectArray, data) == false) {
+    if (data.down && player.y<=630 && checkCollisionDown(player, objectArray) == false) {
       if(data.left || data.right){
         player.y+=1.41}
         else{
@@ -204,9 +204,9 @@ http.listen(3000, function(){
   console.log('listening on *:3000');
 });
 
-function checkCollisionRight(player, objectArray, data){
+function checkCollisionRight(player, objectArray){
   for(i=0; i<objectArray.length; i++){
-    if(data.right && objectArray[i].position == "vertical"){
+    if(objectArray[i].position == "vertical"){
       if(player.x + 10 >= objectArray[i].x && player.x + 10 <= objectArray[i].x + objectArray[i].width){
         if(player.y - 10 <= objectArray[i].y && player.y + 10 >= objectArray[i].y + objectArray[i].height || player.y - 10 >= objectArray[i].y && player.y + 10 <= objectArray[i].y + objectArray[i].height){
           console.log(111);
@@ -221,9 +221,9 @@ function checkCollisionRight(player, objectArray, data){
   }
   return false;
 }
-function checkCollisionDown(player, objectArray, data){
+function checkCollisionDown(player, objectArray){
   for(i=0; i<objectArray.length; i++){
-    if(data.down && objectArray[i].position == "horizontal"){
+    if(objectArray[i].position == "horizontal"){
       if(player.y + 10 >= objectArray[i].y && player.y + 10 <= objectArray[i].y + objectArray[i].height){
         if(player.x - 10 <= objectArray[i].x && player.x + 10 >= objectArray[i].x + objectArray[i].width || player.x - 10 >= objectArray[i].x && player.x + 10 <= objectArray[i].x + objectArray[i].width){
           console.log(222);
@@ -238,9 +238,9 @@ function checkCollisionDown(player, objectArray, data){
   }
   return false;
 }
-function checkCollisionLeft(player, objectArray, data){
+function checkCollisionLeft(player, objectArray){
   for(i=0; i<objectArray.length; i++){
-    if(data.left && objectArray[i].position == "vertical"){
+    if(objectArray[i].position == "vertical"){
       if(player.x - 10 >= objectArray[i].x && player.x - 10 <= objectArray[i].x + objectArray[i].width){
         if(player.y - 10 >= objectArray[i].y && player.y + 10 <= objectArray[i].y + objectArray[i].height || player.y - 10 <= objectArray[i].y && player.y + 10 >= objectArray[i].y + objectArray[i].height){
           console.log(333);
@@ -255,9 +255,9 @@ function checkCollisionLeft(player, objectArray, data){
   }
   return false;
 }
-function checkCollisionUp(player, objectArray, data){
+function checkCollisionUp(player, objectArray){
   for(i=0; i<objectArray.length; i++){
-    if(data.up && objectArray[i].position == "horizontal"){   
+    if(objectArray[i].position == "horizontal"){   
       if(player.y - 10 >= objectArray[i].y && player.y - 10 <= objectArray[i].y + objectArray[i].height){
         if(player.x - 10 <= objectArray[i].x && player.x + 10 >= objectArray[i].x + objectArray[i].width || player.x - 10 >= objectArray[i].x && player.x + 10 <= objectArray[i].x + objectArray[i].width){
           console.log(444);
