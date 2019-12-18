@@ -332,14 +332,14 @@ socket.on('startGameServer', function(){
         bullet.x += bullet.xSpeed
        }
        else {
-        bullet.x = 0
+        bullet.x = -10
       }
 
       if(bullet.y >= 0 && bullet.y <= 640 && checkCollisionUp(bullet, objectArray) == false && checkCollisionDown(bullet, objectArray) == false){
         bullet.y += bullet.ySpeed
       }
       else {
-        bullet.y = 0
+        bullet.y = -10
       }
      }
    })
@@ -436,7 +436,7 @@ function calculateBulletSpeed(bullet){
 function serverGameLoop(){
 
   for( var i = bullets.length - 1; i >= 0; i--){
-    if(bullets[i].x === 0 || bullets[i].y === 0 || bullets[i].isHit === true){
+    if(bullets[i].x === -10 || bullets[i].y === -10 || bullets[i].isHit === true){
       bullets.splice(i,1);
     } 
   }
