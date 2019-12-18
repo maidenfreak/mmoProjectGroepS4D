@@ -5,6 +5,29 @@ canvas.height = 640;
 var context = canvas.getContext('2d');
 
 const objects = [];
+const roomsArray = [];
+
+class room {
+  constructor(roomnum, x, y){
+    this.roomnum = roomnum;
+    this.x = x;
+    this.y = y;
+    this.size = 80;
+    this.visible = false;
+  }
+  pushRooms(){
+    roomsArray.push(this);
+  }
+  buildRoom(){
+    if(this.visible==false){
+      context.beginPath();
+      context.fillStyle = "grey";
+      context.rect(this.x, this.y, this.size, this.size);
+      context.fill();
+    }
+  }
+}
+
 class object {
   constructor(name, x, y, width, height){
     this.name = name;
@@ -108,10 +131,8 @@ socket.on('state', function(players, bullets) {
   context.fillStyle = 'green';
   for (var id in players) {
     var player = players[id];
+    checkRoom(player, roomsArray);
     context.beginPath();
-    
-
-        
     context.font = "20px Arial";
     if(player.hp > 0){
       context.arc(player.x, player.y, 10, 0, 2 * Math.PI);
@@ -119,6 +140,10 @@ socket.on('state', function(players, bullets) {
     }    
     context.fill();  
   }
+
+  for(i=0; i<roomsArray.length; i++){
+    roomsArray[i].buildRoom();
+  } 
 
   for(i=0; i<objects.length; i++){
     objects[i].build();
@@ -131,6 +156,26 @@ socket.on('state', function(players, bullets) {
     context.fill();
   }
 });
+
+function checkRoom(player, roomsArray){
+  for (i=0; i<roomsArray.length; i++){
+    if (player.x>roomsArray[i].x && player.x<roomsArray[i].x+roomsArray[i].size){
+      if (player.y>roomsArray[i].y && player.y<roomsArray[i].y+roomsArray[i].size){
+        for (j=0; j<roomsArray.length; j++){
+          if (roomsArray[j].roomnum==roomsArray[i].roomnum){
+            roomsArray[j].visible=true;
+          }
+          else{
+            roomsArray[j].visible=false;
+          }
+        }
+      }
+    }
+    if(roomsArray[i].roomnum==19){
+      roomsArray[i].visible=true;
+    }
+  }
+}
 
 //alle objecten die worden getekend.
 let wall1 = new object("wall1", 160, 0, 2, 25); wall1.pushToArray();
@@ -197,4 +242,69 @@ let wall61 = new object("wall61", 160,295,2,55); wall61.pushToArray();
 let wall62 = new object("wall62", 160,240,2,25); wall62.pushToArray();
 let wall63 = new object("wall63", 135,320,25,2); wall63.pushToArray();
 
+let box1 = new room(1, 0, 0); box1.pushRooms();
+let box2 = new room(1, 80, 0); box2.pushRooms();
+let box3 = new room(1, 80, 80); box3.pushRooms();
+let box4 = new room(1, 0, 80); box4.pushRooms();
+let box5 = new room(2, 160, 0); box5.pushRooms();
+let box6 = new room(2, 240, 0); box6.pushRooms();
+let box7 = new room(2, 240, 80); box7.pushRooms();
+let box8 = new room(2, 320, 80); box8.pushRooms();
+let box9 = new room(2, 320, 0); box9.pushRooms();
+let box10 = new room(3, 400, 0); box10.pushRooms();
+let box11 = new room(3, 400, 80); box11.pushRooms();
+let box12 = new room(3, 480, 0); box12.pushRooms();
+let box13 = new room(3, 480, 80); box13.pushRooms();
+let box14 = new room(4, 560, 0); box14.pushRooms();
+let box15 = new room(4, 560, 80); box15.pushRooms();
+let box16 = new room(4, 560, 160); box16.pushRooms();
+let box17 = new room(5, 560, 240); box17.pushRooms();
+let box18 = new room(6, 480, 320); box18.pushRooms();
+let box19 = new room(6, 560, 320); box19.pushRooms();
+let box20 = new room(6, 560, 400); box20.pushRooms();
+let box21 = new room(7, 480, 160); box21.pushRooms();
+let box22 = new room(7, 480, 240); box22.pushRooms();
+let box23 = new room(8, 400, 160); box23.pushRooms();
+let box24 = new room(9, 480, 400); box24.pushRooms();
+let box25 = new room(9, 400, 400); box25.pushRooms();
+let box26 = new room(9, 400, 480); box26.pushRooms();
+let box27 = new room(10, 480, 480); box27.pushRooms();
+let box28 = new room(10, 480, 560); box28.pushRooms();
+let box29 = new room(10, 560, 560); box29.pushRooms();
+let box30 = new room(10, 560, 480); box30.pushRooms();
+let box31 = new room(11, 400, 560); box31.pushRooms();
+let box32 = new room(11, 240, 560); box32.pushRooms();
+let box33 = new room(11, 240, 480); box33.pushRooms();
+let box34 = new room(11, 320, 480); box34.pushRooms();
+let box35 = new room(11, 320, 560); box35.pushRooms();
+let box36 = new room(12, 80, 480); box36.pushRooms();
+let box37 = new room(12, 80, 560); box37.pushRooms();
+let box38 = new room(12, 160, 480); box38.pushRooms();
+let box39 = new room(12, 160, 560); box39.pushRooms();
+let box40 = new room(13, 0, 400); box40.pushRooms();
+let box41 = new room(13, 0, 480); box41.pushRooms();
+let box42 = new room(13, 0, 560); box42.pushRooms();
+let box43 = new room(14, 160, 400); box43.pushRooms();
+let box44 = new room(15, 80, 400); box44.pushRooms();
+let box45 = new room(15, 80, 320); box45.pushRooms();
+let box46 = new room(16, 0, 320); box46.pushRooms();
+let box47 = new room(17, 0, 160); box47.pushRooms();
+let box48 = new room(17, 0, 240); box48.pushRooms();
+let box49 = new room(17, 80, 240); box49.pushRooms();
+let box50 = new room(18, 80, 160); box50.pushRooms();
+let box51 = new room(18, 160, 80); box51.pushRooms();
+let box52 = new room(18, 160, 160); box52.pushRooms();
 
+let box53 = new room(19, 240, 160); box53.pushRooms();
+let box54 = new room(19, 320, 160); box54.pushRooms();
+let box55 = new room(19, 160, 240); box55.pushRooms();
+let box56 = new room(19, 240, 240); box56.pushRooms();
+let box57 = new room(19, 320, 240); box57.pushRooms();
+let box58 = new room(19, 400, 240); box58.pushRooms();
+let box59 = new room(19, 160, 320); box59.pushRooms();
+let box60 = new room(19, 240, 320); box60.pushRooms();
+let box61 = new room(19, 320, 320); box61.pushRooms();
+let box62 = new room(19, 400, 320); box62.pushRooms();
+let box63 = new room(19, 240, 400); box63.pushRooms();
+let box64 = new room(19, 320, 400); box64.pushRooms();
+console.log(roomsArray);
