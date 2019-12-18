@@ -184,14 +184,28 @@ app.get('/views/', function(request, response) {
     bullets.push(newBullet);
   })
 
-  socket.on('checkBullets', function(){
+  socket.on('checkBullets', function(objectArray){
     var player = players[socket.id] || {};
     for(var i = 0; i < bullets.length; i++){
        var bullet = bullets[i]
        if(bullet.x >= player.x - 10 && bullet.x <= player.x + 10 && bullet.y >= player.y - 10 && bullet.y <= player.y + 10){
          player.hp -= 10;
          bullet.isHit = true
-       } 
+        }
+
+       if(bullet.x >= 0 && bullet.x <= 640 && checkCollisionLeft(bullet, objectArray) == false && checkCollisionRight(bullet, objectArray) == false){
+        bullet.x += bullet.xSpeed
+       }
+       else {
+        bullet.x = 0
+      }
+
+      if(bullet.y >= 0 && bullet.y <= 640 && checkCollisionUp(bullet, objectArray) == false && checkCollisionDown(bullet, objectArray) == false){
+        bullet.y += bullet.ySpeed
+      }
+      else {
+        bullet.y = 0
+      }
      }
    })
 });
@@ -279,27 +293,12 @@ function calculateBulletSpeed(bullet){
     var dist = Math.sqrt(vx * vx + vy * vy)
     var dx = vx / dist
     var dy = vy / dist
-    dx *= 10
-    dy *= 10  
+    dx *= 3
+    dy *= 3  
   return [dx, dy]
 }
 
 function serverGameLoop(){
-  for(var i = 0; i < bullets.length; i++){
-    var bullet = bullets[i]
-   if(bullet.x >= 0 && bullet.x <= 640){
-      bullet.x += bullet.xSpeed
-    }
-    else {
-      bullet.x = 0
-    }
-    if(bullet.y >= 0 && bullet.y <= 640){
-      bullet.y += bullet.ySpeed
-    }
-    else {
-      bullet.y = 0
-    }
-  }
 
   for( var i = bullets.length - 1; i >= 0; i--){
     if(bullets[i].x === 0 || bullets[i].y === 0 || bullets[i].isHit === true){
