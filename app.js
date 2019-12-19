@@ -182,7 +182,7 @@ class swat extends character {
   
   //creates a new player
   socket.on('new player', function( playertype, name) {
-
+  
 if(playertype == "militant"){players[socket.id] = new militant(socket.id, name)}
 else if(playertype == "guerrilla"){players[socket.id] = new guerrilla(socket.id, name)}
 else if(playertype == "vigilante"){players[socket.id] = new vigilante(socket.id, name)}
@@ -191,6 +191,8 @@ else if(playertype == "grenadier"){players[socket.id] = new grenadier(socket.id,
 else if(playertype == "breacher"){players[socket.id] = new breacher(socket.id, name)}
 else if(playertype == "observer"){players[socket.id] = new observer(socket.id, name)}
 else if(playertype == "charger"){players[socket.id] = new charger(socket.id, name)}
+  socket.emit('playerteam', players[socket.id].teamname);
+  
   });
     
   function randomFunc(myArr) {      
@@ -443,3 +445,4 @@ function serverGameLoop(){
 }
 
 setInterval(serverGameLoop, 16);
+

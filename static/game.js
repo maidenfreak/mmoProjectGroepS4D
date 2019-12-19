@@ -122,16 +122,16 @@ function getCursorPosition(canvas, event){
       socket.emit('shoot-bullet', {x: 300, y: 300, speedY: 5, isHit: false},x,y);
     }
 
+    
+
 
 socket.on('state', function(players, bullets) {
   context.clearRect(0, 0, 640, 640);
-  
+  checkRoom(players, roomsArray);
   for (var id in players) {
-    var player = players[id];
-    checkRoom(player, roomsArray);
+    var player = players[id]; 
     context.fillStyle = player.color
     context.beginPath();        
-
     context.font = "20px Arial";
     if(player.hp > 0){
       context.arc(player.x, player.y, 10, 0, 2 * Math.PI);
@@ -156,21 +156,29 @@ socket.on('state', function(players, bullets) {
   }
 });
 
-function checkRoom(player, roomsArray){
+var tteamname
+socket.on('playerteam', function(teamname){
+  console.log(teamname);
+  tteamname=teamname;
+})
+
+function checkRoom(players, roomsArray){
   for (i=0; i<roomsArray.length; i++){
-    if (player.x>roomsArray[i].x && player.x<roomsArray[i].x+roomsArray[i].size){
-      if (player.y>roomsArray[i].y && player.y<roomsArray[i].y+roomsArray[i].size){
-        for (j=0; j<roomsArray.length; j++){
-          if (roomsArray[j].roomnum==roomsArray[i].roomnum){
-            roomsArray[j].visible=true;
-          }
-          else{
-            roomsArray[j].visible=false;
-          }
+    for (var id in players){
+      if (players[id].teamname==tteamname){
+        if (players[id].x>roomsArray[i].x && players[id].x<roomsArray[i].x+roomsArray[i].size && players[id].y>roomsArray[i].y && players[id].y<roomsArray[i].y+roomsArray[i].size){
+          for (j=0; j<roomsArray.length; j++){
+            if (roomsArray[j].roomnum==roomsArray[i].roomnum){
+              roomsArray[j].visible=true;
+            }
+            else{
+              roomsArray[j].visible=false;
+            }
+          }   
         }
-      }
+      } 
     }
-    if(roomsArray[i].roomnum==19){
+    if (roomsArray[i].roomnum==19){
       roomsArray[i].visible=true;
     }
   }
@@ -178,7 +186,7 @@ function checkRoom(player, roomsArray){
 
 //alle objecten die worden getekend.
 let wall1 = new object("wall1", 160, 0, 2, 25); wall1.pushToArray();
-let wall2 = new object("wall2", 160, 55, 2, 107); wall2.pushToArray();
+let wall2 = new object("wall2", 160, 55, 2, 105); wall2.pushToArray();
 let wall3 = new object("wall3", 0, 160, 25, 2); wall3.pushToArray();
 let wall4 = new object("wall4", 55, 160, 105, 2); wall4.pushToArray();
 let wall5 = new object("wall5", 160, 80, 80, 2); wall5.pushToArray();
@@ -186,7 +194,7 @@ let wall6 = new object("wall6", 240, 80, 2, 25); wall6.pushToArray();
 let wall7 = new object("wall7", 240, 135, 2, 50); wall7.pushToArray();
 let wall45 = new object("wall45", 80, 215, 2, 25); wall45.pushToArray();
 let wall46 = new object("wall46", 80, 160, 2, 25); wall46.pushToArray();
-let wall47 = new object("wall47", 240, 215, 2, 27); wall47.pushToArray();
+let wall47 = new object("wall47", 240, 215, 2, 26); wall47.pushToArray();
 let wall48 = new object("wall48", 80, 240, 160, 2); wall48.pushToArray();
 let wall8 = new object("wall8", 240, 160, 65, 2); wall8.pushToArray();
 let wall9 = new object("wall9", 335, 160, 65, 2); wall9.pushToArray();
@@ -293,7 +301,6 @@ let box49 = new room(17, 80, 240); box49.pushRooms();
 let box50 = new room(18, 80, 160); box50.pushRooms();
 let box51 = new room(18, 160, 80); box51.pushRooms();
 let box52 = new room(18, 160, 160); box52.pushRooms();
-
 let box53 = new room(19, 240, 160); box53.pushRooms();
 let box54 = new room(19, 320, 160); box54.pushRooms();
 let box55 = new room(19, 160, 240); box55.pushRooms();
