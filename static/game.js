@@ -156,16 +156,16 @@ socket.on('state', function(players, bullets) {
   }
 });
 
-var tteamname
-socket.on('playerteam', function(teamname){
-  console.log(teamname);
-  tteamname=teamname;
+var myname
+socket.on('playerteam', function(player){
+  console.log(player.name);
+  myname=player.name;
 })
 
 function checkRoom(players, roomsArray){
   for (i=0; i<roomsArray.length; i++){
     for (var id in players){
-      if (players[id].teamname==tteamname){
+      if (players[id].name==myname){
         if (players[id].x>roomsArray[i].x && players[id].x<roomsArray[i].x+roomsArray[i].size && players[id].y>roomsArray[i].y && players[id].y<roomsArray[i].y+roomsArray[i].size){
           for (j=0; j<roomsArray.length; j++){
             if (roomsArray[j].roomnum==roomsArray[i].roomnum){
@@ -189,8 +189,8 @@ let wall1 = new object("wall1", 160, 0, 2, 25); wall1.pushToArray();
 let wall2 = new object("wall2", 160, 55, 2, 105); wall2.pushToArray();
 let wall3 = new object("wall3", 0, 160, 25, 2); wall3.pushToArray();
 let wall4 = new object("wall4", 55, 160, 105, 2); wall4.pushToArray();
-let wall5 = new object("wall5", 160, 80, 80, 2); wall5.pushToArray();
-let wall6 = new object("wall6", 240, 80, 2, 25); wall6.pushToArray();
+let wall5 = new object("wall5", 162, 80, 78, 2); wall5.pushToArray();
+let wall6 = new object("wall6", 240, 82, 2, 25); wall6.pushToArray();
 let wall7 = new object("wall7", 240, 135, 2, 50); wall7.pushToArray();
 let wall45 = new object("wall45", 80, 215, 2, 25); wall45.pushToArray();
 let wall46 = new object("wall46", 80, 160, 2, 25); wall46.pushToArray();
@@ -211,7 +211,7 @@ let wall18 = new object("wall18", 615,240,25,2); wall18.pushToArray();
 let wall20 = new object("wall20", 615,320,25,2); wall20.pushToArray();
 let wall21 = new object("wall21", 400,160,2,80); wall21.pushToArray();
 let wall22 = new object("wall22", 400,240,80,2); wall22.pushToArray();
-let wall23 = new object("wall23", 480,160,2,25); wall23.pushToArray();
+let wall23 = new object("wall23", 480,162,2,25); wall23.pushToArray();
 let wall24 = new object("wall24", 480,215,2,50); wall24.pushToArray();
 let wall25 = new object("wall25", 480,295,2,50); wall25.pushToArray();
 let wall26 = new object("wall26", 480,320,25,2); wall26.pushToArray();

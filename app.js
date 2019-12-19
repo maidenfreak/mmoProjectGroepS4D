@@ -191,7 +191,7 @@ else if(playertype == "grenadier"){players[socket.id] = new grenadier(socket.id,
 else if(playertype == "breacher"){players[socket.id] = new breacher(socket.id, name)}
 else if(playertype == "observer"){players[socket.id] = new observer(socket.id, name)}
 else if(playertype == "charger"){players[socket.id] = new charger(socket.id, name)}
-  socket.emit('playerteam', players[socket.id].teamname);
+  socket.emit('playerteam', players[socket.id]);
   
   });
     
