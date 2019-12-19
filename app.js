@@ -265,28 +265,28 @@ socket.on('startGameServer', function(){
       player.y = -30
     }
 
-    if (data.left && player.x>=10 && checkCollisionLeft(player, objectArray, 9) == false) {
+    if (data.left && player.x>=10 && checkCollisionLeft(player, players, objectArray, 9) == false ) {
       if(data.up || data.down){
         player.x-=1.41
       } else {
         player.x -= 2;
       }
     }
-    if (data.up && player.y>=10 && checkCollisionUp(player, objectArray, 9) == false) {
+    if (data.up && player.y>=1 && checkCollisionUp(player, players, objectArray, 9) == false) {
       if(data.left || data.right){
         player.y-=1.41}
         else{
         player.y -= 2;
         }
     }
-    if (data.right && player.x<=630 && checkCollisionRight(player, objectArray, 9) == false) {
+    if (data.right && player.x<=630 && checkCollisionRight(player, players, objectArray, 9) == false) {
       if(data.up || data.down){
         player.x+=1.41}
         else{
         player.x += 2;
         }
     }
-    if (data.down && player.y<=630 && checkCollisionDown(player, objectArray, 9) == false) {
+    if (data.down && player.y<=630 && checkCollisionDown(player, players, objectArray, 9) == false) {
       if(data.left || data.right){
         player.y+=1.41}
         else{
@@ -328,14 +328,14 @@ socket.on('startGameServer', function(){
          bullet.isHit = true
         }
 
-       if(bullet.x >= 0 && bullet.x <= 640 && checkCollisionLeft(bullet, objectArray, 2) == false && checkCollisionRight(bullet, objectArray, 2) == false){
+       if(bullet.x >= 0 && bullet.x <= 640 && checkCollisionLeft(bullet, {}, objectArray, 2) == false && checkCollisionRight(bullet, {}, objectArray, 2) == false){
         bullet.x += bullet.xSpeed
        }
        else {
         bullet.x = -10
       }
 
-      if(bullet.y >= 0 && bullet.y <= 640 && checkCollisionUp(bullet, objectArray, 2) == false && checkCollisionDown(bullet, objectArray, 2) == false){
+      if(bullet.y >= 0 && bullet.y <= 640 && checkCollisionUp(bullet, {}, objectArray, 2) == false && checkCollisionDown(bullet, {}, objectArray, 2) == false){
         bullet.y += bullet.ySpeed
       }
       else {
@@ -353,69 +353,101 @@ http.listen(3000, function(){
   console.log('listening on *:3000');
 });
 
-function checkCollisionRight(player, objectArray, radius){
+function checkCollisionRight(player, playerArray, objectArray, radius){
   for(i=0; i<objectArray.length; i++){
     if(objectArray[i].position == "vertical"){
       if(player.x + radius >= objectArray[i].x && player.x + radius <= objectArray[i].x + objectArray[i].width){
-        if(player.y - radius <= objectArray[i].y && player.y + radius >= objectArray[i].y + objectArray[i].height || player.y - radius >= objectArray[i].y && player.y + radius <= objectArray[i].y + objectArray[i].height){
-          console.log(111);
+        if(player.y - radius <= objectArray[i].y && player.y + radius >= objectArray[i].y + objectArray[i].height || player.y - radius >= objectArray[i].y && player.y + radius <= objectArray[i].y + objectArray[i].height){ 
           return true;
         }
         else if(player.y - radius >= objectArray[i].y && player.y - radius <= objectArray[i].y + objectArray[i].height || player.y + radius >= objectArray[i].y && player.y + radius <= objectArray[i].y + objectArray[i].height){
-          console.log(111);
           return true;
         }
       }
     }
   }
+  for(var id in playerArray){
+    var otherPlayer = playerArray[id];
+    if(otherPlayer.name == player.name){
+    }
+    else if(player.x + radius >= otherPlayer.x - radius && player.x + radius <= otherPlayer.x + radius){
+      if(player.y - radius <= otherPlayer.y + radius && player.y - radius >= otherPlayer.y - radius || player.y + radius >= otherPlayer.y - radius && player.y + radius <= otherPlayer.y + radius){
+        return true;
+      }
+    }
+  }
   return false;
 }
-function checkCollisionDown(player, objectArray, radius){
+function checkCollisionDown(player, playerArray, objectArray, radius){
   for(i=0; i<objectArray.length; i++){
     if(objectArray[i].position == "horizontal"){
       if(player.y + radius >= objectArray[i].y && player.y + radius <= objectArray[i].y + objectArray[i].height){
         if(player.x - radius <= objectArray[i].x && player.x + radius >= objectArray[i].x + objectArray[i].width || player.x - radius >= objectArray[i].x && player.x + radius <= objectArray[i].x + objectArray[i].width){
-          console.log(222);
           return true;
         }
         else if(player.x - radius >= objectArray[i].x && player.x - radius <= objectArray[i].x + objectArray[i].width || player.x + radius >= objectArray[i].x && player.x + radius <= objectArray[i].x + objectArray[i].width){
-          console.log(222);
           return true;
         }
       }
     }
   }
+  for(var id in playerArray){
+    var otherPlayer = playerArray[id];
+    if(otherPlayer.name == player.name){
+    }
+    else if(player.y + radius >= otherPlayer.y - radius && player.y + radius <= otherPlayer.y + radius){
+      if(player.x - radius <= otherPlayer.x + radius && player.x - radius >= otherPlayer.x - radius || player.x + radius >= otherPlayer.x - radius && player.x + radius <= otherPlayer.x + radius){
+        return true;
+      }
+    }
+  }
   return false;
 }
-function checkCollisionLeft(player, objectArray, radius){
+function checkCollisionLeft(player, playerArray, objectArray, radius){
   for(i=0; i<objectArray.length; i++){
     if(objectArray[i].position == "vertical"){
       if(player.x - radius >= objectArray[i].x && player.x - radius <= objectArray[i].x + objectArray[i].width){
         if(player.y - radius >= objectArray[i].y && player.y + radius <= objectArray[i].y + objectArray[i].height || player.y - radius <= objectArray[i].y && player.y + radius >= objectArray[i].y + objectArray[i].height){
-          console.log(333);
           return true;
         }
         else if(player.y - radius >= objectArray[i].y && player.y - radius <= objectArray[i].y + objectArray[i].height || player.y + radius >= objectArray[i].y && player.y + radius <= objectArray[i].y + objectArray[i].height){
-          console.log(333);
           return true;
         }
       }
     }
   }
+  for(var id in playerArray){
+    var otherPlayer = playerArray[id];
+    if(otherPlayer.name == player.name){
+    }
+    else if(player.x - radius <= otherPlayer.x + radius && player.x - radius >= otherPlayer.x - radius){
+      if(player.y - radius <= otherPlayer.y + radius && player.y - radius >= otherPlayer.y - radius || player.y + radius >= otherPlayer.y - radius && player.y + radius <= otherPlayer.y + radius){
+        return true;
+      }
+    }
+  }
   return false;
 }
-function checkCollisionUp(player, objectArray, radius){
+function checkCollisionUp(player, playerArray, objectArray, radius){
   for(i=0; i<objectArray.length; i++){
     if(objectArray[i].position == "horizontal"){   
       if(player.y - radius >= objectArray[i].y && player.y - radius <= objectArray[i].y + objectArray[i].height){
         if(player.x - radius <= objectArray[i].x && player.x + radius >= objectArray[i].x + objectArray[i].width || player.x - radius >= objectArray[i].x && player.x + radius <= objectArray[i].x + objectArray[i].width){
-          console.log(444);
           return true;
         }
         else if(player.x - radius >= objectArray[i].x && player.x - radius <= objectArray[i].x + objectArray[i].width || player.x + radius >= objectArray[i].x && player.x + radius <= objectArray[i].x + objectArray[i].width){
-          console.log(444);
           return true;
         }
+      }
+    }
+  }
+  for(var id in playerArray){
+    var otherPlayer = playerArray[id];
+    if(otherPlayer.name == player.name){
+    }
+    else if(player.y - radius <= otherPlayer.y + radius && player.y - radius >= otherPlayer.y - radius){
+      if(player.x - radius <= otherPlayer.x + radius && player.x - radius >= otherPlayer.x - radius || player.x + radius >= otherPlayer.x - radius && player.x + radius <= otherPlayer.x + radius){
+        return true;
       }
     }
   }
