@@ -1,0 +1,127 @@
+<link href="style.css" rel="stylesheet" type="text/css">
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  var socket = io();
+
+</script>
+<body>
+<div id="content">
+  <div id="wrapper">
+    <div id="game">
+      <h1>Lobby</h1>
+
+      <div id="test">
+          <script>
+
+var MongoClient = require('mongodb').MongoClient;
+var url = "mongodb://localhost:27017/";
+              
+MongoClient.connect(url, function(err, db) {
+  if (err) throw err;
+  var dbo = db.db("mmodb");
+  dbo.createCollection("highscoretable", function(err, res) {
+    if (err) throw err;
+    console.log("Collection created!");
+    db.close();
+  });
+});
+              
+for (var id in players) {
+  var player = players[id];
+  var MongoClient = require('mongodb').MongoClient;
+  var url = "mongodb://localhost:27017/";
+  MongoClient.connect(url, function(err, db) {
+      if (err) throw err;
+      var dbo = db.db("mmodb");
+      var query = { username: player.name };
+      dbo.collection("highscoretable").find(query).toArray(function(err, result) {
+        if (err) throw err;
+          db.close();
+        if(result.length){ 
+            newHighscore = result[0].highscore + player.score
+            newWinScore = result[0].winscore + player.win
+            MongoClient.connect(url, function(err, db) {
+              if (err) throw err;
+              var dbo = db.db("mmodb");
+              var myquery = { username: player.name };
+              var newvalues = { $set: {username: player.name, highscore: newHighscore, winscore: newWinscore } };
+              dbo.collection("highscoretable").updateOne(myquery, newvalues, function(err, res) {
+                if (err) throw err;
+                console.log("1 document updated");
+                db.close();
+              });
+            });    
+        }else{
+        MongoClient.connect(url, function(err, db) {
+          if (err) throw err;
+          var dbo = db.db("mmodb");
+          var myobj = { username: player.name, highscore: player.score, winscore: player.win };
+          dbo.collection("userstable").insertOne(myobj, function(err, res) {
+            if (err) throw err;
+            console.log("1 document inserted");
+            db.close();
+          });
+        });
+        }  });
+    
+
+});
+   
+}
+MongoClient.connect(url, function(err, db) {
+  if (err) throw err;
+  var dbo = db.db("mmodb");
+  dbo.collection("highscoretable").find({}).toArray(function(err, result) {
+    if (err) throw err;
+    console.log(result);
+    db.close();
+  });
+}); 
+              
+var MongoClient = require('mongodb').MongoClient;
+var url = "mongodb://localhost:27017/";
+
+MongoClient.connect(url, function(err, db) {
+  if (err) throw err;
+  var dbo = db.db("mydb");
+  //Sort the result by name:
+  var sort = { highscore: 1, winscore: 1 };
+  dbo.collection("highscoretable").find().sort(sort).limit(10).toArray(function(err, result) {
+    if (err) throw err;
+    console.log(result);
+    makeTableHTML(result)  
+    db.close();
+  });
+});
+              
+function makeTableHTML(myArray) {
+    var result = "<table border=1>";
+    for(var i=0; i<myArray.length; i++) {
+        result += "<tr>";
+        for(var j=0; j<myArray[i].length; j++){
+            result += "<td>"+myArray[i][j]+"</td>";
+        }
+        result += "</tr>";
+    }
+    result += "</table>";
+
+    return result;
+}
+   var MongoClient = require('mongodb').MongoClient;
+  var url = "mongodb://localhost:27017/";
+  MongoClient.connect(url, function(err, db) {
+      if (err) throw err;
+      var dbo = db.db("mmodb");
+      var query = { username: player.name };
+      dbo.collection("highscoretable").find(query).toArray(function(err, result) {
+        if (err) throw err;
+          db.close();
+        if(result.length){              
+          </script>
+      </div>
+      
+</div>
+    </div>
+    </div>
+</body>
+<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
