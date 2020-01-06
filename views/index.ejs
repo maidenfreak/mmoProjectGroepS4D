@@ -23,6 +23,7 @@
 <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
 <script src="../static/game.js"></script>
 <script>
+  var leaveButtonPressed = false;
   var playername='<%= name %>';
       socket.emit('teamconfig');
       socket.on("teamconfigReturn", function (teamconfig) {
@@ -44,9 +45,18 @@
 
     function joinedLobby(){
       $(function () {
+        leaveButtonPressed = true;
         socket.emit('leaveGame');
         socket.emit('playerLobby', '<%= name %>', 'false');
         location.assign('/');
       });
+    }
+
+    window.onbeforeunload = function(){
+      if(leaveButtonPressed == false){
+        return "stop!";
+      }else{
+        return;
+      }  
     }
 </script>

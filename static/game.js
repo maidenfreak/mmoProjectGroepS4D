@@ -74,6 +74,10 @@ var movement = {
       case 83: // S
         movement.down = true;
         break;
+      case 116: //disablen van de f5 key zodat pagina hiermee niet gerefreshed kan worden.
+        event.returnValue = false;
+        event.keyCode = 0;
+        break;
     }
   });
   document.addEventListener('keyup', function(event) {
