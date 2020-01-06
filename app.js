@@ -92,40 +92,48 @@ class rebels extends character {
 }
         //rebels 1
         class militant extends rebels {
-            constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname){
+            constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead){
                 super(id, name, teamscore, score, color, teamname)
                 this.hp = 150;
                 this.x = 100;
                 this.y = 100;
                 this.weapondamage = 20;
+                this.isDead = false;
+                this.score = 0;
             }
         }
         //rebels 2
         class guerrilla extends rebels {
-             constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname){
+             constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead){
                 super(id, name, teamscore, score, color, teamname)
                 this.hp = 100;
                 this.x = 130;
                 this.y = 100;
                 this.weapondamage = 20;
+                this.isDead = false;
+                this.score = 0;
             }        }
         //rebels 3
         class vigilante extends rebels {
-             constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname){
+             constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead){
                 super(id, name, teamscore, score, color, teamname)
                 this.hp = 200;
                 this.x = 100;
                 this.y = 130;
                 this.weapondamage = 40;
+                this.isDead = false;
+                this.score = 0;
             }        }
         //rebels 4
         class separatist extends rebels {
-             constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname){
+             constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead){
                 super(id, name, teamscore, score, color, teamname)
                 this.hp = 240;
                 this.x = 130;
                 this.y = 130;
                 this.weapondamage = 20;
+                this.isDead = false;
+                this.score = 0;
             }        }
 
 
@@ -141,42 +149,50 @@ class swat extends character {
 }
         //swat 1
         class grenadier extends swat {
-            constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname){
+            constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead){
                 super(id, name, teamscore, score, color, teamname)
                 this.hp = 150;
                 this.x = 500;
                 this.y = 500;
                 this.weapondamage = 20;
+                this.isDead = false;
+                this.score = 0;
             }
     
         }
         //swat 2
         class breacher extends swat {
-           constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname){
+           constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead){
                 super(id, name, teamscore, score, color, teamname)
                 this.hp = 200;
                 this.x = 530;
                 this.y = 500;
                 this.weapondamage = 40;
+                this.isDead = false;
+                this.score = 0;
             }
         }
         //swat 3
         class observer extends swat {
-            constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname){
+            constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead){
                 super(id, name, teamscore, score, color, teamname)
                 this.hp = 100;
                 this.x = 500;
                 this.y = 530;
                 this.weapondamage = 20;
+                this.isDead = false;
+                this.score = 0;
             }        }
         //swat 4
         class charger extends swat {
-            constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname){
+            constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead){
                 super(id, name, teamscore, score, color, teamname)
                 this.hp = 240;
                 this.x = 530;
                 this.y = 530;
                 this.weapondamage = 20;
+                this.isDead = false;
+                this.score = 0;
             }        }
    
   
@@ -262,9 +278,10 @@ socket.on('startGameServer', function(){
   socket.on('movement', function(data, objectArray) {
     var player = players[socket.id] || {};
 
-    if(player.hp == 0){
+    if(player.hp <= 0){
       player.x = -30
       player.y = -30
+      player.isDead = true
     }
 
     if (data.left && player.x>=10 && checkCollisionLeft(player, players, objectArray, 9) == false ) {
@@ -315,18 +332,36 @@ socket.on('startGameServer', function(){
     }
     newBullet.targetX = targetX;
     newBullet.targetY = targetY;
+    newBullet.comesFrom = player.name;
+    newBullet.damage = player.weapondamage
     var bulletSpeed = calculateBulletSpeed(newBullet);
     newBullet.xSpeed = bulletSpeed[0];
     newBullet.ySpeed = bulletSpeed[1];
     bullets.push(newBullet);
   })
 
+  function addKiller(naam){
+    for (var id in players) {
+      var player = players[id];
+    var killer1 = naam
+    if(player.name == killer1){
+      player.score += 1
+      //console.log(player.name + " heeft " + player.score +  " kill")
+    }
+  }  
+  }
   socket.on('checkBullets', function(objectArray){
     var player = players[socket.id] || {};
     for(var i = 0; i < bullets.length; i++){
        var bullet = bullets[i]
+       var killer;
        if(bullet.x >= player.x - 10 && bullet.x <= player.x + 10 && bullet.y >= player.y - 10 && bullet.y <= player.y + 10){
-         player.hp -= 10;
+         player.hp -= bullet.damage;
+
+          if(player.hp <= 0){
+            killer = bullet.comesFrom
+            addKiller(killer)          
+          }
          bullet.isHit = true
         }
 

@@ -48,9 +48,46 @@
     #content {width: 100%; 
     text-align: center;
     }
+    #stats {width: 100px; 
+    height: 640px;
+    float: left;
+    text-align: center;
+    background-color: aqua;
+    }
+    #hp {width: 30px; 
+    margin: 10px;
+    height: 560px;
+    float: left;
+    text-align: center;            
+    background-color:white;
+    }
+    #ammo {width: 30px; 
+    margin: 10px;
+    height: 560px;
+    float: left;
+    text-align: center;
+    }
+    #bullet {width: 30px;
+    margin-bottom: 10px; 
+    height: 10px;
+    float: left;
+    text-align: center;            
+    background-color:white;
+    }
     #wrapper {display: inline-block; 
     margin-top:10px; 
     border: 1px solid black;
     }
     #leaveButton {position: relative;
-    float: left !important;}
+    float: left !important;
+    }
+    #playername {width:100%; 
+    height: 30px;
+    float: left;
+    text-align: center;            
+    }
+    #playerclass {width:100%; 
+    height: 30px;
+    float: left;
+    text-align: center;            
+    }
