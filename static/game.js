@@ -23,7 +23,7 @@ class room {
   buildRoom(){
     if(this.visible==false){
       context.beginPath();
-      context.fillStyle = "grey";
+      context.fillStyle = "#666260";
       context.rect(this.x, this.y, this.size, this.size);
       context.fill();
     }
