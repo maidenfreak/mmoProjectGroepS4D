@@ -58,14 +58,12 @@
     margin: 10px;
     height: 560px;
     float: left;
-    text-align: center;            
-    background-color:white;
+    text-align: center;
+    background-color:#007f00;
     }
-    #health-bar {background-color:#007f00;
-        width: inherit;
-        height: inherit;
-        position: relative;
-        bottom: inherit;
+    #health-bar{background-color:white;
+    width: 30px;
+    height: 0px;
     }
     #ammo {width: 30px; 
     margin: 10px;
