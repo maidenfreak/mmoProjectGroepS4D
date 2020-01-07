@@ -77,7 +77,8 @@ MongoClient.connect(url, function(err, db) {
     db.close();
   });
 }); 
-              
+
+function getHighscore(){
 var MongoClient = require('mongodb').MongoClient;
 var url = "mongodb://localhost:27017/";
 
@@ -86,18 +87,49 @@ MongoClient.connect(url, function(err, db) {
   var dbo = db.db("mydb");
   //Sort the result by name:
   var sort = { highscore: 1, winscore: 1 };
-  dbo.collection("highscoretable").find().sort(sort).limit(10).toArray(function(err, result) {
-    if (err) throw err;
-    console.log(result);
-    makeTableHTML(result)  
-    db.close();
+  dbo.collection("highscoretable").find().sort(sort).toArray(function(err, result) {
+      if (err) throw err;
+      console.log(result);
+      db.close();
+      return result
+
   });
-});
+    
+});   
+}
+              
+function getplayerPosition(){
+    var MongoClient = require('mongodb').MongoClient;
+    var url = "mongodb://localhost:27017/";
+
+    MongoClient.connect(url, function(err, db) {
+      if (err) throw err;
+      var dbo = db.db("mydb");
+       var playerName = players[socket.id].name
+      //Sort the result by name:
+      //var sort = { highscore: 1, winscore: 1 };
+      dbo.collection("highscoretable").find().toArray(function(err, result) {
+          if (err) throw err;
+          console.log(result);
+          db.close();
+          return result
+        //var playerName = players[socket.id].name
+      });
+
+    });   
+}
+var highscoreArray = getHighcore()
+var topTenArray = highscoreArray.slice(0, 9);
+
+    makeTableHTML(topTenArray) 
+
+
               
 function makeTableHTML(myArray) {
     var result = "<table border=1>";
     for(var i=0; i<myArray.length; i++) {
         result += "<tr>";
+        
         for(var j=0; j<myArray[i].length; j++){
             result += "<td>"+myArray[i][j]+"</td>";
         }

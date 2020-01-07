@@ -42,7 +42,12 @@
     margin: 0; 
     padding: 0; 
     }
-    canvas {width: 640px;
+    canvas {
+        background-image: url('map.jpg');
+        background-position: center; /* Center the image */
+        background-repeat: no-repeat; /* Do not repeat the image */
+        background-size: cover;
+        width: 640px;
     height: 640px;
     }
     #content {width: 100%; 
