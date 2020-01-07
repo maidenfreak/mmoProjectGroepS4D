@@ -48,7 +48,7 @@ class object {
   }
   build(){
     context.beginPath();
-    context.fillStyle = "black";
+    context.fillStyle = "#442E27";
     context.rect(this.x, this.y, this.width, this.height);
     context.fill();
   }
