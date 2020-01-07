@@ -118,28 +118,35 @@ function getCursorPosition(canvas, event){
 }
 
 //Wanneer er geklikt wordt geeft deze de coordinaten van de muis.
-    canvas.onclick = function(event){
-      var values = getCursorPosition(canvas, event)
-      var x = values[0];
-      var y = values[1];
-      var coords = "x" + x + "y" + y;
-      socket.emit('shoot-bullet', {x: 300, y: 300, speedY: 5, isHit: false, damage: 0},x,y);
-    }
-
-    
-
+canvas.onclick = function(event){
+  var values = getCursorPosition(canvas, event)
+  var x = values[0];
+  var y = values[1];
+  var coords = "x" + x + "y" + y;
+  socket.emit('shoot-bullet', {x: 300, y: 300, speedY: 5, isHit: false, damage: 0},x,y);
+}
 
 socket.on('state', function(players, bullets) {
   context.clearRect(0, 0, 640, 640);
   checkRoom(players, roomsArray);
+
+  canvas.onmousemove = function(event){
+    var player = players[socket.id];
+    mouseX = parseInt(event.clientX - canvas.offsetLeft);
+    mouseY = parseInt(event.clientY - canvas.offsetTop);
+    var dx = mouseX - player.x;
+    var dy = mouseY - player.y;
+    var angle = Math.atan2(dy, dx);
+    socket.emit("anglePush", angle);
+  }
+
   for (var id in players) {
     var player = players[id]; 
     context.fillStyle = player.color
     context.beginPath();        
     context.font = "20px Arial";
     if(player.hp > 0){
-      context.arc(player.x, player.y, 10, 0, 2 * Math.PI);
-      context.fillText(player.hp, player.x, player.y, 100);
+      context.arc(player.x, player.y, 10, player.angle, player.angle + Math.PI);
     }    
     context.fill();  
   }
