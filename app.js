@@ -71,129 +71,183 @@ app.get('/views/', function(request, response) {
   response.sendFile(path.join(__dirname, 'index.ejs'));
 });
 
- class character {
+class character {
     constructor(id, name, score){
         this.name = name;
         this.score = 0;
     }
 
-    //Methode om score te getten
+    endGame(){
+      for(var id in players){
+        var player = players[id];
+          if(player.teamname == "swat"){
+            var swatCount =+ 1;
+          }
+          else if(player.teamname == 'rebels'){
+            var rebelsCount =+ 1;
+          }
+      }
+      return swatCount, rebelsCount; 
+    } 
+  
 
-}
+    calculateWinner(){
+      if(swat.teamscore >= rebels.teamscore){
+        return "The SWAT unit has won the match with " + swat.teamscore + " kills & " + rebels.teamscore + " deaths.";
+      }
+      else if(rebels.teamscore >= swat.teamscore){
+        return "The rebel unit has won the match with " + rebels.teamscore + " kills & " + swat.teamscore + " deaths.";
+      }
+    }
+  }
+
 
 //rebels subclass welke erft van character class.
 class rebels extends character {
-    constructor(id, name, teamscore ,score, color, teamname){
+    constructor(id, name, teamscore ,score, color, teamname, win){
         super(id, name, score)
         this.teamscore = 0;
         this.color = "red";
         this.teamname = "rebels";
+        this.win = 0;
     }
+      setTeamScore(){
+        this.teamscore = militant.score + guerrilla.score + vigilante.score + separatist.score;
+      }
+
+      getTeamScore(){
+        return this.teamscore;
+      }
 }
         //rebels 1
         class militant extends rebels {
-            constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead){
-                super(id, name, teamscore, score, color, teamname)
+            constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, ammo, classname, win){
+                super(id, name, teamscore, score, color, teamname, win)
                 this.hp = 150;
                 this.x = 100;
                 this.y = 100;
                 this.weapondamage = 20;
                 this.isDead = false;
                 this.score = 0;
+                this.ammo = 100;
+                this.classname = "Militant";
             }
         }
         //rebels 2
         class guerrilla extends rebels {
-             constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead){
-                super(id, name, teamscore, score, color, teamname)
+             constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, ammo, classname, win){
+                super(id, name, teamscore, score, color, teamname, win)
                 this.hp = 100;
                 this.x = 130;
                 this.y = 100;
                 this.weapondamage = 20;
                 this.isDead = false;
                 this.score = 0;
+                this.ammo = 100;
+                this.classname = "Guerrilla";
             }        }
         //rebels 3
         class vigilante extends rebels {
-             constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead){
-                super(id, name, teamscore, score, color, teamname)
+             constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, ammo, classname, win){
+                super(id, name, teamscore, score, color, teamname, win)
                 this.hp = 200;
                 this.x = 100;
                 this.y = 130;
                 this.weapondamage = 40;
                 this.isDead = false;
                 this.score = 0;
+                this.ammo = 100;
+                this.classname = "Vigilante";
             }        }
         //rebels 4
         class separatist extends rebels {
-             constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead){
-                super(id, name, teamscore, score, color, teamname)
+             constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, ammo, classname, win){
+                super(id, name, teamscore, score, color, teamname, win)
                 this.hp = 240;
                 this.x = 130;
                 this.y = 130;
                 this.weapondamage = 20;
                 this.isDead = false;
                 this.score = 0;
+                this.ammo = 100;
+                this.classname = "Separatist"; 
             }        }
-
 
 //swat subclass welke erft van character class.
 class swat extends character {
-    constructor(id, name, teamscore, score, color, teamname){
+    constructor(id, name, teamscore, score, color, teamname, win){
         super(id, name, score)
         this.teamscore = 0;
         this.color = "blue";
         this.teamname = "swat";
+        this.win = 0;
     }
+      setTeamScore(){
+       this.teamscore = militant.score + guerrilla.score + vigilante.score + separatist.score;
+      }
+
+      getTeamScore(){
+       return this.teamscore;
+      }
         
 }
         //swat 1
         class grenadier extends swat {
-            constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead){
-                super(id, name, teamscore, score, color, teamname)
+            constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, ammo, classname, win){
+                super(id, name, teamscore, score, color, teamname, win)
                 this.hp = 150;
                 this.x = 500;
                 this.y = 500;
                 this.weapondamage = 20;
                 this.isDead = false;
                 this.score = 0;
+                this.ammo = 100;
+                this.classname = "Grenadier";
             }
     
         }
         //swat 2
         class breacher extends swat {
-           constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead){
-                super(id, name, teamscore, score, color, teamname)
+           constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, ammo, classname, win){
+                super(id, name, teamscore, score, color, teamname, win)
                 this.hp = 200;
                 this.x = 530;
                 this.y = 500;
                 this.weapondamage = 40;
                 this.isDead = false;
                 this.score = 0;
+                this.ammo = 100;
+               this.classname = "Breacher";
             }
         }
         //swat 3
         class observer extends swat {
-            constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead){
-                super(id, name, teamscore, score, color, teamname)
+            constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, ammo, classname, win){
+                super(id, name, teamscore, score, color, teamname, win)
                 this.hp = 100;
                 this.x = 500;
                 this.y = 530;
                 this.weapondamage = 20;
                 this.isDead = false;
                 this.score = 0;
+                this.ammo = 100;
+                this.classname = "Observer";
             }        }
         //swat 4
         class charger extends swat {
-            constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead){
-                super(id, name, teamscore, score, color, teamname)
+            constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, ammo, classname, win){
+                super(id, name, teamscore, score, color, teamname, win)
                 this.hp = 240;
                 this.x = 530;
                 this.y = 530;
                 this.weapondamage = 20;
                 this.isDead = false;
                 this.score = 0;
+                this.ammo = 100;
+                this.classname = "Charger";
             }        }
+   
+
    
   
   //creates a new player

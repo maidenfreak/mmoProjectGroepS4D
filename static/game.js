@@ -7,6 +7,8 @@ var context = canvas.getContext('2d');
 const objects = [];
 const roomsArray = [];
 
+const currentHealth = 0;
+
 class room {
   constructor(roomnum, x, y){
     this.roomnum = roomnum;
@@ -73,6 +75,10 @@ var movement = {
         break;
       case 83: // S
         movement.down = true;
+        break;
+      case 116: //disablen van de f5 key zodat pagina hiermee niet gerefreshed kan worden.
+        event.returnValue = false;
+        event.keyCode = 0;
         break;
     }
   });
@@ -160,6 +166,8 @@ var myname
 socket.on('playerteam', function(player){
   console.log(player.name);
   myname=player.name;
+  playerclass.innerHTML = player.hp;
+  currentHealth = player.hp;
 })
 
 function checkRoom(players, roomsArray){
