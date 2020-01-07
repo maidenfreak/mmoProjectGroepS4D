@@ -7,8 +7,6 @@ var context = canvas.getContext('2d');
 const objects = [];
 const roomsArray = [];
 
-const currentHealth = 0;
-
 class room {
   constructor(roomnum, x, y){
     this.roomnum = roomnum;
@@ -166,8 +164,6 @@ var myname
 socket.on('playerteam', function(player){
   console.log(player.name);
   myname=player.name;
-  playerclass.innerHTML = player.hp;
-  currentHealth = player.hp;
 })
 
 function checkRoom(players, roomsArray){

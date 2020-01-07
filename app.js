@@ -262,7 +262,6 @@ else if(playertype == "breacher"){players[socket.id] = new breacher(socket.id, n
 else if(playertype == "observer"){players[socket.id] = new observer(socket.id, name)}
 else if(playertype == "charger"){players[socket.id] = new charger(socket.id, name)}
   socket.emit('playerteam', players[socket.id]);
-  
   });
     
   function randomFunc(myArr) {      
@@ -411,7 +410,7 @@ socket.on('startGameServer', function(){
        var killer;
        if(bullet.x >= player.x - 10 && bullet.x <= player.x + 10 && bullet.y >= player.y - 10 && bullet.y <= player.y + 10){
          player.hp -= bullet.damage;
-
+         socket.emit("updatedHP", player.hp);
           if(player.hp <= 0){
             killer = bullet.comesFrom
             addKiller(killer)          
