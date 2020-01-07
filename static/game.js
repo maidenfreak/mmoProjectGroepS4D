@@ -142,14 +142,19 @@ socket.on('state', function(players, bullets) {
 
   for (var id in players) {
     var player = players[id]; 
-    context.fillStyle = player.color
+    context.fillStyle = "#FFD49C";
     context.beginPath();        
     context.font = "20px Arial";
     if(player.hp > 0){
-      context.arc(player.x, player.y, 10, player.angle, player.angle + Math.PI);
+      context.arc(player.x, player.y, 10, 0, 2 * Math.PI);
+        context.fill();
+        context.fillStyle = player.color;
+        context.beginPath(); 
+      context.arc(player.x, player.y, 10, 1.3+player.angle, 1.8+player.angle + Math.PI);
     }    
     context.fill();  
   }
+
 
   for(i=0; i<roomsArray.length; i++){
     roomsArray[i].buildRoom();
