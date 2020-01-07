@@ -371,6 +371,7 @@ socket.on('startGameServer', function(){
   socket.on('shoot-bullet', function(data, targetX, targetY){
     var player = players[socket.id] || {};
     if(players[socket.id] == undefined) return;
+    player.ammo -= 1
     var newBullet = data;
     if(targetX > player.x){
       newBullet.x = player.x + 11
