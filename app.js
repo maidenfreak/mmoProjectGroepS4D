@@ -400,12 +400,13 @@ socket.on('startGameServer', function(){
     bullets.push(newBullet);
   })
 
-  function addKiller(naam){
+  function addKiller(naam, bullets){
     for (var id in players) {
       var player = players[id];
     var killer1 = naam
     if(player.name == killer1){
       player.score += 1
+      player.ammo += bullets
       //console.log(player.name + " heeft " + player.score +  " kill")
     }
   }  
@@ -419,8 +420,9 @@ socket.on('startGameServer', function(){
          player.hp -= bullet.damage;
          socket.emit("updatedHP", player.hp);
           if(player.hp <= 0){
+            var lostBullets = player.ammo
             killer = bullet.comesFrom
-            addKiller(killer)          
+            addKiller(killer, lostBullets)          
           }
          bullet.isHit = true
         }
