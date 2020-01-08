@@ -376,19 +376,20 @@ socket.on('startGameServer', function(){
   socket.on('shoot-bullet', function(data, targetX, targetY){
     var player = players[socket.id] || {};
     if(players[socket.id] == undefined) return;
+    if(player.ammo == 0) return;
     player.ammo -= 1
     var newBullet = data;
     if(targetX > player.x){
-      newBullet.x = player.x //+ 11
+      newBullet.x = player.x
     }
     if(targetX < player.x){
-      newBullet.x = player.x //- 11
+      newBullet.x = player.x
     }
     if(targetY > player.y){
-      newBullet.y = player.y //+ 11
+      newBullet.y = player.y
     }      
     if(targetY < player.y){
-      newBullet.y = player.y //- 11
+      newBullet.y = player.y
     }
     newBullet.targetX = targetX;
     newBullet.targetY = targetY;
