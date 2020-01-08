@@ -73,6 +73,7 @@ app.get('/views/', function(request, response) {
 
 class character {
     constructor(id, name, score, angle){
+        this.id = id;
         this.name = name;
         this.score = 0;
         this.angle = 0;
@@ -376,42 +377,45 @@ socket.on('startGameServer', function(){
   socket.on('shoot-bullet', function(data, targetX, targetY){
     var player = players[socket.id] || {};
     if(players[socket.id] == undefined) return;
-    if(player.ammo == 0) return;
-    player.ammo -= 1
-    var newBullet = data;
-    if(targetX > player.x){
-      newBullet.x = player.x
+
+    if(player.ammo > 0){
+      player.ammo -= 1
+      var newBullet = data;
+      if(targetX > player.x){
+        newBullet.x = player.x //+ 11
+      }
+      if(targetX < player.x){
+        newBullet.x = player.x //- 11
+      }
+      if(targetY > player.y){
+        newBullet.y = player.y //+ 11
+      }      
+      if(targetY < player.y){
+        newBullet.y = player.y //- 11
+      }
+      newBullet.targetX = targetX;
+      newBullet.targetY = targetY;
+      newBullet.comesFrom = player.name;
+      newBullet.damage = player.weapondamage
+      var bulletSpeed = calculateBulletSpeed(newBullet);
+      newBullet.xSpeed = bulletSpeed[0];
+      newBullet.ySpeed = bulletSpeed[1];
+      bullets.push(newBullet);
+      socket.emit('updatedAmmo', player.ammo);
     }
-    if(targetX < player.x){
-      newBullet.x = player.x
-    }
-    if(targetY > player.y){
-      newBullet.y = player.y
-    }      
-    if(targetY < player.y){
-      newBullet.y = player.y
-    }
-    newBullet.targetX = targetX;
-    newBullet.targetY = targetY;
-    newBullet.comesFrom = player.name;
-    newBullet.damage = player.weapondamage
-    var bulletSpeed = calculateBulletSpeed(newBullet);
-    newBullet.xSpeed = bulletSpeed[0];
-    newBullet.ySpeed = bulletSpeed[1];
-    bullets.push(newBullet);
-    socket.emit('updatedAmmo', player.ammo);
   })
 
   function addKiller(naam, bullets){
     for (var id in players) {
       var player = players[id];
-    var killer1 = naam
-    if(player.name == killer1){
-      player.score += 1
-      player.ammo += bullets
-      //console.log(player.name + " heeft " + player.score +  " kill")
-    }
-  }  
+      var killer1 = naam
+      if(player.name == killer1){
+        var oldAmmo = player.ammo;
+        player.score += 1
+        player.ammo += bullets
+        io.to(player.id).emit("addAmmo", oldAmmo, player.ammo);
+      }
+    }  
   }
   socket.on('checkBullets', function(objectArray){
     var player = players[socket.id] || {};
@@ -424,7 +428,7 @@ socket.on('startGameServer', function(){
           if(player.hp <= 0){
             var lostBullets = player.ammo
             killer = bullet.comesFrom
-            addKiller(killer, lostBullets)          
+            addKiller(killer, lostBullets)         
           }
          bullet.isHit = true
         }
