@@ -44,7 +44,6 @@ class object {
       this.position = "vertical"
     }
     objects.push(this);
-    console.log(objects);
   }
   build(){
     context.beginPath();

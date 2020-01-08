@@ -12,143 +12,49 @@
 
       <div id="test">
           <script>
-
-var MongoClient = require('mongodb').MongoClient;
-var url = "mongodb://localhost:27017/";
               
-MongoClient.connect(url, function(err, db) {
-  if (err) throw err;
-  var dbo = db.db("mmodb");
-  dbo.createCollection("highscoretable", function(err, res) {
-    if (err) throw err;
-    console.log("Collection created!");
-    db.close();
-  });
-});
+
               
-for (var id in players) {
-  var player = players[id];
-  var MongoClient = require('mongodb').MongoClient;
-  var url = "mongodb://localhost:27017/";
-  MongoClient.connect(url, function(err, db) {
-      if (err) throw err;
-      var dbo = db.db("mmodb");
-      var query = { username: player.name };
-      dbo.collection("highscoretable").find(query).toArray(function(err, result) {
-        if (err) throw err;
-          db.close();
-        if(result.length){ 
-            newHighscore = result[0].highscore + player.score
-            newWinScore = result[0].winscore + player.win
-            MongoClient.connect(url, function(err, db) {
-              if (err) throw err;
-              var dbo = db.db("mmodb");
-              var myquery = { username: player.name };
-              var newvalues = { $set: {username: player.name, highscore: newHighscore, winscore: newWinscore } };
-              dbo.collection("highscoretable").updateOne(myquery, newvalues, function(err, res) {
-                if (err) throw err;
-                console.log("1 document updated");
-                db.close();
-              });
-            });    
-        }else{
-        MongoClient.connect(url, function(err, db) {
-          if (err) throw err;
-          var dbo = db.db("mmodb");
-          var myobj = { username: player.name, highscore: player.score, winscore: player.win };
-          dbo.collection("userstable").insertOne(myobj, function(err, res) {
-            if (err) throw err;
-            console.log("1 document inserted");
-            db.close();
-          });
-        });
-        }  });
-    
-
-});
-   
-}
-MongoClient.connect(url, function(err, db) {
-  if (err) throw err;
-  var dbo = db.db("mmodb");
-  dbo.collection("highscoretable").find({}).toArray(function(err, result) {
-    if (err) throw err;
-    console.log(result);
-    db.close();
-  });
-}); 
-
-function getHighscore(){
-var MongoClient = require('mongodb').MongoClient;
-var url = "mongodb://localhost:27017/";
-
-MongoClient.connect(url, function(err, db) {
-  if (err) throw err;
-  var dbo = db.db("mydb");
-  //Sort the result by name:
-  var sort = { highscore: 1, winscore: 1 };
-  dbo.collection("highscoretable").find().sort(sort).toArray(function(err, result) {
-      if (err) throw err;
-      console.log(result);
-      db.close();
-      return result
-
-  });
-    
-});   
-}
-              
-function getplayerPosition(){
-    var MongoClient = require('mongodb').MongoClient;
-    var url = "mongodb://localhost:27017/";
-
-    MongoClient.connect(url, function(err, db) {
-      if (err) throw err;
-      var dbo = db.db("mydb");
-       var playerName = players[socket.id].name
-      //Sort the result by name:
-      //var sort = { highscore: 1, winscore: 1 };
-      dbo.collection("highscoretable").find().toArray(function(err, result) {
-          if (err) throw err;
-          console.log(result);
-          db.close();
-          return result
-        //var playerName = players[socket.id].name
-      });
-
-    });   
-}
-var highscoreArray = getHighcore()
-var topTenArray = highscoreArray.slice(0, 9);
-
-    makeTableHTML(topTenArray) 
+//var highscoreArray = getHighcore()
+//var topTenArray = highscoreArray.slice(0, 9);
+//var indexPlayer = highscoreArray.findIndex(players[socket.id].name)
+//var playerInfo = highscoreArray.find(players[socket.id].name)
+//makeTableHTML(topTenArray, indexPlayer, playerInfo) 
 
 
               
-function makeTableHTML(myArray) {
+function makeTableHTML(myArray, playerIndex, playerInfo) {
     var result = "<table border=1>";
     for(var i=0; i<myArray.length; i++) {
         result += "<tr>";
-        
+        result += "<td>" +i +1 +"</td>";
         for(var j=0; j<myArray[i].length; j++){
             result += "<td>"+myArray[i][j]+"</td>";
         }
+        result += "</tr>";
+    }
+    if(!myArray.find(player)){
+        result += "<tr>";
+        result += "<td>" +playerIndex+"</td>";
+        result += "<td>" +playerInfo[0]+"</td>";
+        result += "<td>" +playerInfo[1]+"</td>";
+        result += "<td>" +playerInfo[2]+"</td>";
         result += "</tr>";
     }
     result += "</table>";
 
     return result;
 }
-   var MongoClient = require('mongodb').MongoClient;
-  var url = "mongodb://localhost:27017/";
-  MongoClient.connect(url, function(err, db) {
-      if (err) throw err;
-      var dbo = db.db("mmodb");
-      var query = { username: player.name };
-      dbo.collection("highscoretable").find(query).toArray(function(err, result) {
-        if (err) throw err;
-          db.close();
-        if(result.length){              
+//   var MongoClient = require('mongodb').MongoClient;
+//  var url = "mongodb://localhost:27017/";
+//  MongoClient.connect(url, function(err, db) {
+//      if (err) throw err;
+//      var dbo = db.db("mmodb");
+//      var query = { username: player.name };
+//      dbo.collection("highscoretable").find(query).toArray(function(err, result) {
+//        if (err) throw err;
+//          db.close();
+//        if(result.length){              
           </script>
       </div>
       

@@ -12,6 +12,10 @@ var io = require('socket.io')(http);
 var players = {};
 const playersInLobby = [];
 const bullets = [];
+var swatCount = 0;
+var rebelsCount = 0 ;
+var rebelscore =0;
+var swatscore = 0;
 var typeplayers = ["militant", "grenadier", "guerrilla", "observer", "vigilante" ,"breacher", "separatist", "charger" ];
 var teamconfig = [];
 require('dotenv').config();
@@ -77,34 +81,10 @@ class character {
         this.name = name;
         this.score = 0;
         this.angle = 0;
+
     }
-
-    endGame(){
-      for(var id in players){
-        var player = players[id];
-          if(player.teamname == "swat"){
-            var swatCount =+ 1;
-          }
-          else if(player.teamname == 'rebels'){
-            var rebelsCount =+ 1;
-          }
-      }
-      return swatCount, rebelsCount; 
-    } 
-  
-
-    calculateWinner(){
-      if(swat.teamscore >= rebels.teamscore){
-        return "The SWAT unit has won the match with " + swat.teamscore + " kills & " + rebels.teamscore + " deaths.";
-      }
-      else if(rebels.teamscore >= swat.teamscore){
-        return "The rebel unit has won the match with " + rebels.teamscore + " kills & " + swat.teamscore + " deaths.";
-      }
-    }
-  }
-
-
-//rebels subclass welke erft van character class.
+}
+ //rebels subclass welke erft van character class.
 class rebels extends character {
     constructor(id, name, teamscore ,score, color, teamname, win, angle){
         super(id, name, score, angle)
@@ -113,13 +93,7 @@ class rebels extends character {
         this.teamname = "rebels";
         this.win = 0;
     }
-      setTeamScore(){
-        this.teamscore = militant.score + guerrilla.score + vigilante.score + separatist.score;
-      }
 
-      getTeamScore(){
-        return this.teamscore;
-      }
 }
         //rebels 1
         class militant extends rebels {
@@ -184,14 +158,7 @@ class swat extends character {
         this.teamname = "swat";
         this.win = 0;
     }
-      setTeamScore(){
-       this.teamscore = militant.score + guerrilla.score + vigilante.score + separatist.score;
-      }
-
-      getTeamScore(){
-       return this.teamscore;
-      }
-        
+     
 }
         //swat 1
         class grenadier extends swat {
@@ -247,7 +214,11 @@ class swat extends character {
                 this.score = 0;
                 this.ammo = 20;
                 this.classname = "Charger";
-            }        }
+                
+                
+            } 
+
+        }
    
 
    
@@ -264,6 +235,11 @@ else if(playertype == "breacher"){players[socket.id] = new breacher(socket.id, n
 else if(playertype == "observer"){players[socket.id] = new observer(socket.id, name)}
 else if(playertype == "charger"){players[socket.id] = new charger(socket.id, name)}
   socket.emit('playerteam', players[socket.id]);
+
+  endGame();
+  console.log("swat " + swatCount);
+  console.log("rebels " + rebelsCount);
+
   });
     
   function randomFunc(myArr) {      
@@ -278,6 +254,54 @@ else if(playertype == "charger"){players[socket.id] = new charger(socket.id, nam
             return myArr;    
          }     
 
+   function calculateWinner(){
+      if(swatscore  >= rebelsCount){
+       // return "The SWAT unit has won the match with " + swatscore + " kills & " + rebelsCount + " deaths.";
+     updateHighscore()
+     
+//     swatCount = 0;
+//     rebelsCount = 0;
+//     swatscore = 0;
+//     rebelscore = 0;
+//     $(function () {
+//     location.assign('/highscore');
+//      });
+          socket.emit('endOfGame');
+      }
+      else if(rebelscore >= swatCount){
+       // return "The rebel unit has won the match with " + rebelscore + " kills & " + swatCount + " deaths.";
+     updateHighscore()
+//     swatCount = 0;
+//     rebelsCount = 0;
+//     swatscore = 0;
+//     rebelscore = 0;
+//     $(function () {
+//     location.assign('/highscore');
+//      });
+           socket.emit('endOfGame');    
+      }
+    }
+//  }
+   
+
+      
+function endGame(){
+     swatCount = 0;
+     rebelsCount = 0;
+      for(var id in players){
+        var player = players[id];
+          if(player.teamname == "swat"){
+            swatCount += 1;
+          }
+          else if(player.teamname == 'rebels'){
+            rebelsCount += 1;
+          }
+      }
+     ("swat" + rebelsCount)
+     console.log("rebels" + swatCount)
+      return swatCount, rebelsCount; 
+    }    
+    
 socket.on('startGameServer', function(){
     hussledArray = randomFunc(playersInLobby)     
     teamconfig =  typeplayers.reduce(function(teamconfig, field, index) {
@@ -324,10 +348,13 @@ socket.on('startGameServer', function(){
   
   socket.on('disconnect', function(){
     delete players[socket.id];
+    endGame()
   });
 
   socket.on('leaveGame', function(){
     delete players[socket.id];
+    endGame()
+      
   });
 
   socket.on("anglePush", function(angle){
@@ -342,6 +369,8 @@ socket.on('startGameServer', function(){
       player.x = -30
       player.y = -30
       player.isDead = true
+      calculateWinner()
+
     }
 
     if (data.left && player.x>=10 && checkCollisionLeft(player, players, objectArray, 9) == false ) {
@@ -377,6 +406,7 @@ socket.on('startGameServer', function(){
   socket.on('shoot-bullet', function(data, targetX, targetY){
     var player = players[socket.id] || {};
     if(players[socket.id] == undefined) return;
+
     if(player.ammo > 0){
       player.ammo -= 1
       var newBullet = data;
@@ -411,10 +441,17 @@ socket.on('startGameServer', function(){
       if(player.name == killer1){
         var oldAmmo = player.ammo;
         player.score += 1
+         if(player.teamname = "swat"){
+          swatscore +=1;
+          
+      }else{
+          rebelscore +=1;
+      }
         player.ammo += bullets
         io.to(player.id).emit("addAmmo", oldAmmo, player.ammo);
       }
     }  
+
   }
   socket.on('checkBullets', function(objectArray){
     var player = players[socket.id] || {};
@@ -427,7 +464,10 @@ socket.on('startGameServer', function(){
           if(player.hp <= 0){
             var lostBullets = player.ammo
             killer = bullet.comesFrom
-            addKiller(killer, lostBullets)         
+
+            addKiller(killer, lostBullets) 
+          //  calculateWinner()
+
           }
          bullet.isHit = true
         }
@@ -447,6 +487,72 @@ socket.on('startGameServer', function(){
       }
      }
    })
+  
+function updateHighscore(){
+    var MongoClient = require('mongodb').MongoClient;
+    var url = "mongodb://localhost:27017/";
+    // create table if not exist
+    MongoClient.connect(url, function(err, db) {
+      if (err) throw err;
+      var dbo = db.db("mmodb");
+      dbo.createCollection("highscore6table", function(err, res) {
+        if (err) throw err;
+        console.log("Collection created!");
+        db.close();
+      });
+    });
+              
+   for (var i in players) {
+//    //for (var i = 0; i < players.length; i++){
+//       console.log(players[i])
+      var highscorePlayer = players[i];
+        
+     // var highscorePlayer = players[socket.id]
+      console.log(highscorePlayer)
+      console.log("test")
+      MongoClient.connect(url, function(err, db) {
+          if (err) throw err;
+          var dbo = db.db("mmodb");
+          var query = { username: highscorePlayer.name };
+          dbo.collection("highscore6table").find(query).toArray(function(err, result) {
+            if (err) throw err;
+              db.close();
+            if(result.length){ 
+                var newHighscore = result[0].highscore + highscorePlayer.score
+                var newWinscore = result[0].winscore + highscorePlayer.win
+                MongoClient.connect(url, function(err, db) {
+                  if (err) throw err;
+                  var dbo = db.db("mmodb");
+                  var myquery = { username: highscorePlayer.name };
+                  var newvalues = { $set: {username: highscorePlayer.name, highscore: newHighscore, winscore: newWinscore } };
+                  dbo.collection("highscore6table").updateOne(myquery, newvalues, function(err, res) {
+                    if (err) throw err;
+                    console.log("1 document updated");
+                    db.close();
+                  });
+                });    
+            }else{
+            MongoClient.connect(url, function(err, db) {
+              if (err) throw err;
+              var dbo = db.db("mmodb");
+              var myobj = { username: highscorePlayer.name, highscore: highscorePlayer.score, winscore: highscorePlayer.win };
+              dbo.collection("highscore6table").insertOne(myobj, function(err, res) {
+                if (err) throw err;
+                console.log("1 document inserted");
+                db.close();
+              });
+            });
+            }  });
+
+
+});
+   
+ }
+}  
+  
+  
+  
+  
 });
 
 setInterval(function() {
@@ -456,6 +562,30 @@ setInterval(function() {
 http.listen(3000, function(){
   console.log('listening on *:3000');
 });
+
+
+
+              
+
+// return complete highscore in een array, gesorteerd op de highscore en winscore.
+function getHighscore(){
+    var MongoClient = require('mongodb').MongoClient;
+    var url = "mongodb://localhost:27017/";
+
+    MongoClient.connect(url, function(err, db) {
+      if (err) throw err;
+      var dbo = db.db("mydb");
+      var sort = { highscore: 1, winscore: 1 };
+      dbo.collection("highscoretable2").find().sort(sort).toArray(function(err, result) {
+          if (err) throw err;
+          console.log(result);
+          db.close();
+          return result
+
+      });
+
+    });   
+}
 
 function checkCollisionRight(player, playerArray, objectArray, radius){
   for(i=0; i<objectArray.length; i++){

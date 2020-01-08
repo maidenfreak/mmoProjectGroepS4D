@@ -3,6 +3,7 @@ var currentHealth = maxHealth;
 
 var maxAmmo = 1;
 var currentAmmo = maxAmmo;
+var eenmaalUitvoeren = false;
 
 var iDiv = document.getElementById('ammo');
 
@@ -11,11 +12,14 @@ socket.on('playerteam', function(player){
     maxAmmo = player.ammo;
     playerclass.innerHTML = player.classname;
 
-    for(i=0; i<maxAmmo; i++){
-        var innerDiv = document.createElement('div');
-        innerDiv.id = 'bullet';
-        innerDiv.className = 'test';
-        iDiv.appendChild(innerDiv);
+    if(eenmaalUitvoeren == false){
+        for(i=0; i<maxAmmo; i++){
+            var innerDiv = document.createElement('div');
+            innerDiv.id = 'bullet';
+            innerDiv.className = 'test';
+            iDiv.appendChild(innerDiv);
+        }
+        eenmaalUitvoeren = true;
     }
 });
 

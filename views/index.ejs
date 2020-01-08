@@ -40,6 +40,12 @@
         classname = teamconfig[playername];
         socket.emit('new player' , classname, playername);
     });
+    socket.on("endOfGame", function () {
+      $(function () {
+     location.assign('/highscore');
+      });  
+    });
+    
     $(function () {
       var socket = io();
       $('form').submit(function(e){
