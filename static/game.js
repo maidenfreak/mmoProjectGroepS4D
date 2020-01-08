@@ -126,10 +126,12 @@ canvas.onclick = function(event){
   socket.emit('shoot-bullet', {x: 300, y: 300, speedY: 5, isHit: false, damage: 0},x,y);
 }
 
+//deze socket staat op een interval en wordt continu uitgevoerd om het spel te updaten
 socket.on('state', function(players, bullets) {
   context.clearRect(0, 0, 640, 640);
   checkRoom(players, roomsArray);
 
+  //update de kant waar de speler naartoe kijkt wanneer er met de muis over het canvas bewogen wordt.
   canvas.onmousemove = function(event){
     var player = players[socket.id];
     mouseX = parseInt(event.clientX - canvas.offsetLeft);
@@ -140,6 +142,7 @@ socket.on('state', function(players, bullets) {
     socket.emit("anglePush", angle);
   }
 
+  //tekent de verschillende spelers op het canvas.
   for (var id in players) {
     var player = players[id]; 
     context.fillStyle = "#FFD49C";
@@ -155,15 +158,17 @@ socket.on('state', function(players, bullets) {
     context.fill();  
   }
 
-
+  //for loop die de rooms tekent op het canvas
   for(i=0; i<roomsArray.length; i++){
     roomsArray[i].buildRoom();
   } 
 
+  //for loop die de muren tekent op het canvas
   for(i=0; i<objects.length; i++){
     objects[i].build();
   }
 
+  //for loop die de kogels tekent op het canvas
   for (var id in bullets) {
     var bullet = bullets[id];
     context.beginPath();
@@ -329,4 +334,3 @@ let box61 = new room(19, 320, 320); box61.pushRooms();
 let box62 = new room(19, 400, 320); box62.pushRooms();
 let box63 = new room(19, 240, 400); box63.pushRooms();
 let box64 = new room(19, 320, 400); box64.pushRooms();
-console.log(roomsArray);
