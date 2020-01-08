@@ -16,6 +16,7 @@
     background-position: center; /* Center the image */
     background-repeat: no-repeat; /* Do not repeat the image */
     background-size: cover;
+    font-family: Arial, Helvetica, sans-serif;
     }
     #form { background: #000; 
     width: 260px; 
@@ -57,6 +58,8 @@
     height: 640px;
     float: left;
     text-align: center;
+    color: white;
+    font-size: small;
     }
     #health-box {width: 30px; 
     margin: 10px;
@@ -80,7 +83,10 @@
     height: 10px;
     float: left;
     text-align: center;            
-    background-color:white;
+    background-image: url('Bullet.svg');
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Do not repeat the image */
+    background-size: cover;
     }
     #wrapper {display: inline-block; 
     margin-top:10px; 

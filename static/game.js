@@ -147,11 +147,9 @@ socket.on('state', function(players, bullets) {
     context.font = "20px Arial";
     if(player.hp > 0){
       context.arc(player.x, player.y, 10, 0, 2 * Math.PI);
-      context.fillText(player.hp, player.x, player.y, 100);
-
-        context.fill();
-        context.fillStyle = player.color;
-        context.beginPath(); 
+      context.fill();
+      context.fillStyle = player.color;
+      context.beginPath(); 
       context.arc(player.x, player.y, 10, 1.3+player.angle, 1.8+player.angle + Math.PI);
     }    
     context.fill();  
