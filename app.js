@@ -12,6 +12,10 @@ var io = require('socket.io')(http);
 var players = {};
 const playersInLobby = [];
 const bullets = [];
+var swatCount = 0;
+var rebelsCount = 0 ;
+var rebelscore =0;
+var swatscore = 0;
 var typeplayers = ["militant", "grenadier", "guerrilla", "observer", "vigilante" ,"breacher", "separatist", "charger" ];
 var teamconfig = [];
 require('dotenv').config();
@@ -77,32 +81,7 @@ class character {
         this.score = 0;
     }
 
-    endGame(){
-      for(var id in players){
-        var player = players[id];
-          if(player.teamname == "swat"){
-            var swatCount =+ 1;
-          }
-          else if(player.teamname == 'rebels'){
-            var rebelsCount =+ 1;
-          }
-      }
-      return swatCount, rebelsCount; 
-    } 
-  
-
-    calculateWinner(){
-      if(swat.teamscore >= rebels.teamscore){
-        return "The SWAT unit has won the match with " + swat.teamscore + " kills & " + rebels.teamscore + " deaths.";
-      }
-      else if(rebels.teamscore >= swat.teamscore){
-        return "The rebel unit has won the match with " + rebels.teamscore + " kills & " + swat.teamscore + " deaths.";
-      }
-    }
-  }
-
-
-//rebels subclass welke erft van character class.
+ //rebels subclass welke erft van character class.
 class rebels extends character {
     constructor(id, name, teamscore ,score, color, teamname, win){
         super(id, name, score)
@@ -111,13 +90,7 @@ class rebels extends character {
         this.teamname = "rebels";
         this.win = 0;
     }
-      setTeamScore(){
-        this.teamscore = militant.score + guerrilla.score + vigilante.score + separatist.score;
-      }
 
-      getTeamScore(){
-        return this.teamscore;
-      }
 }
         //rebels 1
         class militant extends rebels {
@@ -182,14 +155,17 @@ class swat extends character {
         this.teamname = "swat";
         this.win = 0;
     }
-      setTeamScore(){
-       this.teamscore = militant.score + guerrilla.score + vigilante.score + separatist.score;
-      }
+ 
+        setTeamScore(){
+          console.log(grenadier.score)
+          console.log(breacher.score)
+          console.log(observer.score)
+          console.log(charger.score)
+       this.teamscore = grenadier.score + breacher.score + observer.score + charger.score;
+      // return this.teamscore;
 
-      getTeamScore(){
-       return this.teamscore;
       }
-        
+    
 }
         //swat 1
         class grenadier extends swat {
@@ -245,7 +221,11 @@ class swat extends character {
                 this.score = 0;
                 this.ammo = 100;
                 this.classname = "Charger";
-            }        }
+                
+                
+            } 
+
+        }
    
 
    
@@ -262,7 +242,9 @@ else if(playertype == "breacher"){players[socket.id] = new breacher(socket.id, n
 else if(playertype == "observer"){players[socket.id] = new observer(socket.id, name)}
 else if(playertype == "charger"){players[socket.id] = new charger(socket.id, name)}
   socket.emit('playerteam', players[socket.id]);
-  
+  endGame();
+  console.log("swat " + swatCount);
+  console.log("rebels " + rebelsCount);
   });
     
   function randomFunc(myArr) {      
@@ -277,6 +259,33 @@ else if(playertype == "charger"){players[socket.id] = new charger(socket.id, nam
             return myArr;    
          }     
 
+    calculateWinner(){
+      if(swat.teamscore >= rebels.teamscore){
+        return "The SWAT unit has won the match with " + swat.teamscore + " kills & " + rebels.teamscore + " deaths.";
+      }
+      else if(rebels.teamscore >= swat.teamscore){
+        return "The rebel unit has won the match with " + rebels.teamscore + " kills & " + swat.teamscore + " deaths.";
+      }
+    }
+  }
+    
+function endGame(){
+     swatCount = 0;
+     rebelsCount = 0;
+      for(var id in players){
+        var player = players[id];
+          if(player.teamname == "swat"){
+            swatCount += 1;
+          }
+          else if(player.teamname == 'rebels'){
+            rebelsCount += 1;
+          }
+      }
+     console.log("swat" + rebelsCount)
+     console.log("rebels" + swatCount)
+      return swatCount, rebelsCount; 
+    }    
+    
 socket.on('startGameServer', function(){
     hussledArray = randomFunc(playersInLobby)     
     teamconfig =  typeplayers.reduce(function(teamconfig, field, index) {
@@ -326,7 +335,9 @@ socket.on('startGameServer', function(){
   });
 
   socket.on('leaveGame', function(){
+    endGame()
     delete players[socket.id];
+      
   });
 
   socket.on('movement', function(data, objectArray) {
@@ -336,6 +347,8 @@ socket.on('startGameServer', function(){
       player.x = -30
       player.y = -30
       player.isDead = true
+
+
     }
 
     if (data.left && player.x>=10 && checkCollisionLeft(player, players, objectArray, 9) == false ) {
@@ -400,7 +413,16 @@ socket.on('startGameServer', function(){
     var killer1 = naam
     if(player.name == killer1){
       player.score += 1
-      //console.log(player.name + " heeft " + player.score +  " kill")
+      if(player.teamname = "swat"){
+          swatscore +=1;
+          
+      }else{
+          rebelscore +=1;
+      }
+      console.log(player.name + " heeft " + player.score +  " kill")
+      console.log("swatscore" + swatscore)
+      console.log("rebelscore" + rebelscore)
+      
     }
   }  
   }
@@ -414,7 +436,9 @@ socket.on('startGameServer', function(){
 
           if(player.hp <= 0){
             killer = bullet.comesFrom
-            addKiller(killer)          
+            addKiller(killer) 
+
+            console.log(player.teamscore)
           }
          bullet.isHit = true
         }
