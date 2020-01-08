@@ -466,7 +466,7 @@ socket.on('startGameServer', function(){
             killer = bullet.comesFrom
 
             addKiller(killer, lostBullets) 
-            calculateWinner()
+          //  calculateWinner()
 
           }
          bullet.isHit = true
