@@ -130,7 +130,7 @@ class rebels extends character {
                 this.weapondamage = 20;
                 this.isDead = false;
                 this.score = 0;
-                this.ammo = 100;
+                this.ammo = 20;
                 this.classname = "Militant";
             }
         }
@@ -144,7 +144,7 @@ class rebels extends character {
                 this.weapondamage = 20;
                 this.isDead = false;
                 this.score = 0;
-                this.ammo = 100;
+                this.ammo = 20;
                 this.classname = "Guerrilla";
             }        }
         //rebels 3
@@ -157,7 +157,7 @@ class rebels extends character {
                 this.weapondamage = 40;
                 this.isDead = false;
                 this.score = 0;
-                this.ammo = 100;
+                this.ammo = 20;
                 this.classname = "Vigilante";
             }        }
         //rebels 4
@@ -170,7 +170,7 @@ class rebels extends character {
                 this.weapondamage = 20;
                 this.isDead = false;
                 this.score = 0;
-                this.ammo = 100;
+                this.ammo = 20;
                 this.classname = "Separatist"; 
             }        }
 
@@ -202,7 +202,7 @@ class swat extends character {
                 this.weapondamage = 20;
                 this.isDead = false;
                 this.score = 0;
-                this.ammo = 100;
+                this.ammo = 20;
                 this.classname = "Grenadier";
             }
     
@@ -217,7 +217,7 @@ class swat extends character {
                 this.weapondamage = 40;
                 this.isDead = false;
                 this.score = 0;
-                this.ammo = 100;
+                this.ammo = 20;
                this.classname = "Breacher";
             }
         }
@@ -231,7 +231,7 @@ class swat extends character {
                 this.weapondamage = 20;
                 this.isDead = false;
                 this.score = 0;
-                this.ammo = 100;
+                this.ammo = 20;
                 this.classname = "Observer";
             }        }
         //swat 4
@@ -244,7 +244,7 @@ class swat extends character {
                 this.weapondamage = 20;
                 this.isDead = false;
                 this.score = 0;
-                this.ammo = 100;
+                this.ammo = 20;
                 this.classname = "Charger";
             }        }
    
