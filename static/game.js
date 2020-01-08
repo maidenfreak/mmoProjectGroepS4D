@@ -7,8 +7,6 @@ var context = canvas.getContext('2d');
 const objects = [];
 const roomsArray = [];
 
-const currentHealth = 0;
-
 class room {
   constructor(roomnum, x, y){
     this.roomnum = roomnum;
@@ -23,7 +21,7 @@ class room {
   buildRoom(){
     if(this.visible==false){
       context.beginPath();
-      context.fillStyle = "grey";
+      context.fillStyle = "#666260";
       context.rect(this.x, this.y, this.size, this.size);
       context.fill();
     }
@@ -46,11 +44,10 @@ class object {
       this.position = "vertical"
     }
     objects.push(this);
-    console.log(objects);
   }
   build(){
     context.beginPath();
-    context.fillStyle = "black";
+    context.fillStyle = "#442E27";
     context.rect(this.x, this.y, this.width, this.height);
     context.fill();
   }
@@ -120,40 +117,57 @@ function getCursorPosition(canvas, event){
 }
 
 //Wanneer er geklikt wordt geeft deze de coordinaten van de muis.
-    canvas.onclick = function(event){
-      var values = getCursorPosition(canvas, event)
-      var x = values[0];
-      var y = values[1];
-      var coords = "x" + x + "y" + y;
-      socket.emit('shoot-bullet', {x: 300, y: 300, speedY: 5, isHit: false, damage: 0},x,y);
-    }
+canvas.onclick = function(event){
+  var values = getCursorPosition(canvas, event)
+  var x = values[0];
+  var y = values[1];
+  var coords = "x" + x + "y" + y;
+  socket.emit('shoot-bullet', {x: 300, y: 300, speedY: 5, isHit: false, damage: 0},x,y);
+}
 
-    
-
-
+//deze socket staat op een interval en wordt continu uitgevoerd om het spel te updaten
 socket.on('state', function(players, bullets) {
   context.clearRect(0, 0, 640, 640);
   checkRoom(players, roomsArray);
+
+  //update de kant waar de speler naartoe kijkt wanneer er met de muis over het canvas bewogen wordt.
+  canvas.onmousemove = function(event){
+    var player = players[socket.id];
+    mouseX = parseInt(event.clientX - canvas.offsetLeft);
+    mouseY = parseInt(event.clientY - canvas.offsetTop);
+    var dx = mouseX - player.x;
+    var dy = mouseY - player.y;
+    var angle = Math.atan2(dy, dx);
+    socket.emit("anglePush", angle);
+  }
+
+  //tekent de verschillende spelers op het canvas.
   for (var id in players) {
     var player = players[id]; 
-    context.fillStyle = player.color
+    context.fillStyle = "#FFD49C";
     context.beginPath();        
     context.font = "20px Arial";
     if(player.hp > 0){
       context.arc(player.x, player.y, 10, 0, 2 * Math.PI);
-      context.fillText(player.hp, player.x, player.y, 100);
+      context.fill();
+      context.fillStyle = player.color;
+      context.beginPath(); 
+      context.arc(player.x, player.y, 10, 1.3+player.angle, 1.8+player.angle + Math.PI);
     }    
     context.fill();  
   }
 
+  //for loop die de rooms tekent op het canvas
   for(i=0; i<roomsArray.length; i++){
     roomsArray[i].buildRoom();
   } 
 
+  //for loop die de muren tekent op het canvas
   for(i=0; i<objects.length; i++){
     objects[i].build();
   }
 
+  //for loop die de kogels tekent op het canvas
   for (var id in bullets) {
     var bullet = bullets[id];
     context.beginPath();
@@ -166,8 +180,6 @@ var myname
 socket.on('playerteam', function(player){
   console.log(player.name);
   myname=player.name;
-  playerclass.innerHTML = player.hp;
-  currentHealth = player.hp;
 })
 
 function checkRoom(players, roomsArray){
@@ -321,4 +333,3 @@ let box61 = new room(19, 320, 320); box61.pushRooms();
 let box62 = new room(19, 400, 320); box62.pushRooms();
 let box63 = new room(19, 240, 400); box63.pushRooms();
 let box64 = new room(19, 320, 400); box64.pushRooms();
-console.log(roomsArray);

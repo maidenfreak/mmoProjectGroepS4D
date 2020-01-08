@@ -16,6 +16,7 @@
     background-position: center; /* Center the image */
     background-repeat: no-repeat; /* Do not repeat the image */
     background-size: cover;
+    font-family: Arial, Helvetica, sans-serif;
     }
     #form { background: #000; 
     width: 260px; 
@@ -42,7 +43,12 @@
     margin: 0; 
     padding: 0; 
     }
-    canvas {width: 640px;
+    canvas {
+        background-image: url('map.jpg');
+        background-position: center; /* Center the image */
+        background-repeat: no-repeat; /* Do not repeat the image */
+        background-size: cover;
+        width: 640px;
     height: 640px;
     }
     #content {width: 100%; 
@@ -52,20 +58,19 @@
     height: 640px;
     float: left;
     text-align: center;
-    background-color: aqua;
+    color: white;
+    font-size: small;
     }
     #health-box {width: 30px; 
     margin: 10px;
     height: 560px;
     float: left;
-    text-align: center;            
-    background-color:white;
+    text-align: center;
+    background-color:#007f00;
     }
-    #health-bar {background-color:#007f00;
-        width: inherit;
-        height: inherit;
-        position: relative;
-        bottom: inherit;
+    #health-bar{background-color:white;
+    width: 30px;
+    height: 0px;
     }
     #ammo {width: 30px; 
     margin: 10px;
@@ -78,7 +83,10 @@
     height: 10px;
     float: left;
     text-align: center;            
-    background-color:white;
+    background-image: url('Bullet.svg');
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Do not repeat the image */
+    background-size: cover;
     }
     #wrapper {display: inline-block; 
     margin-top:10px; 
@@ -97,3 +105,16 @@
     float: left;
     text-align: center;            
     }
+    #logo {width: 600px;
+        margin-top: -50px;
+        margin-left: 20px;
+        margin-right: 20px;
+        margin-bottom: 20px;
+        height: 180px;
+        float: left;
+        text-align: center;            
+        background-image: url('Logo.svg');
+        background-position: center; /* Center the image */
+        background-repeat: no-repeat; /* Do not repeat the image */
+        background-size: cover;
+        }
