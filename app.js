@@ -379,16 +379,16 @@ socket.on('startGameServer', function(){
     player.ammo -= 1
     var newBullet = data;
     if(targetX > player.x){
-      newBullet.x = player.x + 11
+      newBullet.x = player.x //+ 11
     }
     if(targetX < player.x){
-      newBullet.x = player.x - 11
+      newBullet.x = player.x //- 11
     }
     if(targetY > player.y){
-      newBullet.y = player.y + 11
+      newBullet.y = player.y //+ 11
     }      
     if(targetY < player.y){
-      newBullet.y = player.y - 11
+      newBullet.y = player.y //- 11
     }
     newBullet.targetX = targetX;
     newBullet.targetY = targetY;
@@ -416,7 +416,7 @@ socket.on('startGameServer', function(){
     for(var i = 0; i < bullets.length; i++){
        var bullet = bullets[i]
        var killer;
-       if(bullet.x >= player.x - 10 && bullet.x <= player.x + 10 && bullet.y >= player.y - 10 && bullet.y <= player.y + 10){
+       if(bullet.x >= player.x - 10 && bullet.x <= player.x + 10 && bullet.y >= player.y - 10 && bullet.y <= player.y + 10 && bullet.comesFrom != player.name){
          player.hp -= bullet.damage;
          socket.emit("updatedHP", player.hp);
           if(player.hp <= 0){
