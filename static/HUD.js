@@ -30,6 +30,15 @@ socket.on('updatedHP', function(healthPlayer){
 });
 
 socket.on('updatedAmmo', function(ammoPlayer){
-    currentAmmo = ammoPlayer;
-    console.log(currentAmmo);
+    var currentAmmo = ammoPlayer;
+    var bulletElement = document.getElementById("bullet");
+    for(i=0; i<maxAmmo; i++){
+        iDiv.removeChild(bulletElement);
+    }
+    for(i=0; i<currentAmmo; i++){
+        var innerBulletDiv = document.createElement('div');
+        innerBulletDiv.id = 'bullet';
+        innerBulletDiv.className = 'test';
+        iDiv.appendChild(innerBulletDiv);
+    }
 });
