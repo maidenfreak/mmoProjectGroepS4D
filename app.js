@@ -398,6 +398,7 @@ socket.on('startGameServer', function(){
     newBullet.xSpeed = bulletSpeed[0];
     newBullet.ySpeed = bulletSpeed[1];
     bullets.push(newBullet);
+    socket.emit('updatedAmmo', player.ammo);
   })
 
   function addKiller(naam, bullets){
