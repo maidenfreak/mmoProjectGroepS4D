@@ -72,9 +72,10 @@ app.get('/views/', function(request, response) {
 });
 
 class character {
-    constructor(id, name, score){
+    constructor(id, name, score, angle){
         this.name = name;
         this.score = 0;
+        this.angle = 0;
     }
 
     endGame(){
@@ -104,8 +105,8 @@ class character {
 
 //rebels subclass welke erft van character class.
 class rebels extends character {
-    constructor(id, name, teamscore ,score, color, teamname, win){
-        super(id, name, score)
+    constructor(id, name, teamscore ,score, color, teamname, win, angle){
+        super(id, name, score, angle)
         this.teamscore = 0;
         this.color = "red";
         this.teamname = "rebels";
@@ -121,8 +122,8 @@ class rebels extends character {
 }
         //rebels 1
         class militant extends rebels {
-            constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, ammo, classname, win){
-                super(id, name, teamscore, score, color, teamname, win)
+            constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, ammo, classname, win, angle){
+                super(id, name, teamscore, score, color, teamname, win, angle)
                 this.hp = 150;
                 this.x = 100;
                 this.y = 100;
@@ -135,8 +136,8 @@ class rebels extends character {
         }
         //rebels 2
         class guerrilla extends rebels {
-             constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, ammo, classname, win){
-                super(id, name, teamscore, score, color, teamname, win)
+             constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, ammo, classname, win, angle){
+                super(id, name, teamscore, score, color, teamname, win, angle)
                 this.hp = 100;
                 this.x = 130;
                 this.y = 100;
@@ -148,8 +149,8 @@ class rebels extends character {
             }        }
         //rebels 3
         class vigilante extends rebels {
-             constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, ammo, classname, win){
-                super(id, name, teamscore, score, color, teamname, win)
+             constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, ammo, classname, win, angle){
+                super(id, name, teamscore, score, color, teamname, win, angle)
                 this.hp = 200;
                 this.x = 100;
                 this.y = 130;
@@ -161,8 +162,8 @@ class rebels extends character {
             }        }
         //rebels 4
         class separatist extends rebels {
-             constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, ammo, classname, win){
-                super(id, name, teamscore, score, color, teamname, win)
+             constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, ammo, classname, win, angle){
+                super(id, name, teamscore, score, color, teamname, win, angle)
                 this.hp = 240;
                 this.x = 130;
                 this.y = 130;
@@ -175,8 +176,8 @@ class rebels extends character {
 
 //swat subclass welke erft van character class.
 class swat extends character {
-    constructor(id, name, teamscore, score, color, teamname, win){
-        super(id, name, score)
+    constructor(id, name, teamscore, score, color, teamname, win, angle){
+        super(id, name, score, angle)
         this.teamscore = 0;
         this.color = "blue";
         this.teamname = "swat";
@@ -193,8 +194,8 @@ class swat extends character {
 }
         //swat 1
         class grenadier extends swat {
-            constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, ammo, classname, win){
-                super(id, name, teamscore, score, color, teamname, win)
+            constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, ammo, classname, win, angle){
+                super(id, name, teamscore, score, color, teamname, win, angle)
                 this.hp = 150;
                 this.x = 500;
                 this.y = 500;
@@ -208,8 +209,8 @@ class swat extends character {
         }
         //swat 2
         class breacher extends swat {
-           constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, ammo, classname, win){
-                super(id, name, teamscore, score, color, teamname, win)
+           constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, ammo, classname, win, angle){
+                super(id, name, teamscore, score, color, teamname, win, angle)
                 this.hp = 200;
                 this.x = 530;
                 this.y = 500;
@@ -222,8 +223,8 @@ class swat extends character {
         }
         //swat 3
         class observer extends swat {
-            constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, ammo, classname, win){
-                super(id, name, teamscore, score, color, teamname, win)
+            constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, ammo, classname, win, angle){
+                super(id, name, teamscore, score, color, teamname, win, angle)
                 this.hp = 100;
                 this.x = 500;
                 this.y = 530;
@@ -235,8 +236,8 @@ class swat extends character {
             }        }
         //swat 4
         class charger extends swat {
-            constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, ammo, classname, win){
-                super(id, name, teamscore, score, color, teamname, win)
+            constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, ammo, classname, win, angle){
+                super(id, name, teamscore, score, color, teamname, win, angle)
                 this.hp = 240;
                 this.x = 530;
                 this.y = 530;
@@ -262,7 +263,6 @@ else if(playertype == "breacher"){players[socket.id] = new breacher(socket.id, n
 else if(playertype == "observer"){players[socket.id] = new observer(socket.id, name)}
 else if(playertype == "charger"){players[socket.id] = new charger(socket.id, name)}
   socket.emit('playerteam', players[socket.id]);
-  
   });
     
   function randomFunc(myArr) {      
@@ -327,6 +327,11 @@ socket.on('startGameServer', function(){
 
   socket.on('leaveGame', function(){
     delete players[socket.id];
+  });
+
+  socket.on("anglePush", function(angle){
+    var player = players[socket.id] || {};
+    player.angle = angle;
   });
 
   socket.on('movement', function(data, objectArray) {
@@ -412,7 +417,7 @@ socket.on('startGameServer', function(){
        var killer;
        if(bullet.x >= player.x - 10 && bullet.x <= player.x + 10 && bullet.y >= player.y - 10 && bullet.y <= player.y + 10){
          player.hp -= bullet.damage;
-
+         socket.emit("updatedHP", player.hp);
           if(player.hp <= 0){
             killer = bullet.comesFrom
             addKiller(killer)          
