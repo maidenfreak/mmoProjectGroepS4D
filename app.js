@@ -380,6 +380,9 @@ socket.on('startGameServer', function(){
     }
 
     if (data.left && player.x>=10 && checkCollisionLeft(player, players, objectArray, 9) == false ) {
+      if(checkCollisionPackageLeft(player, itemboxes , 9) == true){
+        console.log('test');
+      }
       if(data.up || data.down){
         player.x-=1.41
       } else {
@@ -387,6 +390,9 @@ socket.on('startGameServer', function(){
       }
     }
     if (data.up && player.y>=1 && checkCollisionUp(player, players, objectArray, 9) == false) {
+      if(checkCollisionPackageUp(player, itemboxes , 9) == true){
+        console.log('test');
+      }
       if(data.left || data.right){
         player.y-=1.41}
         else{
@@ -394,6 +400,9 @@ socket.on('startGameServer', function(){
         }
     }
     if (data.right && player.x<=630 && checkCollisionRight(player, players, objectArray, 9) == false) {
+      if(checkCollisionPackageRight(player, itemboxes , 9) == true){
+        console.log('test');
+      }
       if(data.up || data.down){
         player.x+=1.41}
         else{
@@ -401,6 +410,9 @@ socket.on('startGameServer', function(){
         }
     }
     if (data.down && player.y<=630 && checkCollisionDown(player, players, objectArray, 9) == false) {
+      if(checkCollisionPackageDown(player, itemboxes , 9) == true){
+        console.log('test');
+      }
       if(data.left || data.right){
         player.y+=1.41}
         else{
@@ -622,6 +634,18 @@ function checkCollisionRight(player, playerArray, objectArray, radius){
   }
   return false;
 }
+function checkCollisionPackageRight(player, objectArray, radius){
+  for(i=0; i<objectArray.length; i++){
+    if(player.x + radius >= objectArray[i][0] && player.x + radius <= objectArray[i][0] + objectArray[i][2]){
+      if(player.y - radius <= objectArray[i][1] && player.y + radius >= objectArray[i][1] + objectArray[i][3] || player.y - radius >= objectArray[i][1] && player.y + radius <= objectArray[i][1] + objectArray[i][3]){ 
+        return true;
+      }
+      else if(player.y - radius >= objectArray[i][1] && player.y - radius <= objectArray[i][1] + objectArray[i][3] || player.y + radius >= objectArray[i][1] && player.y + radius <= objectArray[i][1] + objectArray[i][3]){
+        return true;
+      }
+    }
+  }
+}
 function checkCollisionDown(player, playerArray, objectArray, radius){
   for(i=0; i<objectArray.length; i++){
     if(objectArray[i].position == "horizontal"){
@@ -646,6 +670,18 @@ function checkCollisionDown(player, playerArray, objectArray, radius){
     }
   }
   return false;
+}
+function checkCollisionPackageDown(player, objectArray, radius){
+  for(i=0; i<objectArray.length; i++){
+    if(player.y + radius >= objectArray[i][1] && player.y + radius <= objectArray[i][1] + objectArray[i][3]){
+      if(player.x - radius <= objectArray[i][0] && player.x + radius >= objectArray[i][0] + objectArray[i][2] || player.x - radius >= objectArray[i][0] && player.x + radius <= objectArray[i][0] + objectArray[i][2]){
+        return true;
+      }
+      else if(player.x - radius >= objectArray[i][0] && player.x - radius <= objectArray[i][0] + objectArray[i][2] || player.x + radius >= objectArray[i][0] && player.x + radius <= objectArray[i][0] + objectArray[i][2]){
+        return true;
+      }
+    }
+  }
 }
 function checkCollisionLeft(player, playerArray, objectArray, radius){
   for(i=0; i<objectArray.length; i++){
@@ -672,6 +708,18 @@ function checkCollisionLeft(player, playerArray, objectArray, radius){
   }
   return false;
 }
+function checkCollisionPackageLeft(player, objectArray, radius){
+  for(i=0; i<objectArray.length; i++){
+    if(player.x - radius >= objectArray[i][0] && player.x - radius <= objectArray[i][0] + objectArray[i][2]){
+      if(player.y - radius >= objectArray[i][1] && player.y + radius <= objectArray[i][1] + objectArray[i][3] || player.y - radius <= objectArray[i][1] && player.y + radius >= objectArray[i][1] + objectArray[i][3]){
+        return true;
+      }
+      else if(player.y - radius >= objectArray[i][1] && player.y - radius <= objectArray[i][1] + objectArray[i][3] || player.y + radius >= objectArray[i][1] && player.y + radius <= objectArray[i][1] + objectArray[i][3]){
+        return true;
+      }
+    }
+  }
+}
 function checkCollisionUp(player, playerArray, objectArray, radius){
   for(i=0; i<objectArray.length; i++){
     if(objectArray[i].position == "horizontal"){   
@@ -696,6 +744,18 @@ function checkCollisionUp(player, playerArray, objectArray, radius){
     }
   }
   return false;
+}
+function checkCollisionPackageUp(player, objectArray, radius){
+  for(i=0; i<objectArray.length; i++){
+    if(player.y - radius >= objectArray[i][1] && player.y - radius <= objectArray[i][1] + objectArray[i][3]){
+      if(player.x - radius <= objectArray[i][0] && player.x + radius >= objectArray[i][0] + objectArray[i][2] || player.x - radius >= objectArray[i][0] && player.x + radius <= objectArray[i][0] + objectArray[i][2]){
+        return true;
+      }
+      else if(player.x - radius >= objectArray[i][0] && player.x - radius <= objectArray[i][0] + objectArray[i][2] || player.x + radius >= objectArray[i][0] && player.x + radius <= objectArray[i][0] + objectArray[i][2]){
+        return true;
+      }
+    }
+  }
 }
 
 function calculateBulletSpeed(bullet){
