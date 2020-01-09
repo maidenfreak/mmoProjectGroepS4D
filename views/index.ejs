@@ -42,7 +42,8 @@
     });
     socket.on("endOfGame", function () {
       $(function () {
-     location.assign('/highscore');
+        leaveButtonPressed = true;
+        location.assign('/highscore');
       });  
     });
     
