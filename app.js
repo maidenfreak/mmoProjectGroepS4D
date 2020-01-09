@@ -259,26 +259,26 @@ else if(playertype == "charger"){players[socket.id] = new charger(socket.id, nam
        // return "The SWAT unit has won the match with " + swatscore + " kills & " + rebelsCount + " deaths.";
      updateHighscore()
      
-//     swatCount = 0;
-//     rebelsCount = 0;
-//     swatscore = 0;
-//     rebelscore = 0;
+     swatCount = 0;
+     rebelsCount = 0;
+     swatscore = 0;
+     rebelscore = 0;
 //     $(function () {
 //     location.assign('/highscore');
 //      });
-          socket.emit('endOfGame');
+          io.emit('endOfGame');
       }
       else if(rebelscore >= swatCount){
        // return "The rebel unit has won the match with " + rebelscore + " kills & " + swatCount + " deaths.";
      updateHighscore()
-//     swatCount = 0;
-//     rebelsCount = 0;
-//     swatscore = 0;
-//     rebelscore = 0;
+     swatCount = 0;
+     rebelsCount = 0;
+     swatscore = 0;
+     rebelscore = 0;
 //     $(function () {
 //     location.assign('/highscore');
 //      });
-           socket.emit('endOfGame');    
+          io.emit('endOfGame');    
       }
     }
 //  }
@@ -448,6 +448,7 @@ socket.on('startGameServer', function(){
           rebelscore +=1;
       }
         player.ammo += bullets
+        
         io.to(player.id).emit("addAmmo", oldAmmo, player.ammo);
       }
     }  
@@ -466,7 +467,7 @@ socket.on('startGameServer', function(){
             killer = bullet.comesFrom
 
             addKiller(killer, lostBullets) 
-          //  calculateWinner()
+            calculateWinner()
 
           }
          bullet.isHit = true
@@ -508,13 +509,15 @@ function updateHighscore(){
       var highscorePlayer = players[i];
         
      // var highscorePlayer = players[socket.id]
-      console.log(highscorePlayer)
-      console.log("test")
+//      console.log(highscorePlayer)
+//      console.log("test")
       MongoClient.connect(url, function(err, db) {
           if (err) throw err;
           var dbo = db.db("mmodb");
           var query = { username: highscorePlayer.name };
           dbo.collection("highscore6table").find(query).toArray(function(err, result) {
+              console.log(result)
+              console.log("bla")
             if (err) throw err;
               db.close();
             if(result.length){ 
