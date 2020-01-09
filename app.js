@@ -9,8 +9,10 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
+
 var players = {};
 const playersInLobby = [];
+const itemboxes = [];
 const bullets = [];
 var swatCount = 0;
 var rebelsCount = 0 ;
@@ -227,26 +229,22 @@ class swat extends character {
 
         }
    
-
    
   
-  //creates a new player
-  socket.on('new player', function( playertype, name) {
-  
-if(playertype == "militant"){players[socket.id] = new militant(socket.id, name)}
-else if(playertype == "guerrilla"){players[socket.id] = new guerrilla(socket.id, name)}
-else if(playertype == "vigilante"){players[socket.id] = new vigilante(socket.id, name)}
-else if(playertype == "seperatist"){players[socket.id] = new seperatist(socket.id, name)}
-else if(playertype == "grenadier"){players[socket.id] = new grenadier(socket.id, name)}
-else if(playertype == "breacher"){players[socket.id] = new breacher(socket.id, name)}
-else if(playertype == "observer"){players[socket.id] = new observer(socket.id, name)}
-else if(playertype == "charger"){players[socket.id] = new charger(socket.id, name)}
+//creates a new player
+socket.on('new player', function( playertype, name) {  
+  if(playertype == "militant"){players[socket.id] = new militant(socket.id, name)}
+  else if(playertype == "guerrilla"){players[socket.id] = new guerrilla(socket.id, name)}
+  else if(playertype == "vigilante"){players[socket.id] = new vigilante(socket.id, name)}
+  else if(playertype == "seperatist"){players[socket.id] = new seperatist(socket.id, name)}
+  else if(playertype == "grenadier"){players[socket.id] = new grenadier(socket.id, name)}
+  else if(playertype == "breacher"){players[socket.id] = new breacher(socket.id, name)}
+  else if(playertype == "observer"){players[socket.id] = new observer(socket.id, name)}
+  else if(playertype == "charger"){players[socket.id] = new charger(socket.id, name)}
   socket.emit('playerteam', players[socket.id]);
-
   endGame();
   console.log("swat " + swatCount);
   console.log("rebels " + rebelsCount);
-
   });
     
   function randomFunc(myArr) {      
@@ -320,6 +318,7 @@ socket.on('startGameServer', function(){
       io.emit('startGame');
       playersInLobby.length = 0;
     }
+    boxPlacement();
   });
 
   socket.on('teamconfig', function(){
@@ -567,7 +566,7 @@ function updateHighscore(){
 });
 
 setInterval(function() {
-  io.sockets.emit('state', players, bullets);
+  io.sockets.emit('state', players, bullets, itemboxes);
 }, 1000 / 60);
 
 http.listen(3000, function(){
@@ -711,12 +710,30 @@ function calculateBulletSpeed(bullet){
 }
 
 function serverGameLoop(){
-
   for( var i = bullets.length - 1; i >= 0; i--){
     if(bullets[i].x === -10 || bullets[i].y === -10 || bullets[i].isHit === true){
       bullets.splice(i,1);
     } 
   }
+}
+
+function randomBoxPlacement(){
+  var coordinates = [[20, 610],[100,490],[100, 360],[605,9],[514, 11],[526,230]];
+  var randomBox = Math.floor((Math.random() * coordinates.length) )
+  var x = coordinates[randomBox][0];
+  var y = coordinates[randomBox][1];
+  return [x,y];
+}
+
+function boxPlacement(){
+  itemboxes.length = 0;
+  var coordinatesBox1 = randomBoxPlacement();
+  var coordinatesBox2 = randomBoxPlacement();
+  while(coordinatesBox2[0] == coordinatesBox1[0] && coordinatesBox2[1] == coordinatesBox1[1]){
+    coordinatesBox2 = randomBoxPlacement();
+  }
+  itemboxes.push([coordinatesBox1[0], coordinatesBox1[1], 20, 20]);
+  itemboxes.push([coordinatesBox2[0], coordinatesBox2[1], 20, 20]);
 }
 
 setInterval(serverGameLoop, 16);
