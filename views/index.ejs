@@ -41,6 +41,7 @@
         socket.emit('new player' , classname, playername);
     });
     socket.on("endOfGame", function () {
+       // socket.emit('leaveGame');
       $(function () {
         leaveButtonPressed = true;
         location.assign('/highscore');

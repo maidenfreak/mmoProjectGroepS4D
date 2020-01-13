@@ -98,9 +98,10 @@ class rebels extends character {
 }
         //rebels 1
         class militant extends rebels {
-            constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, maxAmmo, currentAmmo, classname, win, angle){
+            constructor(id,name, hp, maxHP, score, x, y, weapondamage, teamscore, color, teamname, isDead, maxAmmo, currentAmmo, classname, win, angle){
                 super(id, name, teamscore, score, color, teamname, win, angle)
                 this.hp = 150;
+                this.maxHP = 150;
                 this.x = 100;
                 this.y = 100;
                 this.weapondamage = 40;
@@ -114,9 +115,10 @@ class rebels extends character {
         }
         //rebels 2
         class guerrilla extends rebels {
-             constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, maxAmmo, currentAmmo, classname, win, angle){
+             constructor(id,name, hp, maxHP, score, x, y, weapondamage, teamscore, color, teamname, isDead, maxAmmo, currentAmmo, classname, win, angle){
                 super(id, name, teamscore, score, color, teamname, win, angle)
                 this.hp = 100;
+                this.maxHP = 100;
                 this.x = 130;
                 this.y = 100;
                 this.weapondamage = 80;
@@ -129,9 +131,10 @@ class rebels extends character {
             }        }
         //rebels 3
         class vigilante extends rebels {
-             constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, maxAmmo, currentAmmo, classname, win, angle){
+             constructor(id,name, hp, maxHP, score, x, y, weapondamage, teamscore, color, teamname, isDead, maxAmmo, currentAmmo, classname, win, angle){
                 super(id, name, teamscore, score, color, teamname, win, angle)
                 this.hp = 200;
+                this.maxHP = 200;
                 this.x = 100;
                 this.y = 130;
                 this.weapondamage = 10;
@@ -144,9 +147,10 @@ class rebels extends character {
             }        }
         //rebels 4
         class separatist extends rebels {
-             constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, maxAmmo, currentAmmo, classname, win, angle){
+             constructor(id,name, hp, maxHP, score, x, y, weapondamage, teamscore, color, teamname, isDead, maxAmmo, currentAmmo, classname, win, angle){
                 super(id, name, teamscore, score, color, teamname, win, angle)
                 this.hp = 240;
+                this.maxHP = 240;
                 this.x = 130;
                 this.y = 130;
                 this.weapondamage = 20;
@@ -172,9 +176,10 @@ class swat extends character {
 }
         //swat 1
         class grenadier extends swat {
-            constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, maxAmmo, currentAmmo, classname, win, angle){
+            constructor(id,name, hp, maxHP, score, x, y, weapondamage, teamscore, color, teamname, isDead, maxAmmo, currentAmmo, classname, win, angle){
                 super(id, name, teamscore, score, color, teamname, win, angle)
                 this.hp = 150;
+                this.maxHP = 150;
                 this.x = 500;
                 this.y = 500;
                 this.weapondamage = 40;
@@ -189,9 +194,10 @@ class swat extends character {
         }
         //swat 2
         class breacher extends swat {
-           constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, maxAmmo, currentAmmo, classname, win, angle){
+           constructor(id,name, hp, maxHP, score, x, y, weapondamage, teamscore, color, teamname, isDead, maxAmmo, currentAmmo, classname, win, angle){
                 super(id, name, teamscore, score, color, teamname, win, angle)
                 this.hp = 200;
+                this.maxHP = 200;
                 this.x = 530;
                 this.y = 500;
                 this.weapondamage = 20;
@@ -205,9 +211,10 @@ class swat extends character {
         }
         //swat 3
         class observer extends swat {
-            constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, maxAmmo, currentAmmo, classname, win, angle){
+            constructor(id,name, hp, maxHP, score, x, y, weapondamage, teamscore, color, teamname, isDead, maxAmmo, currentAmmo, classname, win, angle){
                 super(id, name, teamscore, score, color, teamname, win, angle)
                 this.hp = 100;
+                this.maxHP = 100;
                 this.x = 500;
                 this.y = 530;
                 this.weapondamage = 80;
@@ -220,9 +227,10 @@ class swat extends character {
             }        }
         //swat 4
         class charger extends swat {
-            constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, maxAmmo, currentAmmo, classname, win, angle){
+            constructor(id,name, hp, maxHP, score, x, y, weapondamage, teamscore, color, teamname, isDead, maxAmmo, currentAmmo, classname, win, angle){
                 super(id, name, teamscore, score, color, teamname, win, angle)
                 this.hp = 240;
+                this.maxHP = 240;
                 this.x = 530;
                 this.y = 530;
                 this.weapondamage = 20;
@@ -252,8 +260,9 @@ socket.on('new player', function( playertype, name) {
   else if(playertype == "charger"){players[socket.id] = new charger(socket.id, name)}
   socket.emit('playerteam', players[socket.id]);
   endGame();
-  console.log("swat " + swatCount);
-  console.log("rebels " + rebelsCount);
+
+  //console.log("rebels " + rebelsCount);
+
   });
     
   function randomFunc(myArr) {      
@@ -268,31 +277,35 @@ socket.on('new player', function( playertype, name) {
             return myArr;    
          }     
 
-   function calculateWinner(){
-      if(swatscore  >= rebelsCount){
+   function calculateWinner(){  
+    if(swatscore  >= rebelsCount){
        // return "The SWAT unit has won the match with " + swatscore + " kills & " + rebelsCount + " deaths.";
-     updateHighscore()
+     //updateHighscore()
      
      swatCount = 0;
      rebelsCount = 0;
      swatscore = 0;
      rebelscore = 0;
+     itemboxes.length = 0;
 //     $(function () {
 //     location.assign('/highscore');
 //      });
           io.emit('endOfGame');
+          delete players[socket.id];
       }
       else if(rebelscore >= swatCount){
        // return "The rebel unit has won the match with " + rebelscore + " kills & " + swatCount + " deaths.";
-     updateHighscore()
+     //updateHighscore()
      swatCount = 0;
      rebelsCount = 0;
      swatscore = 0;
      rebelscore = 0;
+     itemboxes.length = 0;
 //     $(function () {
 //     location.assign('/highscore');
 //      });
-          io.emit('endOfGame');    
+          io.emit('endOfGame');   
+          delete players[socket.id];
       }
     }
 //  }
@@ -311,8 +324,12 @@ function endGame(){
             rebelsCount += 1;
           }
       }
-     ("swat" + rebelsCount)
-     console.log("rebels" + swatCount)
+
+     
+
+     //console.log("swat" + swatCount)
+     //console.log("rebels" + rebelsCount)
+
       return swatCount, rebelsCount; 
     }    
     
@@ -327,7 +344,7 @@ socket.on('startGameServer', function(){
       io.emit('startGame');
       playersInLobby.length = 0;
     }
-    boxPlacement();
+    boxPlacement(null);
   });
 
   socket.on('teamconfig', function(){
@@ -384,13 +401,16 @@ socket.on('startGameServer', function(){
       player.x = -30
       player.y = -30
       player.isDead = true
-      calculateWinner()
+
+      //calculateWinner()
+
 
     }
 
     if (data.left && player.x>=10 && checkCollisionLeft(player, players, objectArray, 9) == false ) {
-      if(checkCollisionPackageLeft(player, itemboxes , 9) == true){
-        console.log('test');
+      var packageValues = checkCollisionPackageLeft(player, itemboxes , 9);
+      if(packageValues[0] == true){
+        addBoxItems(player, packageValues[1]);
       }
       if(data.up || data.down){
         player.x-=1.41
@@ -399,8 +419,9 @@ socket.on('startGameServer', function(){
       }
     }
     if (data.up && player.y>=1 && checkCollisionUp(player, players, objectArray, 9) == false) {
-      if(checkCollisionPackageUp(player, itemboxes , 9) == true){
-        console.log('test');
+      var packageValues = checkCollisionPackageUp(player, itemboxes , 9);
+      if(packageValues[0] == true){
+        addBoxItems(player, packageValues[1]);
       }
       if(data.left || data.right){
         player.y-=1.41}
@@ -409,8 +430,9 @@ socket.on('startGameServer', function(){
         }
     }
     if (data.right && player.x<=630 && checkCollisionRight(player, players, objectArray, 9) == false) {
-      if(checkCollisionPackageRight(player, itemboxes , 9) == true){
-        console.log('test');
+      var packageValues = checkCollisionPackageRight(player, itemboxes , 9);
+      if(packageValues[0] == true){
+        addBoxItems(player, packageValues[1]);
       }
       if(data.up || data.down){
         player.x+=1.41}
@@ -419,8 +441,9 @@ socket.on('startGameServer', function(){
         }
     }
     if (data.down && player.y<=630 && checkCollisionDown(player, players, objectArray, 9) == false) {
-      if(checkCollisionPackageDown(player, itemboxes , 9) == true){
-        console.log('test');
+      var packageValues = checkCollisionPackageDown(player, itemboxes , 9);
+      if(packageValues[0] == true){
+        addBoxItems(player, packageValues[1]);
       }
       if(data.left || data.right){
         player.y+=1.41}
@@ -429,6 +452,16 @@ socket.on('startGameServer', function(){
         }
     }
   });
+
+function addBoxItems (player, packageData){
+  if(packageData[5] == 0){
+    calculateAmmo(player, packageData[4]);
+  }else if(packageData[5] == 1){
+    calculateHealth(player, packageData[4]);
+  }
+  boxPlacement(packageData);
+}
+
 //Maakt aan de hand van de meegegeven gegevens een bullet en stopt deze in een array.
   socket.on('shoot-bullet', function(data, targetX, targetY){
     var player = players[socket.id] || {};
@@ -465,21 +498,36 @@ socket.on('startGameServer', function(){
     for (var id in players) {
       var player = players[id];
       var killer1 = naam
-      if(player.name == killer1){
-        var oldAmmo = player.currentAmmo;
+      if(player.name == killer1){ 
         player.score += 1
-        if(player.teamname = "swat"){
+        if(player.teamname == "swat"){
           swatscore +=1;          
         }else{
           rebelscore +=1;
         }
-        player.currentAmmo += bullets
-        if(player.currentAmmo > player.maxAmmo){
-          player.currentAmmo = player.maxAmmo;
-        }    
-        io.to(player.id).emit("addAmmo", oldAmmo, player.currentAmmo);
+        calculateAmmo(player, bullets);       
       }
     }  
+
+  }
+
+  function calculateAmmo(player, bullets){
+    var oldAmmo = player.currentAmmo;
+    player.currentAmmo += bullets;
+    if(player.currentAmmo > player.maxAmmo){
+      player.currentAmmo = player.maxAmmo;
+    }    
+    io.to(player.id).emit("addAmmo", oldAmmo, player.currentAmmo);
+
+  }
+
+  function calculateHealth(player, health){
+    var oldHealth = player.hp;
+    player.hp += health;
+    if(player.hp > player.maxHP){
+      player.hp = player.maxHP;
+    }
+    io.to(player.id).emit("addHealth", oldHealth, player.hp);
   }
 
   socket.on('checkBullets', function(objectArray){
@@ -518,73 +566,127 @@ socket.on('startGameServer', function(){
    })
   
 function updateHighscore(){
-    var MongoClient = require('mongodb').MongoClient;
-    var url = "mongodb://localhost:27017/";
-    // create table if not exist
-    MongoClient.connect(url, function(err, db) {
-      if (err) throw err;
-      var dbo = db.db("mmodb");
-      dbo.createCollection("highscore6table", function(err, res) {
-        if (err) throw err;
-        console.log("Collection created!");
-        db.close();
-      });
-    });
-              
-   for (var i in players) {
-//    //for (var i = 0; i < players.length; i++){
-//       console.log(players[i])
-      var highscorePlayer = players[i];
-        
-     // var highscorePlayer = players[socket.id]
-//      console.log(highscorePlayer)
-//      console.log("test")
-      MongoClient.connect(url, function(err, db) {
-          if (err) throw err;
-          var dbo = db.db("mmodb");
-          var query = { username: highscorePlayer.name };
-          dbo.collection("highscore6table").find(query).toArray(function(err, result) {
-              console.log(result)
-              console.log("bla")
-            if (err) throw err;
-              db.close();
-            if(result.length){ 
-                var newHighscore = result[0].highscore + highscorePlayer.score
-                var newWinscore = result[0].winscore + highscorePlayer.win
-                MongoClient.connect(url, function(err, db) {
-                  if (err) throw err;
-                  var dbo = db.db("mmodb");
-                  var myquery = { username: highscorePlayer.name };
-                  var newvalues = { $set: {username: highscorePlayer.name, highscore: newHighscore, winscore: newWinscore } };
-                  dbo.collection("highscore6table").updateOne(myquery, newvalues, function(err, res) {
-                    if (err) throw err;
-                    console.log("1 document updated");
-                    db.close();
-                  });
-                });    
-            }else{
-            MongoClient.connect(url, function(err, db) {
-              if (err) throw err;
-              var dbo = db.db("mmodb");
-              var myobj = { username: highscorePlayer.name, highscore: highscorePlayer.score, winscore: highscorePlayer.win };
-              dbo.collection("highscore6table").insertOne(myobj, function(err, res) {
-                if (err) throw err;
-                console.log("1 document inserted");
-                db.close();
-              });
-            });
-            }  });
+    //in server.js
+    
+const mongoose = require('mongoose')
+mongoose.connect('mongodb://localhost:27017/mmodb', {useNewUrlParser: true});
+const Schema = mongoose.Schema
+const highscoreSchema = new Schema({
+    name: {type: String, required: true, unique: true} ,
+    highscore: {type: Number, required: false, unique:false},
+    winscore: {type: Number, required: false, unique:false}
+})
+const newModel = mongoose.model('highscoretable9', highscoreSchema)
 
+for (var i in players) {
+    currentPlayer = players[i]
+    console.log("currentplayer" + currentPlayer.score)
+    //newModel.find({ name: currentPlayer.name}, function (err, docs) {
+        if (!(newModel.find({ name: currentPlayer.name}))){
+            const newDocument = newModel({name: currentPlayer.name, highscore: currentPlayer.score, winscore: currentPlayer.win})
+            console.log("1 document inserted");
+            newDocument.save()
+        }else{
+            //var currentPlayer = docs
+            //console.log(currentPlayer.score)
+            //var objectPlayer = newModel.find({ name: currentPlayer.name})
+          //  console.log(objectPlayer)
+            newModel.findOne({name: currentPlayer.name},function(err, doc) {
+                console.log(doc)
+  //doc = the first (!!!) doc that have question in his `question` attribute 
 
-});
-   
- }
-}  
-  
-  
-  
-  
-});
+            var newHighscore = doc.highscore + currentPlayer.score
+            console.log("doc" + doc.highscore)
+            console.log("currentplayer" + currentPlayer.score)
+            console.log(newHighscore)
+            var newWinscore = doc.winscore + currentPlayer.win
+            console.log(newWinscore)
+            newModel.updateOne({ name: currentPlayer.name }, { $set: {  highscore: newHighscore, winscore: newWinscore } })
+            console.log("1 document updated");
+           
+                          }) }
+        }}
+  //  )
+ // }
+//}
+    
+    
+    
+    //const res2 = await Customer.find({}).sort({ name: 1 }).skip(1).limit(1)
+//    var MongoClient = require('mongodb').MongoClient;
+//    var url = "mongodb://localhost:27017/";
+//    // create table if not exist
+//    MongoClient.connect(url, function(err, db) {
+//      if (err) throw err;
+//      var dbo = db.db("mmodb");
+//      dbo.createCollection("highscore8table", function(err, res) {
+//        if (err) throw err;
+//        console.log("Collection created!");
+//        db.close();
+//      });
+//    });
+//   var highscoreTable = []          
+//   for (var i in players) {
+//        highscoreTable.push(players[i]) 
+//   }
+//    
+//MongoClient.connect(url, function(err, db) {
+//    var dbo = db.db("mmodb");
+//  for (var index in highscoreTable){  
+//      console.log("naam" + highscoreTable[index].name)
+//      
+//          console.log("naam4" + highscoreTable[index].name)
+//          //if (err) throw err;
+//          
+//          var query = {}
+//           query = { username: highscoreTable[index].name };
+//          console.log("naam2" + highscoreTable[index].name)
+//          dbo.collection("highscore8table").find(query).toArray(function(err, result) {
+//              console.log("query")
+//              console.log( query)
+//              console.log("bla")
+//              console.log("naam3" + highscoreTable[index].name)
+//            //if (err) throw err;
+//             
+//            if(result.length){ 
+//                var newHighscore = result[0].highscore + highscoreTable[index].score
+//                var newWinscore = result[0].winscore + highscoreTable[index].win
+//                MongoClient.connect(url, function(err, db) {
+//                  if (err) throw err;
+//                  var dbo = db.db("mmodb");
+//                  var myquery = { username: highscoreTable[index].name };
+//                  var newvalues = { $set: {username: highscoreTable[index].name, highscore: newHighscore, winscore: newWinscore } };
+//                  dbo.collection("highscore8table").update(myquery, newvalues, function(err, res) {
+//                   // if (err) throw err;
+//                    console.log("1 document updated");
+//                    db.close();
+//                  });
+//                }); 
+//                result = [];
+//                query = {}
+//            }else{
+//            MongoClient.connect(url, function(err, db) {
+//              if (err) throw err;
+//              var dbo = db.db("mmodb");
+//              var myobj = { username: highscoreTable[index].name, highscore: highscoreTable[index].score, winscore: highscoreTable[index].win };
+//              dbo.collection("highscore8table").insert(myobj, function(err, res) {
+//                if (err) throw err;
+//                console.log("1 document inserted");
+//                db.close();
+//              });
+//            });
+//                result = [];
+//                query = {}
+//            }  })}})
+
+}
+    
+    
+    
+    
+    
+    
+);
 
 setInterval(function() {
   io.sockets.emit('state', players, bullets, itemboxes);
@@ -647,13 +749,14 @@ function checkCollisionPackageRight(player, objectArray, radius){
   for(i=0; i<objectArray.length; i++){
     if(player.x + radius >= objectArray[i][0] && player.x + radius <= objectArray[i][0] + objectArray[i][2]){
       if(player.y - radius <= objectArray[i][1] && player.y + radius >= objectArray[i][1] + objectArray[i][3] || player.y - radius >= objectArray[i][1] && player.y + radius <= objectArray[i][1] + objectArray[i][3]){ 
-        return true;
+        return [true, objectArray[i]];
       }
       else if(player.y - radius >= objectArray[i][1] && player.y - radius <= objectArray[i][1] + objectArray[i][3] || player.y + radius >= objectArray[i][1] && player.y + radius <= objectArray[i][1] + objectArray[i][3]){
-        return true;
+        return [true, objectArray[i]];
       }
     }
   }
+  return [false, null];
 }
 function checkCollisionDown(player, playerArray, objectArray, radius){
   for(i=0; i<objectArray.length; i++){
@@ -684,13 +787,14 @@ function checkCollisionPackageDown(player, objectArray, radius){
   for(i=0; i<objectArray.length; i++){
     if(player.y + radius >= objectArray[i][1] && player.y + radius <= objectArray[i][1] + objectArray[i][3]){
       if(player.x - radius <= objectArray[i][0] && player.x + radius >= objectArray[i][0] + objectArray[i][2] || player.x - radius >= objectArray[i][0] && player.x + radius <= objectArray[i][0] + objectArray[i][2]){
-        return true;
+        return [true, objectArray[i]];
       }
       else if(player.x - radius >= objectArray[i][0] && player.x - radius <= objectArray[i][0] + objectArray[i][2] || player.x + radius >= objectArray[i][0] && player.x + radius <= objectArray[i][0] + objectArray[i][2]){
-        return true;
+        return [true, objectArray[i]];
       }
     }
   }
+  return [false, null];
 }
 function checkCollisionLeft(player, playerArray, objectArray, radius){
   for(i=0; i<objectArray.length; i++){
@@ -721,13 +825,14 @@ function checkCollisionPackageLeft(player, objectArray, radius){
   for(i=0; i<objectArray.length; i++){
     if(player.x - radius >= objectArray[i][0] && player.x - radius <= objectArray[i][0] + objectArray[i][2]){
       if(player.y - radius >= objectArray[i][1] && player.y + radius <= objectArray[i][1] + objectArray[i][3] || player.y - radius <= objectArray[i][1] && player.y + radius >= objectArray[i][1] + objectArray[i][3]){
-        return true;
+        return [true, objectArray[i]];
       }
       else if(player.y - radius >= objectArray[i][1] && player.y - radius <= objectArray[i][1] + objectArray[i][3] || player.y + radius >= objectArray[i][1] && player.y + radius <= objectArray[i][1] + objectArray[i][3]){
-        return true;
+        return [true, objectArray[i]];
       }
     }
   }
+  return [false, null];
 }
 function checkCollisionUp(player, playerArray, objectArray, radius){
   for(i=0; i<objectArray.length; i++){
@@ -758,13 +863,14 @@ function checkCollisionPackageUp(player, objectArray, radius){
   for(i=0; i<objectArray.length; i++){
     if(player.y - radius >= objectArray[i][1] && player.y - radius <= objectArray[i][1] + objectArray[i][3]){
       if(player.x - radius <= objectArray[i][0] && player.x + radius >= objectArray[i][0] + objectArray[i][2] || player.x - radius >= objectArray[i][0] && player.x + radius <= objectArray[i][0] + objectArray[i][2]){
-        return true;
+        return [true, objectArray[i]];
       }
       else if(player.x - radius >= objectArray[i][0] && player.x - radius <= objectArray[i][0] + objectArray[i][2] || player.x + radius >= objectArray[i][0] && player.x + radius <= objectArray[i][0] + objectArray[i][2]){
-        return true;
+        return [true, objectArray[i]];
       }
     }
   }
+  return [false, null];
 }
 
 function calculateBulletSpeed(bullet){
@@ -787,22 +893,48 @@ function serverGameLoop(){
 }
 
 function randomBoxPlacement(){
-  var coordinates = [[20, 610],[100,490],[100, 360],[605,9],[514, 11],[526,230]];
+  var coordinates = [[20, 610],[100,490],[88, 385],[605,9],[514, 11],[526,230],[288,611],[307,307],[330,8],[448,527],[170,91]];
   var randomBox = Math.floor((Math.random() * coordinates.length) )
   var x = coordinates[randomBox][0];
   var y = coordinates[randomBox][1];
   return [x,y];
 }
 
-function boxPlacement(){
-  itemboxes.length = 0;
-  var coordinatesBox1 = randomBoxPlacement();
-  var coordinatesBox2 = randomBoxPlacement();
-  while(coordinatesBox2[0] == coordinatesBox1[0] && coordinatesBox2[1] == coordinatesBox1[1]){
-    coordinatesBox2 = randomBoxPlacement();
-  }
-  itemboxes.push([coordinatesBox1[0], coordinatesBox1[1], 20, 20]);
-  itemboxes.push([coordinatesBox2[0], coordinatesBox2[1], 20, 20]);
+function boxPlacement(box){
+  if(itemboxes.length == 0){
+    var coordinatesBox1 = randomBoxPlacement();
+    var coordinatesBox2 = randomBoxPlacement();
+    var coordinatesBox3 = randomBoxPlacement();
+    while(coordinatesBox2[0] == coordinatesBox1[0] && coordinatesBox2[1] == coordinatesBox1[1]){
+      coordinatesBox2 = randomBoxPlacement();
+      coordinatesBox3 = randomBoxPlacement();
+      while(coordinatesBox3[0] == coordinatesBox1[0] || coordinatesBox3[0] == coordinatesBox2[0] && coordinatesBox3[1] == coordinatesBox1[1] || coordinatesBox3[1] == coordinatesBox2[1]){
+        coordinatesBox3 = randomBoxPlacement();
+      }
+    }
+    itemboxes.push([coordinatesBox1[0], coordinatesBox1[1], 20, 20, 10, 0]);
+    itemboxes.push([coordinatesBox2[0], coordinatesBox2[1], 20, 20, 10, 0]);
+    itemboxes.push([coordinatesBox3[0], coordinatesBox3[1], 20, 20, 40, 1]);
+  }else{
+    var index = itemboxes.indexOf(box);
+    var coordinatesBox = randomBoxPlacement();
+    var duplicateCounter = 0;
+    var ammountBox = 0;
+    var boxType = 0;
+    if(index !== -1){
+      ammountBox = itemboxes[index][4];
+      boxType = itemboxes[index][5];
+      for(i=0; i<itemboxes.length; i++){
+        if(itemboxes[index][0]==itemboxes[i][0]&&itemboxes[index][1]==itemboxes[i][1]){
+          duplicateCounter++;
+        }
+      }
+      if(duplicateCounter > 1){
+        coordinatesBox = randomBoxPlacement();
+      }
+      itemboxes[index] = [coordinatesBox[0], coordinatesBox[1], 20, 20, ammountBox, boxType];
+    }
+  } 
 }
 
 setInterval(serverGameLoop, 16);
