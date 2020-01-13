@@ -103,12 +103,13 @@ class rebels extends character {
                 this.hp = 150;
                 this.x = 100;
                 this.y = 100;
-                this.weapondamage = 20;
+                this.weapondamage = 40;
                 this.isDead = false;
                 this.score = 0;
                 this.maxAmmo = 20;
                 this.currentAmmo = 20;
                 this.classname = "Militant";
+                this.fireRate = 200;
             }
         }
         //rebels 2
@@ -118,12 +119,13 @@ class rebels extends character {
                 this.hp = 100;
                 this.x = 130;
                 this.y = 100;
-                this.weapondamage = 20;
+                this.weapondamage = 80;
                 this.isDead = false;
                 this.score = 0;
-                this.maxAmmo = 20;
-                this.currentAmmo = 20;
+                this.maxAmmo = 10;
+                this.currentAmmo = 10;
                 this.classname = "Guerrilla";
+                this.fireRate = 1000;
             }        }
         //rebels 3
         class vigilante extends rebels {
@@ -132,12 +134,13 @@ class rebels extends character {
                 this.hp = 200;
                 this.x = 100;
                 this.y = 130;
-                this.weapondamage = 40;
+                this.weapondamage = 10;
                 this.isDead = false;
                 this.score = 0;
                 this.maxAmmo = 20;
                 this.currentAmmo = 20;
                 this.classname = "Vigilante";
+                this.fireRate = 0;
             }        }
         //rebels 4
         class separatist extends rebels {
@@ -152,6 +155,7 @@ class rebels extends character {
                 this.maxAmmo = 20;
                 this.currentAmmo = 20;
                 this.classname = "Separatist"; 
+                this.fireRate = 300;
             }        }
 
 //swat subclass welke erft van character class.
@@ -162,6 +166,7 @@ class swat extends character {
         this.color = "blue";
         this.teamname = "swat";
         this.win = 0;
+       
     }
      
 }
@@ -172,12 +177,13 @@ class swat extends character {
                 this.hp = 150;
                 this.x = 500;
                 this.y = 500;
-                this.weapondamage = 20;
+                this.weapondamage = 40;
                 this.isDead = false;
                 this.score = 0;
                 this.maxAmmo = 20;
                 this.currentAmmo = 20;
                 this.classname = "Grenadier";
+                this.fireRate = 200;
             }
     
         }
@@ -188,12 +194,13 @@ class swat extends character {
                 this.hp = 200;
                 this.x = 530;
                 this.y = 500;
-                this.weapondamage = 40;
+                this.weapondamage = 20;
                 this.isDead = false;
                 this.score = 0;
                 this.maxAmmo = 20;
                 this.currentAmmo = 20;
                this.classname = "Breacher";
+               this.fireRate = 0;
             }
         }
         //swat 3
@@ -203,12 +210,13 @@ class swat extends character {
                 this.hp = 100;
                 this.x = 500;
                 this.y = 530;
-                this.weapondamage = 20;
+                this.weapondamage = 80;
                 this.isDead = false;
                 this.score = 0;
-                this.maxAmmo = 20;
-                this.currentAmmo = 20;
+                this.maxAmmo = 10;
+                this.currentAmmo = 10;
                 this.classname = "Observer";
+                this.fireRate = 1000;
             }        }
         //swat 4
         class charger extends swat {
@@ -223,6 +231,7 @@ class swat extends character {
                 this.maxAmmo = 20;
                 this.currentAmmo = 20;
                 this.classname = "Charger";
+                this.fireRate = 300;
                 
                 
             } 

@@ -117,24 +117,45 @@ function getCursorPosition(canvas, event){
   return [x,y]
 }
 
+
 //Wanneer er geklikt wordt geeft deze de coordinaten van de muis.
-canvas.onclick = function(event){
+function shootBullet(event){ 
   var values = getCursorPosition(canvas, event)
   var x = values[0];
   var y = values[1];
   var coords = "x" + x + "y" + y;
   console.log(coords);
-  socket.emit('shoot-bullet', {x: 300, y: 300, speedY: 5, isHit: false, damage: 0},x,y);
+  socket.emit('shoot-bullet', {x: 300, y: 300, speedY: 5, isHit: false, damage: 0},x,y); 
 }
 
+var bulletDelayed=false;
+var thisplayer; 
+
+function bulletTimer(fireRate){
+  setTimeout(func, fireRate);
+  function func() {
+    bulletDelayed=false
+  }
+}
+
+canvas.onclick = function(event){
+  if (!bulletDelayed){
+    bulletDelayed=true;
+    var fireRate=1000;
+    shootBullet(event)
+    bulletTimer(thisplayer.fireRate);
+ }
+}
+
+ 
 //deze socket staat op een interval en wordt continu uitgevoerd om het spel te updaten
 socket.on('state', function(players, bullets, itemboxes) {
   context.clearRect(0, 0, 640, 640);
   checkRoom(players, roomsArray);
-
   //update de kant waar de speler naartoe kijkt wanneer er met de muis over het canvas bewogen wordt.
   canvas.onmousemove = function(event){
     var player = players[socket.id];
+    thisplayer=player;
     mouseX = parseInt(event.clientX - canvas.offsetLeft);
     mouseY = parseInt(event.clientY - canvas.offsetTop);
     var dx = mouseX - player.x;
@@ -142,6 +163,7 @@ socket.on('state', function(players, bullets, itemboxes) {
     var angle = Math.atan2(dy, dx);
     socket.emit("anglePush", angle);
   }
+  
 
   //tekent de verschillende spelers op het canvas.
   for (var id in players) {
