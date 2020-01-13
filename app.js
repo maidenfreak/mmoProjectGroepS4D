@@ -98,9 +98,10 @@ class rebels extends character {
 }
         //rebels 1
         class militant extends rebels {
-            constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, maxAmmo, currentAmmo, classname, win, angle){
+            constructor(id,name, hp, maxHP, score, x, y, weapondamage, teamscore, color, teamname, isDead, maxAmmo, currentAmmo, classname, win, angle){
                 super(id, name, teamscore, score, color, teamname, win, angle)
                 this.hp = 150;
+                this.maxHP = 150;
                 this.x = 100;
                 this.y = 100;
                 this.weapondamage = 20;
@@ -113,9 +114,10 @@ class rebels extends character {
         }
         //rebels 2
         class guerrilla extends rebels {
-             constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, maxAmmo, currentAmmo, classname, win, angle){
+             constructor(id,name, hp, maxHP, score, x, y, weapondamage, teamscore, color, teamname, isDead, maxAmmo, currentAmmo, classname, win, angle){
                 super(id, name, teamscore, score, color, teamname, win, angle)
                 this.hp = 100;
+                this.maxHP = 100;
                 this.x = 130;
                 this.y = 100;
                 this.weapondamage = 20;
@@ -127,9 +129,10 @@ class rebels extends character {
             }        }
         //rebels 3
         class vigilante extends rebels {
-             constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, maxAmmo, currentAmmo, classname, win, angle){
+             constructor(id,name, hp, maxHP, score, x, y, weapondamage, teamscore, color, teamname, isDead, maxAmmo, currentAmmo, classname, win, angle){
                 super(id, name, teamscore, score, color, teamname, win, angle)
                 this.hp = 200;
+                this.maxHP = 200;
                 this.x = 100;
                 this.y = 130;
                 this.weapondamage = 40;
@@ -141,9 +144,10 @@ class rebels extends character {
             }        }
         //rebels 4
         class separatist extends rebels {
-             constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, maxAmmo, currentAmmo, classname, win, angle){
+             constructor(id,name, hp, maxHP, score, x, y, weapondamage, teamscore, color, teamname, isDead, maxAmmo, currentAmmo, classname, win, angle){
                 super(id, name, teamscore, score, color, teamname, win, angle)
                 this.hp = 240;
+                this.maxHP = 240;
                 this.x = 130;
                 this.y = 130;
                 this.weapondamage = 20;
@@ -167,9 +171,10 @@ class swat extends character {
 }
         //swat 1
         class grenadier extends swat {
-            constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, maxAmmo, currentAmmo, classname, win, angle){
+            constructor(id,name, hp, maxHP, score, x, y, weapondamage, teamscore, color, teamname, isDead, maxAmmo, currentAmmo, classname, win, angle){
                 super(id, name, teamscore, score, color, teamname, win, angle)
                 this.hp = 150;
+                this.maxHP = 150;
                 this.x = 500;
                 this.y = 500;
                 this.weapondamage = 20;
@@ -183,9 +188,10 @@ class swat extends character {
         }
         //swat 2
         class breacher extends swat {
-           constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, maxAmmo, currentAmmo, classname, win, angle){
+           constructor(id,name, hp, maxHP, score, x, y, weapondamage, teamscore, color, teamname, isDead, maxAmmo, currentAmmo, classname, win, angle){
                 super(id, name, teamscore, score, color, teamname, win, angle)
                 this.hp = 200;
+                this.maxHP = 200;
                 this.x = 530;
                 this.y = 500;
                 this.weapondamage = 40;
@@ -198,9 +204,10 @@ class swat extends character {
         }
         //swat 3
         class observer extends swat {
-            constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, maxAmmo, currentAmmo, classname, win, angle){
+            constructor(id,name, hp, maxHP, score, x, y, weapondamage, teamscore, color, teamname, isDead, maxAmmo, currentAmmo, classname, win, angle){
                 super(id, name, teamscore, score, color, teamname, win, angle)
                 this.hp = 100;
+                this.maxHP = 100;
                 this.x = 500;
                 this.y = 530;
                 this.weapondamage = 20;
@@ -212,9 +219,10 @@ class swat extends character {
             }        }
         //swat 4
         class charger extends swat {
-            constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, maxAmmo, currentAmmo, classname, win, angle){
+            constructor(id,name, hp, maxHP, score, x, y, weapondamage, teamscore, color, teamname, isDead, maxAmmo, currentAmmo, classname, win, angle){
                 super(id, name, teamscore, score, color, teamname, win, angle)
                 this.hp = 240;
+                this.maxHP = 240;
                 this.x = 530;
                 this.y = 530;
                 this.weapondamage = 20;
@@ -392,15 +400,8 @@ socket.on('startGameServer', function(){
 
     if (data.left && player.x>=10 && checkCollisionLeft(player, players, objectArray, 9) == false ) {
       var packageValues = checkCollisionPackageLeft(player, itemboxes , 9);
-      var packageCollision = packageValues[0];
-      var packageData = packageValues[1];
-      if(packageCollision == true){
-        if(packageData[5] == 0){
-          calculateAmmo(player, packageData[4]);
-        }else if(packageData[5] == 1){
-          calculateHealth(player, packageData[4]);
-        }
-        boxPlacement(packageData);
+      if(packageValues[0] == true){
+        addBoxItems(player, packageValues[1]);
       }
       if(data.up || data.down){
         player.x-=1.41
@@ -410,11 +411,8 @@ socket.on('startGameServer', function(){
     }
     if (data.up && player.y>=1 && checkCollisionUp(player, players, objectArray, 9) == false) {
       var packageValues = checkCollisionPackageUp(player, itemboxes , 9);
-      var packageCollision = packageValues[0];
-      var packageData = packageValues[1];
-      if(packageCollision == true){
-        calculateAmmo(player, packageData[4]);
-        boxPlacement(packageData);
+      if(packageValues[0] == true){
+        addBoxItems(player, packageValues[1]);
       }
       if(data.left || data.right){
         player.y-=1.41}
@@ -424,11 +422,8 @@ socket.on('startGameServer', function(){
     }
     if (data.right && player.x<=630 && checkCollisionRight(player, players, objectArray, 9) == false) {
       var packageValues = checkCollisionPackageRight(player, itemboxes , 9);
-      var packageCollision = packageValues[0];
-      var packageData = packageValues[1];
-      if(packageCollision == true){
-        calculateAmmo(player, packageData[4]);
-        boxPlacement(packageData);
+      if(packageValues[0] == true){
+        addBoxItems(player, packageValues[1]);
       }
       if(data.up || data.down){
         player.x+=1.41}
@@ -438,11 +433,8 @@ socket.on('startGameServer', function(){
     }
     if (data.down && player.y<=630 && checkCollisionDown(player, players, objectArray, 9) == false) {
       var packageValues = checkCollisionPackageDown(player, itemboxes , 9);
-      var packageCollision = packageValues[0];
-      var packageData = packageValues[1];
-      if(packageCollision == true){
-        calculateAmmo(player, packageData[4]);
-        boxPlacement(packageData);
+      if(packageValues[0] == true){
+        addBoxItems(player, packageValues[1]);
       }
       if(data.left || data.right){
         player.y+=1.41}
@@ -451,6 +443,16 @@ socket.on('startGameServer', function(){
         }
     }
   });
+
+function addBoxItems (player, packageData){
+  if(packageData[5] == 0){
+    calculateAmmo(player, packageData[4]);
+  }else if(packageData[5] == 1){
+    calculateHealth(player, packageData[4]);
+  }
+  boxPlacement(packageData);
+}
+
 //Maakt aan de hand van de meegegeven gegevens een bullet en stopt deze in een array.
   socket.on('shoot-bullet', function(data, targetX, targetY){
     var player = players[socket.id] || {};
@@ -512,7 +514,11 @@ socket.on('startGameServer', function(){
 
   function calculateHealth(player, health){
     var oldHealth = player.hp;
-    
+    player.hp += health;
+    if(player.hp > player.maxHP){
+      player.hp = player.maxHP;
+    }
+    io.to(player.id).emit("addHealth", oldHealth, player.hp);
   }
 
   socket.on('checkBullets', function(objectArray){
