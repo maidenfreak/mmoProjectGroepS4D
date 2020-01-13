@@ -243,8 +243,7 @@ socket.on('new player', function( playertype, name) {
   else if(playertype == "charger"){players[socket.id] = new charger(socket.id, name)}
   socket.emit('playerteam', players[socket.id]);
   endGame();
-  console.log("swat " + swatCount);
-  console.log("rebels " + rebelsCount);
+  //console.log("rebels " + rebelsCount);
   });
     
   function randomFunc(myArr) {      
@@ -262,7 +261,7 @@ socket.on('new player', function( playertype, name) {
    function calculateWinner(){
       if(swatscore  >= rebelsCount){
        // return "The SWAT unit has won the match with " + swatscore + " kills & " + rebelsCount + " deaths.";
-     updateHighscore()
+     //updateHighscore()
      
      swatCount = 0;
      rebelsCount = 0;
@@ -275,7 +274,7 @@ socket.on('new player', function( playertype, name) {
       }
       else if(rebelscore >= swatCount){
        // return "The rebel unit has won the match with " + rebelscore + " kills & " + swatCount + " deaths.";
-     updateHighscore()
+     //updateHighscore()
      swatCount = 0;
      rebelsCount = 0;
      swatscore = 0;
@@ -302,8 +301,8 @@ function endGame(){
             rebelsCount += 1;
           }
       }
-     ("swat" + rebelsCount)
-     console.log("rebels" + swatCount)
+     //console.log("swat" + swatCount)
+     //console.log("rebels" + rebelsCount)
       return swatCount, rebelsCount; 
     }    
     
@@ -375,7 +374,7 @@ socket.on('startGameServer', function(){
       player.x = -30
       player.y = -30
       player.isDead = true
-      calculateWinner()
+      //calculateWinner()
 
     }
 
@@ -459,7 +458,7 @@ socket.on('startGameServer', function(){
       if(player.name == killer1){
         var oldAmmo = player.currentAmmo;
         player.score += 1
-        if(player.teamname = "swat"){
+        if(player.teamname == "swat"){
           swatscore +=1;          
         }else{
           rebelscore +=1;
