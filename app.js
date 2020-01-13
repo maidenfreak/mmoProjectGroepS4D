@@ -237,8 +237,8 @@ else if(playertype == "charger"){players[socket.id] = new charger(socket.id, nam
   socket.emit('playerteam', players[socket.id]);
 
   endGame();
-  console.log("swat " + swatCount);
-  console.log("rebels " + rebelsCount);
+//  console.log("swat " + swatCount);
+//  console.log("rebels " + rebelsCount);
 
   });
     
@@ -267,6 +267,7 @@ else if(playertype == "charger"){players[socket.id] = new charger(socket.id, nam
 //     location.assign('/highscore');
 //      });
           io.emit('endOfGame');
+          delete players[socket.id];
       }
       else if(rebelscore >= swatCount){
        // return "The rebel unit has won the match with " + rebelscore + " kills & " + swatCount + " deaths.";
@@ -278,7 +279,8 @@ else if(playertype == "charger"){players[socket.id] = new charger(socket.id, nam
 //     $(function () {
 //     location.assign('/highscore');
 //      });
-          io.emit('endOfGame');    
+          io.emit('endOfGame');   
+          delete players[socket.id];
       }
     }
 //  }
@@ -297,8 +299,8 @@ function endGame(){
             rebelsCount += 1;
           }
       }
-     ("swat" + rebelsCount)
-     console.log("rebels" + swatCount)
+     //("swat" + rebelsCount)
+   //  console.log("rebels" + swatCount)
       return swatCount, rebelsCount; 
     }    
     
@@ -369,7 +371,7 @@ socket.on('startGameServer', function(){
       player.x = -30
       player.y = -30
       player.isDead = true
-      calculateWinner()
+     // calculateWinner()
 
     }
 
@@ -452,7 +454,7 @@ socket.on('startGameServer', function(){
         io.to(player.id).emit("addAmmo", oldAmmo, player.ammo);
       }
     }  
-
+ calculateWinner()
   }
   socket.on('checkBullets', function(objectArray){
     var player = players[socket.id] || {};
@@ -467,7 +469,7 @@ socket.on('startGameServer', function(){
             killer = bullet.comesFrom
 
             addKiller(killer, lostBullets) 
-            calculateWinner()
+            //calculateWinner()
 
           }
          bullet.isHit = true
@@ -490,73 +492,126 @@ socket.on('startGameServer', function(){
    })
   
 function updateHighscore(){
-    var MongoClient = require('mongodb').MongoClient;
-    var url = "mongodb://localhost:27017/";
-    // create table if not exist
-    MongoClient.connect(url, function(err, db) {
-      if (err) throw err;
-      var dbo = db.db("mmodb");
-      dbo.createCollection("highscore6table", function(err, res) {
-        if (err) throw err;
-        console.log("Collection created!");
-        db.close();
-      });
-    });
-              
-   for (var i in players) {
-//    //for (var i = 0; i < players.length; i++){
-//       console.log(players[i])
-      var highscorePlayer = players[i];
-        
-     // var highscorePlayer = players[socket.id]
-//      console.log(highscorePlayer)
-//      console.log("test")
-      MongoClient.connect(url, function(err, db) {
-          if (err) throw err;
-          var dbo = db.db("mmodb");
-          var query = { username: highscorePlayer.name };
-          dbo.collection("highscore6table").find(query).toArray(function(err, result) {
-              console.log(result)
-              console.log("bla")
-            if (err) throw err;
-              db.close();
-            if(result.length){ 
-                var newHighscore = result[0].highscore + highscorePlayer.score
-                var newWinscore = result[0].winscore + highscorePlayer.win
-                MongoClient.connect(url, function(err, db) {
-                  if (err) throw err;
-                  var dbo = db.db("mmodb");
-                  var myquery = { username: highscorePlayer.name };
-                  var newvalues = { $set: {username: highscorePlayer.name, highscore: newHighscore, winscore: newWinscore } };
-                  dbo.collection("highscore6table").updateOne(myquery, newvalues, function(err, res) {
-                    if (err) throw err;
-                    console.log("1 document updated");
-                    db.close();
-                  });
-                });    
-            }else{
-            MongoClient.connect(url, function(err, db) {
-              if (err) throw err;
-              var dbo = db.db("mmodb");
-              var myobj = { username: highscorePlayer.name, highscore: highscorePlayer.score, winscore: highscorePlayer.win };
-              dbo.collection("highscore6table").insertOne(myobj, function(err, res) {
-                if (err) throw err;
-                console.log("1 document inserted");
-                db.close();
-              });
-            });
-            }  });
+    //in server.js
+    
+const mongoose = require('mongoose')
+mongoose.connect('mongodb://localhost:27017/mmodb', {useNewUrlParser: true});
+const Schema = mongoose.Schema
+const highscoreSchema = new Schema({
+    name: {type: String, required: true, unique: true} ,
+    highscore: {type: Number, required: false, unique:false},
+    winscore: {type: Number, required: false, unique:false}
+})
+const newModel = mongoose.model('highscoretable9', highscoreSchema)
 
+for (var i in players) {
+    currentPlayer = players[i]
+    //newModel.find({ name: currentPlayer.name}, function (err, docs) {
+        if (!(newModel.find({ name: currentPlayer.name}))){
+            const newDocument = newModel({name: currentPlayer.name, highscore: currentPlayer.score, winscore: currentPlayer.win})
+            console.log("1 document inserted");
+            newDocument.save()
+        }else{
+            //var currentPlayer = docs
+            //console.log(currentPlayer.score)
+            //var objectPlayer = newModel.find({ name: currentPlayer.name})
+          //  console.log(objectPlayer)
+            newModel.findOne({name: currentPlayer.name},function(err, doc) {
+                console.log(doc)
+  //doc = the first (!!!) doc that have question in his `question` attribute 
 
-});
-   
- }
-}  
-  
-  
-  
-  
-});
+            var newHighscore = doc.highscore + currentPlayer.score
+            console.log("doc" + doc.highscore)
+            console.log("currentplayer" + currentPlayer.score)
+            console.log(newHighscore)
+            var newWinscore = doc.winscore + currentPlayer.win
+            console.log(newWinscore)
+            newModel.updateOne({ name: currentPlayer.name }, { $set: {  highscore: newHighscore, winscore: newWinscore } })
+            console.log("1 document updated");
+           
+                          }) }
+        }}
+  //  )
+ // }
+//}
+    
+    
+    
+    //const res2 = await Customer.find({}).sort({ name: 1 }).skip(1).limit(1)
+//    var MongoClient = require('mongodb').MongoClient;
+//    var url = "mongodb://localhost:27017/";
+//    // create table if not exist
+//    MongoClient.connect(url, function(err, db) {
+//      if (err) throw err;
+//      var dbo = db.db("mmodb");
+//      dbo.createCollection("highscore8table", function(err, res) {
+//        if (err) throw err;
+//        console.log("Collection created!");
+//        db.close();
+//      });
+//    });
+//   var highscoreTable = []          
+//   for (var i in players) {
+//        highscoreTable.push(players[i]) 
+//   }
+//    
+//MongoClient.connect(url, function(err, db) {
+//    var dbo = db.db("mmodb");
+//  for (var index in highscoreTable){  
+//      console.log("naam" + highscoreTable[index].name)
+//      
+//          console.log("naam4" + highscoreTable[index].name)
+//          //if (err) throw err;
+//          
+//          var query = {}
+//           query = { username: highscoreTable[index].name };
+//          console.log("naam2" + highscoreTable[index].name)
+//          dbo.collection("highscore8table").find(query).toArray(function(err, result) {
+//              console.log("query")
+//              console.log( query)
+//              console.log("bla")
+//              console.log("naam3" + highscoreTable[index].name)
+//            //if (err) throw err;
+//             
+//            if(result.length){ 
+//                var newHighscore = result[0].highscore + highscoreTable[index].score
+//                var newWinscore = result[0].winscore + highscoreTable[index].win
+//                MongoClient.connect(url, function(err, db) {
+//                  if (err) throw err;
+//                  var dbo = db.db("mmodb");
+//                  var myquery = { username: highscoreTable[index].name };
+//                  var newvalues = { $set: {username: highscoreTable[index].name, highscore: newHighscore, winscore: newWinscore } };
+//                  dbo.collection("highscore8table").update(myquery, newvalues, function(err, res) {
+//                   // if (err) throw err;
+//                    console.log("1 document updated");
+//                    db.close();
+//                  });
+//                }); 
+//                result = [];
+//                query = {}
+//            }else{
+//            MongoClient.connect(url, function(err, db) {
+//              if (err) throw err;
+//              var dbo = db.db("mmodb");
+//              var myobj = { username: highscoreTable[index].name, highscore: highscoreTable[index].score, winscore: highscoreTable[index].win };
+//              dbo.collection("highscore8table").insert(myobj, function(err, res) {
+//                if (err) throw err;
+//                console.log("1 document inserted");
+//                db.close();
+//              });
+//            });
+//                result = [];
+//                query = {}
+//            }  })}})
+
+}
+    
+    
+    
+    
+    
+    
+);
 
 setInterval(function() {
   io.sockets.emit('state', players, bullets);
