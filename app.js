@@ -527,7 +527,7 @@ function addBoxItems (player, packageData){
     if(player.hp > player.maxHP){
       player.hp = player.maxHP;
     }
-    io.to(player.id).emit("addHealth", oldHealth, player.hp);
+    io.to(player.id).emit("updatedHP", player.hp);
   }
 
   socket.on('checkBullets', function(objectArray){
