@@ -5,7 +5,6 @@ canvas.height = 640;
 var context = canvas.getContext('2d');
 
 const objects = [];
-const itemboxes = [];
 const roomsArray = [];
 
 class room {

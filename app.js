@@ -259,8 +259,8 @@ socket.on('new player', function( playertype, name) {
             return myArr;    
          }     
 
-   function calculateWinner(){
-      if(swatscore  >= rebelsCount){
+   function calculateWinner(){  
+    if(swatscore  >= rebelsCount){
        // return "The SWAT unit has won the match with " + swatscore + " kills & " + rebelsCount + " deaths.";
      updateHighscore()
      
@@ -268,6 +268,7 @@ socket.on('new player', function( playertype, name) {
      rebelsCount = 0;
      swatscore = 0;
      rebelscore = 0;
+     itemboxes.length = 0;
 //     $(function () {
 //     location.assign('/highscore');
 //      });
@@ -280,6 +281,7 @@ socket.on('new player', function( playertype, name) {
      rebelsCount = 0;
      swatscore = 0;
      rebelscore = 0;
+     itemboxes.length = 0;
 //     $(function () {
 //     location.assign('/highscore');
 //      });
@@ -318,7 +320,7 @@ socket.on('startGameServer', function(){
       io.emit('startGame');
       playersInLobby.length = 0;
     }
-    boxPlacement();
+    boxPlacement(null);
   });
 
   socket.on('teamconfig', function(){
@@ -380,8 +382,12 @@ socket.on('startGameServer', function(){
     }
 
     if (data.left && player.x>=10 && checkCollisionLeft(player, players, objectArray, 9) == false ) {
-      if(checkCollisionPackageLeft(player, itemboxes , 9) == true){
-        console.log('test');
+      var packageValues = checkCollisionPackageLeft(player, itemboxes , 9);
+      var packageCollision = packageValues[0];
+      var packageData = packageValues[1];
+      if(packageCollision == true){
+        calculateAmmo(player, packageData[4]);
+        boxPlacement(packageData);
       }
       if(data.up || data.down){
         player.x-=1.41
@@ -390,8 +396,12 @@ socket.on('startGameServer', function(){
       }
     }
     if (data.up && player.y>=1 && checkCollisionUp(player, players, objectArray, 9) == false) {
-      if(checkCollisionPackageUp(player, itemboxes , 9) == true){
-        console.log('test');
+      var packageValues = checkCollisionPackageUp(player, itemboxes , 9);
+      var packageCollision = packageValues[0];
+      var packageData = packageValues[1];
+      if(packageCollision == true){
+        calculateAmmo(player, packageData[4]);
+        boxPlacement(packageData);
       }
       if(data.left || data.right){
         player.y-=1.41}
@@ -400,8 +410,12 @@ socket.on('startGameServer', function(){
         }
     }
     if (data.right && player.x<=630 && checkCollisionRight(player, players, objectArray, 9) == false) {
-      if(checkCollisionPackageRight(player, itemboxes , 9) == true){
-        console.log('test');
+      var packageValues = checkCollisionPackageRight(player, itemboxes , 9);
+      var packageCollision = packageValues[0];
+      var packageData = packageValues[1];
+      if(packageCollision == true){
+        calculateAmmo(player, packageData[4]);
+        boxPlacement(packageData);
       }
       if(data.up || data.down){
         player.x+=1.41}
@@ -410,8 +424,12 @@ socket.on('startGameServer', function(){
         }
     }
     if (data.down && player.y<=630 && checkCollisionDown(player, players, objectArray, 9) == false) {
-      if(checkCollisionPackageDown(player, itemboxes , 9) == true){
-        console.log('test');
+      var packageValues = checkCollisionPackageDown(player, itemboxes , 9);
+      var packageCollision = packageValues[0];
+      var packageData = packageValues[1];
+      if(packageCollision == true){
+        calculateAmmo(player, packageData[4]);
+        boxPlacement(packageData);
       }
       if(data.left || data.right){
         player.y+=1.41}
@@ -456,21 +474,25 @@ socket.on('startGameServer', function(){
     for (var id in players) {
       var player = players[id];
       var killer1 = naam
-      if(player.name == killer1){
-        var oldAmmo = player.currentAmmo;
+      if(player.name == killer1){ 
         player.score += 1
         if(player.teamname = "swat"){
           swatscore +=1;          
         }else{
           rebelscore +=1;
         }
-        player.currentAmmo += bullets
-        if(player.currentAmmo > player.maxAmmo){
-          player.currentAmmo = player.maxAmmo;
-        }    
-        io.to(player.id).emit("addAmmo", oldAmmo, player.currentAmmo);
+        calculateAmmo(player, bullets);       
       }
     }  
+  }
+
+  function calculateAmmo(player, bullets){
+    var oldAmmo = player.currentAmmo;
+    player.currentAmmo += bullets;
+    if(player.currentAmmo > player.maxAmmo){
+      player.currentAmmo = player.maxAmmo;
+    }    
+    io.to(player.id).emit("addAmmo", oldAmmo, player.currentAmmo);
   }
 
   socket.on('checkBullets', function(objectArray){
@@ -638,13 +660,14 @@ function checkCollisionPackageRight(player, objectArray, radius){
   for(i=0; i<objectArray.length; i++){
     if(player.x + radius >= objectArray[i][0] && player.x + radius <= objectArray[i][0] + objectArray[i][2]){
       if(player.y - radius <= objectArray[i][1] && player.y + radius >= objectArray[i][1] + objectArray[i][3] || player.y - radius >= objectArray[i][1] && player.y + radius <= objectArray[i][1] + objectArray[i][3]){ 
-        return true;
+        return [true, objectArray[i]];
       }
       else if(player.y - radius >= objectArray[i][1] && player.y - radius <= objectArray[i][1] + objectArray[i][3] || player.y + radius >= objectArray[i][1] && player.y + radius <= objectArray[i][1] + objectArray[i][3]){
-        return true;
+        return [true, objectArray[i]];
       }
     }
   }
+  return [false, null];
 }
 function checkCollisionDown(player, playerArray, objectArray, radius){
   for(i=0; i<objectArray.length; i++){
@@ -675,13 +698,14 @@ function checkCollisionPackageDown(player, objectArray, radius){
   for(i=0; i<objectArray.length; i++){
     if(player.y + radius >= objectArray[i][1] && player.y + radius <= objectArray[i][1] + objectArray[i][3]){
       if(player.x - radius <= objectArray[i][0] && player.x + radius >= objectArray[i][0] + objectArray[i][2] || player.x - radius >= objectArray[i][0] && player.x + radius <= objectArray[i][0] + objectArray[i][2]){
-        return true;
+        return [true, objectArray[i]];
       }
       else if(player.x - radius >= objectArray[i][0] && player.x - radius <= objectArray[i][0] + objectArray[i][2] || player.x + radius >= objectArray[i][0] && player.x + radius <= objectArray[i][0] + objectArray[i][2]){
-        return true;
+        return [true, objectArray[i]];
       }
     }
   }
+  return [false, null];
 }
 function checkCollisionLeft(player, playerArray, objectArray, radius){
   for(i=0; i<objectArray.length; i++){
@@ -712,13 +736,14 @@ function checkCollisionPackageLeft(player, objectArray, radius){
   for(i=0; i<objectArray.length; i++){
     if(player.x - radius >= objectArray[i][0] && player.x - radius <= objectArray[i][0] + objectArray[i][2]){
       if(player.y - radius >= objectArray[i][1] && player.y + radius <= objectArray[i][1] + objectArray[i][3] || player.y - radius <= objectArray[i][1] && player.y + radius >= objectArray[i][1] + objectArray[i][3]){
-        return true;
+        return [true, objectArray[i]];
       }
       else if(player.y - radius >= objectArray[i][1] && player.y - radius <= objectArray[i][1] + objectArray[i][3] || player.y + radius >= objectArray[i][1] && player.y + radius <= objectArray[i][1] + objectArray[i][3]){
-        return true;
+        return [true, objectArray[i]];
       }
     }
   }
+  return [false, null];
 }
 function checkCollisionUp(player, playerArray, objectArray, radius){
   for(i=0; i<objectArray.length; i++){
@@ -749,13 +774,14 @@ function checkCollisionPackageUp(player, objectArray, radius){
   for(i=0; i<objectArray.length; i++){
     if(player.y - radius >= objectArray[i][1] && player.y - radius <= objectArray[i][1] + objectArray[i][3]){
       if(player.x - radius <= objectArray[i][0] && player.x + radius >= objectArray[i][0] + objectArray[i][2] || player.x - radius >= objectArray[i][0] && player.x + radius <= objectArray[i][0] + objectArray[i][2]){
-        return true;
+        return [true, objectArray[i]];
       }
       else if(player.x - radius >= objectArray[i][0] && player.x - radius <= objectArray[i][0] + objectArray[i][2] || player.x + radius >= objectArray[i][0] && player.x + radius <= objectArray[i][0] + objectArray[i][2]){
-        return true;
+        return [true, objectArray[i]];
       }
     }
   }
+  return [false, null];
 }
 
 function calculateBulletSpeed(bullet){
@@ -785,15 +811,25 @@ function randomBoxPlacement(){
   return [x,y];
 }
 
-function boxPlacement(){
-  itemboxes.length = 0;
+function boxPlacement(box){
   var coordinatesBox1 = randomBoxPlacement();
-  var coordinatesBox2 = randomBoxPlacement();
-  while(coordinatesBox2[0] == coordinatesBox1[0] && coordinatesBox2[1] == coordinatesBox1[1]){
-    coordinatesBox2 = randomBoxPlacement();
-  }
-  itemboxes.push([coordinatesBox1[0], coordinatesBox1[1], 20, 20]);
-  itemboxes.push([coordinatesBox2[0], coordinatesBox2[1], 20, 20]);
+  if(itemboxes.length == 0){
+    var coordinatesBox2 = randomBoxPlacement();
+    while(coordinatesBox2[0] == coordinatesBox1[0] && coordinatesBox2[1] == coordinatesBox1[1]){
+      coordinatesBox2 = randomBoxPlacement();
+    }
+    itemboxes.push([coordinatesBox1[0], coordinatesBox1[1], 20, 20, 10]);
+    itemboxes.push([coordinatesBox2[0], coordinatesBox2[1], 20, 20, 10]);
+  }else{
+    var index = itemboxes.indexOf(box);
+    var coordinatesBox2 = randomBoxPlacement();
+    while(coordinatesBox2[0] == coordinatesBox1[0] && coordinatesBox2[1] == coordinatesBox1[1]){
+      coordinatesBox2 = randomBoxPlacement();
+    }
+    if(index !== -1){
+      itemboxes[index] = [coordinatesBox2[0], coordinatesBox2[1], 20, 20, 10];
+    }
+  } 
 }
 
 setInterval(serverGameLoop, 16);
