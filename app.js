@@ -386,7 +386,11 @@ socket.on('startGameServer', function(){
       var packageCollision = packageValues[0];
       var packageData = packageValues[1];
       if(packageCollision == true){
-        calculateAmmo(player, packageData[4]);
+        if(packageData[5] == 0){
+          calculateAmmo(player, packageData[4]);
+        }else if(packageData[5] == 1){
+          calculateHealth(player, packageData[4]);
+        }
         boxPlacement(packageData);
       }
       if(data.up || data.down){
@@ -493,6 +497,11 @@ socket.on('startGameServer', function(){
       player.currentAmmo = player.maxAmmo;
     }    
     io.to(player.id).emit("addAmmo", oldAmmo, player.currentAmmo);
+  }
+
+  function calculateHealth(player, health){
+    var oldHealth = player.hp;
+    
   }
 
   socket.on('checkBullets', function(objectArray){
@@ -804,7 +813,7 @@ function serverGameLoop(){
 }
 
 function randomBoxPlacement(){
-  var coordinates = [[20, 610],[100,490],[100, 360],[605,9],[514, 11],[526,230]];
+  var coordinates = [[20, 610],[100,490],[88, 385],[605,9],[514, 11],[526,230],[288,611],[307,307],[330,8],[448,527],[170,91]];
   var randomBox = Math.floor((Math.random() * coordinates.length) )
   var x = coordinates[randomBox][0];
   var y = coordinates[randomBox][1];
@@ -812,22 +821,38 @@ function randomBoxPlacement(){
 }
 
 function boxPlacement(box){
-  var coordinatesBox1 = randomBoxPlacement();
   if(itemboxes.length == 0){
+    var coordinatesBox1 = randomBoxPlacement();
     var coordinatesBox2 = randomBoxPlacement();
+    var coordinatesBox3 = randomBoxPlacement();
     while(coordinatesBox2[0] == coordinatesBox1[0] && coordinatesBox2[1] == coordinatesBox1[1]){
       coordinatesBox2 = randomBoxPlacement();
+      coordinatesBox3 = randomBoxPlacement();
+      while(coordinatesBox3[0] == coordinatesBox1[0] || coordinatesBox3[0] == coordinatesBox2[0] && coordinatesBox3[1] == coordinatesBox1[1] || coordinatesBox3[1] == coordinatesBox2[1]){
+        coordinatesBox3 = randomBoxPlacement();
+      }
     }
-    itemboxes.push([coordinatesBox1[0], coordinatesBox1[1], 20, 20, 10]);
-    itemboxes.push([coordinatesBox2[0], coordinatesBox2[1], 20, 20, 10]);
+    itemboxes.push([coordinatesBox1[0], coordinatesBox1[1], 20, 20, 10, 0]);
+    itemboxes.push([coordinatesBox2[0], coordinatesBox2[1], 20, 20, 10, 0]);
+    itemboxes.push([coordinatesBox3[0], coordinatesBox3[1], 20, 20, 40, 1]);
   }else{
     var index = itemboxes.indexOf(box);
-    var coordinatesBox2 = randomBoxPlacement();
-    while(coordinatesBox2[0] == coordinatesBox1[0] && coordinatesBox2[1] == coordinatesBox1[1]){
-      coordinatesBox2 = randomBoxPlacement();
-    }
+    var coordinatesBox = randomBoxPlacement();
+    var duplicateCounter = 0;
+    var ammountBox = 0;
+    var boxType = 0;
     if(index !== -1){
-      itemboxes[index] = [coordinatesBox2[0], coordinatesBox2[1], 20, 20, 10];
+      ammountBox = itemboxes[index][4];
+      boxType = itemboxes[index][5];
+      for(i=0; i<itemboxes.length; i++){
+        if(itemboxes[index][0]==itemboxes[i][0]&&itemboxes[index][1]==itemboxes[i][1]){
+          duplicateCounter++;
+        }
+      }
+      if(duplicateCounter > 1){
+        coordinatesBox = randomBoxPlacement();
+      }
+      itemboxes[index] = [coordinatesBox[0], coordinatesBox[1], 20, 20, ammountBox, boxType];
     }
   } 
 }
