@@ -137,13 +137,13 @@ class rebels extends character {
                 this.maxHP = 200;
                 this.x = 100;
                 this.y = 130;
-                this.weapondamage = 10;
+                this.weapondamage = 30;
                 this.isDead = false;
                 this.score = 0;
                 this.maxAmmo = 20;
                 this.currentAmmo = 20;
                 this.classname = "Vigilante";
-                this.fireRate = 0;
+                this.fireRate = 100;
             }        }
         //rebels 4
         class separatist extends rebels {
@@ -159,7 +159,7 @@ class rebels extends character {
                 this.maxAmmo = 20;
                 this.currentAmmo = 20;
                 this.classname = "Separatist"; 
-                this.fireRate = 300;
+                this.fireRate = 0;
             }        }
 
 //swat subclass welke erft van character class.

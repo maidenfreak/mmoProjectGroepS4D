@@ -190,10 +190,8 @@ socket.on('state', function(players, bullets, itemboxes) {
 
   //for loop die de itemboxes tekent op het canvas
   for(i=0; i<itemboxes.length; i++){
-    context.beginPath();
-    context.fillStyle = "00FF00";
-    context.rect(itemboxes[i][0], itemboxes[i][1], itemboxes[i][2], itemboxes[i][3]);
-    context.fill();
+    var ammobox = document.getElementById("ammobox")
+    context.drawImage(ammobox,itemboxes[i][0],itemboxes[i][1]);
   }
 
   //for loop die de rooms tekent op het canvas

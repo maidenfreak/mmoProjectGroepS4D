@@ -7,16 +7,33 @@ var eenmaalUitvoeren = false;
 
 var iDiv = document.getElementById('ammo');
 
+
+
 socket.on('playerteam', function(player){
     maxHealth = player.hp;
     maxAmmo = player.maxAmmo;
     playerclass.innerHTML = player.classname;
+    var weaponWrapper = document.getElementById('weapon');
+    var weaponDiv = document.createElement('div');
+    
+    if (player.weapondamage==40){
+        weaponDiv.id = 'handgun';
+    }
+    else if (player.weapondamage==80){
+        weaponDiv.id = 'sniper';
+    }
+    else if (player.weapondamage==30){
+        weaponDiv.id = 'rifle';
+    }
+    else if (player.weapondamage==20){
+        weaponDiv.id = 'minigun';
+    }
+    weaponWrapper.appendChild(weaponDiv);
 
     if(eenmaalUitvoeren == false){
         for(i=0; i<maxAmmo; i++){
             var innerDiv = document.createElement('div');
             innerDiv.id = 'bullet';
-            innerDiv.className = 'test';
             iDiv.appendChild(innerDiv);
         }
         eenmaalUitvoeren = true;
