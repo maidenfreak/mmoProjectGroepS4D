@@ -519,7 +519,7 @@ socket.on('startGameServer', function(){
             killer = bullet.comesFrom
 
             addKiller(killer, lostBullets) 
-            //calculateWinner()
+            calculateWinner()
 
           }
          bullet.isHit = true
@@ -556,6 +556,7 @@ const newModel = mongoose.model('highscoretable9', highscoreSchema)
 
 for (var i in players) {
     currentPlayer = players[i]
+    console.log("currentplayer" + currentPlayer.score)
     //newModel.find({ name: currentPlayer.name}, function (err, docs) {
         if (!(newModel.find({ name: currentPlayer.name}))){
             const newDocument = newModel({name: currentPlayer.name, highscore: currentPlayer.score, winscore: currentPlayer.win})
