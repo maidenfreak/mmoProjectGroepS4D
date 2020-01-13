@@ -9,7 +9,7 @@ var iDiv = document.getElementById('ammo');
 
 socket.on('playerteam', function(player){
     maxHealth = player.hp;
-    maxAmmo = player.ammo;
+    maxAmmo = player.maxAmmo;
     playerclass.innerHTML = player.classname;
 
     if(eenmaalUitvoeren == false){
@@ -34,7 +34,6 @@ socket.on('updatedHP', function(healthPlayer){
 });
 
 socket.on('updatedAmmo', function(ammoPlayer){
-    var currentAmmo = ammoPlayer;
     var bulletElement = document.getElementById("bullet");
     iDiv.removeChild(bulletElement);
 });

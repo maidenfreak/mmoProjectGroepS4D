@@ -122,11 +122,12 @@ canvas.onclick = function(event){
   var x = values[0];
   var y = values[1];
   var coords = "x" + x + "y" + y;
+  console.log(coords);
   socket.emit('shoot-bullet', {x: 300, y: 300, speedY: 5, isHit: false, damage: 0},x,y);
 }
 
 //deze socket staat op een interval en wordt continu uitgevoerd om het spel te updaten
-socket.on('state', function(players, bullets) {
+socket.on('state', function(players, bullets, itemboxes) {
   context.clearRect(0, 0, 640, 640);
   checkRoom(players, roomsArray);
 
@@ -157,6 +158,22 @@ socket.on('state', function(players, bullets) {
     context.fill();  
   }
 
+  //for loop die de kogels tekent op het canvas
+  for (var id in bullets) {
+    var bullet = bullets[id];
+    context.beginPath();
+    context.arc(bullet.x, bullet.y, 2, 0, 2 * Math.PI);
+    context.fill();
+  }
+
+  //for loop die de itemboxes tekent op het canvas
+  for(i=0; i<itemboxes.length; i++){
+    context.beginPath();
+    context.fillStyle = "00FF00";
+    context.rect(itemboxes[i][0], itemboxes[i][1], itemboxes[i][2], itemboxes[i][3]);
+    context.fill();
+  }
+
   //for loop die de rooms tekent op het canvas
   for(i=0; i<roomsArray.length; i++){
     roomsArray[i].buildRoom();
@@ -165,14 +182,6 @@ socket.on('state', function(players, bullets) {
   //for loop die de muren tekent op het canvas
   for(i=0; i<objects.length; i++){
     objects[i].build();
-  }
-
-  //for loop die de kogels tekent op het canvas
-  for (var id in bullets) {
-    var bullet = bullets[id];
-    context.beginPath();
-    context.arc(bullet.x, bullet.y, 2, 0, 2 * Math.PI);
-    context.fill();
   }
 });
 
@@ -203,6 +212,9 @@ function checkRoom(players, roomsArray){
     }
   }
 }
+
+/*let itemBox1 = new itemBox("itemBox1", 0, 0, 20, 25);
+let itemBox2 = new itemBox("itemBox2", 0, 0, 20, 25);*/
 
 //alle objecten die worden getekend.
 let wall1 = new object("wall1", 160, 0, 2, 25); wall1.pushToArray();

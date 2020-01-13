@@ -12,7 +12,7 @@
     background-color: white;
     }
     body { margin: 0px;
-    background-image: url('background.gif');
+    background-image: url('images/background.gif');
     background-position: center; /* Center the image */
     background-repeat: no-repeat; /* Do not repeat the image */
     background-size: cover;
@@ -45,7 +45,7 @@
     padding: 0; 
     }
     #canvas {
-        background-image: url('map.jpg');
+        background-image: url('images/map.jpg');
         background-position: center; /* Center the image */
         background-repeat: no-repeat; /* Do not repeat the image */
         background-size: cover;
@@ -86,7 +86,7 @@
     height: 10px;
     float: left;
     text-align: center;            
-    background-image: url('Bullet.svg');
+    background-image: url('images/Bullet.svg');
     background-position: center; /* Center the image */
     background-repeat: no-repeat; /* Do not repeat the image */
     background-size: cover;
@@ -115,7 +115,7 @@
         height: 180px;
         float: left;
         text-align: center;            
-        background-image: url('Logo.svg');
+        background-image: url('images/Logo.svg');
         background-position: center; /* Center the image */
         background-repeat: no-repeat; /* Do not repeat the image */
         background-size: cover;

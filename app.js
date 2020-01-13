@@ -9,8 +9,10 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
+
 var players = {};
 const playersInLobby = [];
+const itemboxes = [];
 const bullets = [];
 var swatCount = 0;
 var rebelsCount = 0 ;
@@ -81,7 +83,6 @@ class character {
         this.name = name;
         this.score = 0;
         this.angle = 0;
-
     }
 }
  //rebels subclass welke erft van character class.
@@ -97,7 +98,7 @@ class rebels extends character {
 }
         //rebels 1
         class militant extends rebels {
-            constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, ammo, classname, win, angle){
+            constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, maxAmmo, currentAmmo, classname, win, angle){
                 super(id, name, teamscore, score, color, teamname, win, angle)
                 this.hp = 150;
                 this.x = 100;
@@ -105,13 +106,14 @@ class rebels extends character {
                 this.weapondamage = 20;
                 this.isDead = false;
                 this.score = 0;
-                this.ammo = 20;
+                this.maxAmmo = 20;
+                this.currentAmmo = 20;
                 this.classname = "Militant";
             }
         }
         //rebels 2
         class guerrilla extends rebels {
-             constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, ammo, classname, win, angle){
+             constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, maxAmmo, currentAmmo, classname, win, angle){
                 super(id, name, teamscore, score, color, teamname, win, angle)
                 this.hp = 100;
                 this.x = 130;
@@ -119,12 +121,13 @@ class rebels extends character {
                 this.weapondamage = 20;
                 this.isDead = false;
                 this.score = 0;
-                this.ammo = 20;
+                this.maxAmmo = 20;
+                this.currentAmmo = 20;
                 this.classname = "Guerrilla";
             }        }
         //rebels 3
         class vigilante extends rebels {
-             constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, ammo, classname, win, angle){
+             constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, maxAmmo, currentAmmo, classname, win, angle){
                 super(id, name, teamscore, score, color, teamname, win, angle)
                 this.hp = 200;
                 this.x = 100;
@@ -132,12 +135,13 @@ class rebels extends character {
                 this.weapondamage = 40;
                 this.isDead = false;
                 this.score = 0;
-                this.ammo = 20;
+                this.maxAmmo = 20;
+                this.currentAmmo = 20;
                 this.classname = "Vigilante";
             }        }
         //rebels 4
         class separatist extends rebels {
-             constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, ammo, classname, win, angle){
+             constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, maxAmmo, currentAmmo, classname, win, angle){
                 super(id, name, teamscore, score, color, teamname, win, angle)
                 this.hp = 240;
                 this.x = 130;
@@ -145,7 +149,8 @@ class rebels extends character {
                 this.weapondamage = 20;
                 this.isDead = false;
                 this.score = 0;
-                this.ammo = 20;
+                this.maxAmmo = 20;
+                this.currentAmmo = 20;
                 this.classname = "Separatist"; 
             }        }
 
@@ -162,7 +167,7 @@ class swat extends character {
 }
         //swat 1
         class grenadier extends swat {
-            constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, ammo, classname, win, angle){
+            constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, maxAmmo, currentAmmo, classname, win, angle){
                 super(id, name, teamscore, score, color, teamname, win, angle)
                 this.hp = 150;
                 this.x = 500;
@@ -170,14 +175,15 @@ class swat extends character {
                 this.weapondamage = 20;
                 this.isDead = false;
                 this.score = 0;
-                this.ammo = 20;
+                this.maxAmmo = 20;
+                this.currentAmmo = 20;
                 this.classname = "Grenadier";
             }
     
         }
         //swat 2
         class breacher extends swat {
-           constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, ammo, classname, win, angle){
+           constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, maxAmmo, currentAmmo, classname, win, angle){
                 super(id, name, teamscore, score, color, teamname, win, angle)
                 this.hp = 200;
                 this.x = 530;
@@ -185,13 +191,14 @@ class swat extends character {
                 this.weapondamage = 40;
                 this.isDead = false;
                 this.score = 0;
-                this.ammo = 20;
+                this.maxAmmo = 20;
+                this.currentAmmo = 20;
                this.classname = "Breacher";
             }
         }
         //swat 3
         class observer extends swat {
-            constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, ammo, classname, win, angle){
+            constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, maxAmmo, currentAmmo, classname, win, angle){
                 super(id, name, teamscore, score, color, teamname, win, angle)
                 this.hp = 100;
                 this.x = 500;
@@ -199,12 +206,13 @@ class swat extends character {
                 this.weapondamage = 20;
                 this.isDead = false;
                 this.score = 0;
-                this.ammo = 20;
+                this.maxAmmo = 20;
+                this.currentAmmo = 20;
                 this.classname = "Observer";
             }        }
         //swat 4
         class charger extends swat {
-            constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, ammo, classname, win, angle){
+            constructor(id,name, hp, score, x, y, weapondamage, teamscore, color, teamname, isDead, maxAmmo, currentAmmo, classname, win, angle){
                 super(id, name, teamscore, score, color, teamname, win, angle)
                 this.hp = 240;
                 this.x = 530;
@@ -212,7 +220,8 @@ class swat extends character {
                 this.weapondamage = 20;
                 this.isDead = false;
                 this.score = 0;
-                this.ammo = 20;
+                this.maxAmmo = 20;
+                this.currentAmmo = 20;
                 this.classname = "Charger";
                 
                 
@@ -220,25 +229,22 @@ class swat extends character {
 
         }
    
-
    
   
-  //creates a new player
-  socket.on('new player', function( playertype, name) {
-  
-if(playertype == "militant"){players[socket.id] = new militant(socket.id, name)}
-else if(playertype == "guerrilla"){players[socket.id] = new guerrilla(socket.id, name)}
-else if(playertype == "vigilante"){players[socket.id] = new vigilante(socket.id, name)}
-else if(playertype == "seperatist"){players[socket.id] = new seperatist(socket.id, name)}
-else if(playertype == "grenadier"){players[socket.id] = new grenadier(socket.id, name)}
-else if(playertype == "breacher"){players[socket.id] = new breacher(socket.id, name)}
-else if(playertype == "observer"){players[socket.id] = new observer(socket.id, name)}
-else if(playertype == "charger"){players[socket.id] = new charger(socket.id, name)}
+//creates a new player
+socket.on('new player', function( playertype, name) {  
+  if(playertype == "militant"){players[socket.id] = new militant(socket.id, name)}
+  else if(playertype == "guerrilla"){players[socket.id] = new guerrilla(socket.id, name)}
+  else if(playertype == "vigilante"){players[socket.id] = new vigilante(socket.id, name)}
+  else if(playertype == "seperatist"){players[socket.id] = new seperatist(socket.id, name)}
+  else if(playertype == "grenadier"){players[socket.id] = new grenadier(socket.id, name)}
+  else if(playertype == "breacher"){players[socket.id] = new breacher(socket.id, name)}
+  else if(playertype == "observer"){players[socket.id] = new observer(socket.id, name)}
+  else if(playertype == "charger"){players[socket.id] = new charger(socket.id, name)}
   socket.emit('playerteam', players[socket.id]);
-
   endGame();
-//  console.log("swat " + swatCount);
-//  console.log("rebels " + rebelsCount);
+
+  //console.log("rebels " + rebelsCount);
 
   });
     
@@ -254,15 +260,16 @@ else if(playertype == "charger"){players[socket.id] = new charger(socket.id, nam
             return myArr;    
          }     
 
-   function calculateWinner(){
-      if(swatscore  >= rebelsCount){
+   function calculateWinner(){  
+    if(swatscore  >= rebelsCount){
        // return "The SWAT unit has won the match with " + swatscore + " kills & " + rebelsCount + " deaths.";
-     updateHighscore()
+     //updateHighscore()
      
      swatCount = 0;
      rebelsCount = 0;
      swatscore = 0;
      rebelscore = 0;
+     itemboxes.length = 0;
 //     $(function () {
 //     location.assign('/highscore');
 //      });
@@ -271,11 +278,12 @@ else if(playertype == "charger"){players[socket.id] = new charger(socket.id, nam
       }
       else if(rebelscore >= swatCount){
        // return "The rebel unit has won the match with " + rebelscore + " kills & " + swatCount + " deaths.";
-     updateHighscore()
+     //updateHighscore()
      swatCount = 0;
      rebelsCount = 0;
      swatscore = 0;
      rebelscore = 0;
+     itemboxes.length = 0;
 //     $(function () {
 //     location.assign('/highscore');
 //      });
@@ -299,8 +307,12 @@ function endGame(){
             rebelsCount += 1;
           }
       }
-     //("swat" + rebelsCount)
-   //  console.log("rebels" + swatCount)
+
+     
+
+     //console.log("swat" + swatCount)
+     //console.log("rebels" + rebelsCount)
+
       return swatCount, rebelsCount; 
     }    
     
@@ -315,6 +327,7 @@ socket.on('startGameServer', function(){
       io.emit('startGame');
       playersInLobby.length = 0;
     }
+    boxPlacement(null);
   });
 
   socket.on('teamconfig', function(){
@@ -371,11 +384,20 @@ socket.on('startGameServer', function(){
       player.x = -30
       player.y = -30
       player.isDead = true
-     // calculateWinner()
+
+      //calculateWinner()
+
 
     }
 
     if (data.left && player.x>=10 && checkCollisionLeft(player, players, objectArray, 9) == false ) {
+      var packageValues = checkCollisionPackageLeft(player, itemboxes , 9);
+      var packageCollision = packageValues[0];
+      var packageData = packageValues[1];
+      if(packageCollision == true){
+        calculateAmmo(player, packageData[4]);
+        boxPlacement(packageData);
+      }
       if(data.up || data.down){
         player.x-=1.41
       } else {
@@ -383,6 +405,13 @@ socket.on('startGameServer', function(){
       }
     }
     if (data.up && player.y>=1 && checkCollisionUp(player, players, objectArray, 9) == false) {
+      var packageValues = checkCollisionPackageUp(player, itemboxes , 9);
+      var packageCollision = packageValues[0];
+      var packageData = packageValues[1];
+      if(packageCollision == true){
+        calculateAmmo(player, packageData[4]);
+        boxPlacement(packageData);
+      }
       if(data.left || data.right){
         player.y-=1.41}
         else{
@@ -390,6 +419,13 @@ socket.on('startGameServer', function(){
         }
     }
     if (data.right && player.x<=630 && checkCollisionRight(player, players, objectArray, 9) == false) {
+      var packageValues = checkCollisionPackageRight(player, itemboxes , 9);
+      var packageCollision = packageValues[0];
+      var packageData = packageValues[1];
+      if(packageCollision == true){
+        calculateAmmo(player, packageData[4]);
+        boxPlacement(packageData);
+      }
       if(data.up || data.down){
         player.x+=1.41}
         else{
@@ -397,6 +433,13 @@ socket.on('startGameServer', function(){
         }
     }
     if (data.down && player.y<=630 && checkCollisionDown(player, players, objectArray, 9) == false) {
+      var packageValues = checkCollisionPackageDown(player, itemboxes , 9);
+      var packageCollision = packageValues[0];
+      var packageData = packageValues[1];
+      if(packageCollision == true){
+        calculateAmmo(player, packageData[4]);
+        boxPlacement(packageData);
+      }
       if(data.left || data.right){
         player.y+=1.41}
         else{
@@ -409,8 +452,8 @@ socket.on('startGameServer', function(){
     var player = players[socket.id] || {};
     if(players[socket.id] == undefined) return;
 
-    if(player.ammo > 0){
-      player.ammo -= 1
+    if(player.currentAmmo > 0){
+      player.currentAmmo -= 1
       var newBullet = data;
       if(targetX > player.x){
         newBullet.x = player.x //+ 11
@@ -432,7 +475,7 @@ socket.on('startGameServer', function(){
       newBullet.xSpeed = bulletSpeed[0];
       newBullet.ySpeed = bulletSpeed[1];
       bullets.push(newBullet);
-      socket.emit('updatedAmmo', player.ammo);
+      socket.emit('updatedAmmo', player.currentAmmo);
     }
   })
 
@@ -440,22 +483,29 @@ socket.on('startGameServer', function(){
     for (var id in players) {
       var player = players[id];
       var killer1 = naam
-      if(player.name == killer1){
-        var oldAmmo = player.ammo;
+      if(player.name == killer1){ 
         player.score += 1
-         if(player.teamname = "swat"){
-          swatscore +=1;
-          
-      }else{
+        if(player.teamname == "swat"){
+          swatscore +=1;          
+        }else{
           rebelscore +=1;
-      }
-        player.ammo += bullets
-        
-        io.to(player.id).emit("addAmmo", oldAmmo, player.ammo);
+        }
+        calculateAmmo(player, bullets);       
       }
     }  
- calculateWinner()
+
   }
+
+  function calculateAmmo(player, bullets){
+    var oldAmmo = player.currentAmmo;
+    player.currentAmmo += bullets;
+    if(player.currentAmmo > player.maxAmmo){
+      player.currentAmmo = player.maxAmmo;
+    }    
+    io.to(player.id).emit("addAmmo", oldAmmo, player.currentAmmo);
+
+  }
+
   socket.on('checkBullets', function(objectArray){
     var player = players[socket.id] || {};
     for(var i = 0; i < bullets.length; i++){
@@ -465,7 +515,7 @@ socket.on('startGameServer', function(){
          player.hp -= bullet.damage;
          socket.emit("updatedHP", player.hp);
           if(player.hp <= 0){
-            var lostBullets = player.ammo
+            var lostBullets = player.currentAmmo
             killer = bullet.comesFrom
 
             addKiller(killer, lostBullets) 
@@ -614,7 +664,7 @@ for (var i in players) {
 );
 
 setInterval(function() {
-  io.sockets.emit('state', players, bullets);
+  io.sockets.emit('state', players, bullets, itemboxes);
 }, 1000 / 60);
 
 http.listen(3000, function(){
@@ -670,6 +720,19 @@ function checkCollisionRight(player, playerArray, objectArray, radius){
   }
   return false;
 }
+function checkCollisionPackageRight(player, objectArray, radius){
+  for(i=0; i<objectArray.length; i++){
+    if(player.x + radius >= objectArray[i][0] && player.x + radius <= objectArray[i][0] + objectArray[i][2]){
+      if(player.y - radius <= objectArray[i][1] && player.y + radius >= objectArray[i][1] + objectArray[i][3] || player.y - radius >= objectArray[i][1] && player.y + radius <= objectArray[i][1] + objectArray[i][3]){ 
+        return [true, objectArray[i]];
+      }
+      else if(player.y - radius >= objectArray[i][1] && player.y - radius <= objectArray[i][1] + objectArray[i][3] || player.y + radius >= objectArray[i][1] && player.y + radius <= objectArray[i][1] + objectArray[i][3]){
+        return [true, objectArray[i]];
+      }
+    }
+  }
+  return [false, null];
+}
 function checkCollisionDown(player, playerArray, objectArray, radius){
   for(i=0; i<objectArray.length; i++){
     if(objectArray[i].position == "horizontal"){
@@ -694,6 +757,19 @@ function checkCollisionDown(player, playerArray, objectArray, radius){
     }
   }
   return false;
+}
+function checkCollisionPackageDown(player, objectArray, radius){
+  for(i=0; i<objectArray.length; i++){
+    if(player.y + radius >= objectArray[i][1] && player.y + radius <= objectArray[i][1] + objectArray[i][3]){
+      if(player.x - radius <= objectArray[i][0] && player.x + radius >= objectArray[i][0] + objectArray[i][2] || player.x - radius >= objectArray[i][0] && player.x + radius <= objectArray[i][0] + objectArray[i][2]){
+        return [true, objectArray[i]];
+      }
+      else if(player.x - radius >= objectArray[i][0] && player.x - radius <= objectArray[i][0] + objectArray[i][2] || player.x + radius >= objectArray[i][0] && player.x + radius <= objectArray[i][0] + objectArray[i][2]){
+        return [true, objectArray[i]];
+      }
+    }
+  }
+  return [false, null];
 }
 function checkCollisionLeft(player, playerArray, objectArray, radius){
   for(i=0; i<objectArray.length; i++){
@@ -720,6 +796,19 @@ function checkCollisionLeft(player, playerArray, objectArray, radius){
   }
   return false;
 }
+function checkCollisionPackageLeft(player, objectArray, radius){
+  for(i=0; i<objectArray.length; i++){
+    if(player.x - radius >= objectArray[i][0] && player.x - radius <= objectArray[i][0] + objectArray[i][2]){
+      if(player.y - radius >= objectArray[i][1] && player.y + radius <= objectArray[i][1] + objectArray[i][3] || player.y - radius <= objectArray[i][1] && player.y + radius >= objectArray[i][1] + objectArray[i][3]){
+        return [true, objectArray[i]];
+      }
+      else if(player.y - radius >= objectArray[i][1] && player.y - radius <= objectArray[i][1] + objectArray[i][3] || player.y + radius >= objectArray[i][1] && player.y + radius <= objectArray[i][1] + objectArray[i][3]){
+        return [true, objectArray[i]];
+      }
+    }
+  }
+  return [false, null];
+}
 function checkCollisionUp(player, playerArray, objectArray, radius){
   for(i=0; i<objectArray.length; i++){
     if(objectArray[i].position == "horizontal"){   
@@ -745,6 +834,19 @@ function checkCollisionUp(player, playerArray, objectArray, radius){
   }
   return false;
 }
+function checkCollisionPackageUp(player, objectArray, radius){
+  for(i=0; i<objectArray.length; i++){
+    if(player.y - radius >= objectArray[i][1] && player.y - radius <= objectArray[i][1] + objectArray[i][3]){
+      if(player.x - radius <= objectArray[i][0] && player.x + radius >= objectArray[i][0] + objectArray[i][2] || player.x - radius >= objectArray[i][0] && player.x + radius <= objectArray[i][0] + objectArray[i][2]){
+        return [true, objectArray[i]];
+      }
+      else if(player.x - radius >= objectArray[i][0] && player.x - radius <= objectArray[i][0] + objectArray[i][2] || player.x + radius >= objectArray[i][0] && player.x + radius <= objectArray[i][0] + objectArray[i][2]){
+        return [true, objectArray[i]];
+      }
+    }
+  }
+  return [false, null];
+}
 
 function calculateBulletSpeed(bullet){
     var vx = bullet.targetX - bullet.x
@@ -758,12 +860,40 @@ function calculateBulletSpeed(bullet){
 }
 
 function serverGameLoop(){
-
   for( var i = bullets.length - 1; i >= 0; i--){
     if(bullets[i].x === -10 || bullets[i].y === -10 || bullets[i].isHit === true){
       bullets.splice(i,1);
     } 
   }
+}
+
+function randomBoxPlacement(){
+  var coordinates = [[20, 610],[100,490],[100, 360],[605,9],[514, 11],[526,230]];
+  var randomBox = Math.floor((Math.random() * coordinates.length) )
+  var x = coordinates[randomBox][0];
+  var y = coordinates[randomBox][1];
+  return [x,y];
+}
+
+function boxPlacement(box){
+  var coordinatesBox1 = randomBoxPlacement();
+  if(itemboxes.length == 0){
+    var coordinatesBox2 = randomBoxPlacement();
+    while(coordinatesBox2[0] == coordinatesBox1[0] && coordinatesBox2[1] == coordinatesBox1[1]){
+      coordinatesBox2 = randomBoxPlacement();
+    }
+    itemboxes.push([coordinatesBox1[0], coordinatesBox1[1], 20, 20, 10]);
+    itemboxes.push([coordinatesBox2[0], coordinatesBox2[1], 20, 20, 10]);
+  }else{
+    var index = itemboxes.indexOf(box);
+    var coordinatesBox2 = randomBoxPlacement();
+    while(coordinatesBox2[0] == coordinatesBox1[0] && coordinatesBox2[1] == coordinatesBox1[1]){
+      coordinatesBox2 = randomBoxPlacement();
+    }
+    if(index !== -1){
+      itemboxes[index] = [coordinatesBox2[0], coordinatesBox2[1], 20, 20, 10];
+    }
+  } 
 }
 
 setInterval(serverGameLoop, 16);
