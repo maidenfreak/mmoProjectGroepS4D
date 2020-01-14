@@ -14,13 +14,14 @@
           <script>
              
 socket.emit('getHighscore');
-socket.on("getHighscoreReturn", function (getHighscore) {
+socket.on("getHighscoreReturn", function (nameArray) {
 //    for (var id in getHighscore){
 //        highscore.add(getHighscore[id]);
 //    }
-    var highscore = getHighscore;
-    console.log(highscore)
-    console.log("getHighscore")
+    //var highscore = getHighscore;
+    console.log(nameArray);
+    //console.log(highscoreArray);
+    //console.log(winscoreArray);
     /*var highscoreArray = highscore
     console.log(highscoreArray)
     console.log("highscoreArray")
