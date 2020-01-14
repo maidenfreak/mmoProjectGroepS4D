@@ -580,139 +580,20 @@ function addBoxItems (player, packageData){
    })
   
 function updateHighscore(player){
-    //in server.js
-    
-//const mongoose = require('mongoose')
-//mongoose.connect('mongodb://localhost:27017/mmodb', {useNewUrlParser: true});
-//const Schema = mongoose.Schema
-//const highscoreSchema = new Schema({
-//    name: {type: String, required: true, unique: true} ,
-//    highscore: {type: Number, required: false, unique:false},
-//    winscore: {type: Number, required: false, unique:false}
-//})
-//const newModel = mongoose.model('highscoretable12', highscoreSchema)
-
-//for (var i in players) {
    var currentPlayer = player
-    //console.log("currentplayer" + currentPlayer.score)
-    //newModel.find({ name: currentPlayer.name}, function (err, docs) {
-    //console.log(!newModel.find({ name: currentPlayer.name}))
-    //var testquery = newModel.find({ name: currentPlayer.name})
    newModel.find({name: currentPlayer.name},function(err, doc) {
-        if (doc.length){
-            console.log(currentPlayer.score)
-            //var objectPlayer = newModel.find({ name: currentPlayer.name})
-          //  console.log(objectPlayer)
-          //  newModel.findOne({name: currentPlayer.name},function(err, doc) {
-             //   console.log(doc)
-  //doc = the first (!!!) doc that have question in his `question` attribute 
-
-            var newHighscore = doc[0].highscore + currentPlayer.score
-            var newWinscore = doc[0].winscore + currentPlayer.win
-            //console.log("doc" + doc.highscore)
-            //console.log("currentplayer" + currentPlayer.score)
-            //console.log(newHighscore)
-            
-           // console.log(newWinscore)
-            newModel.updateOne({ name: currentPlayer.name }, { $set: {  highscore: newHighscore, winscore: newWinscore } })
-            console.log("1 document updated");
-            
-       // }
-        }else{
-            const newDocument = newModel({name: currentPlayer.name, highscore: currentPlayer.score, winscore: currentPlayer.win})
-            console.log("1 document inserted");
-            newDocument.save()
-            //var currentPlayer = docs
-            
-//           
-  //  }
-    //) 
-}
+     if (doc.length){
+        var newHighscore = doc[0].highscore + currentPlayer.score
+        var newWinscore = doc[0].winscore + currentPlayer.win
+        newModel.update({name: currentPlayer.name}, {$set: { highscore: newHighscore, winscore: newWinscore}}, function (err, user) {
+        })
+     }else{
+        const newDocument = newModel({name: currentPlayer.name, highscore: currentPlayer.score, winscore: currentPlayer.win})
+        newDocument.save()
+    }
+  })
  }
-)}
-                   // }
-//}
-  //  )
- // }
-//}
-    
-    
-    
-    //const res2 = await Customer.find({}).sort({ name: 1 }).skip(1).limit(1)
-//    var MongoClient = require('mongodb').MongoClient;
-//    var url = "mongodb://localhost:27017/";
-//    // create table if not exist
-//    MongoClient.connect(url, function(err, db) {
-//      if (err) throw err;
-//      var dbo = db.db("mmodb");
-//      dbo.createCollection("highscore8table", function(err, res) {
-//        if (err) throw err;
-//        console.log("Collection created!");
-//        db.close();
-//      });
-//    });
-//   var highscoreTable = []          
-//   for (var i in players) {
-//        highscoreTable.push(players[i]) 
-//   }
-//    
-//MongoClient.connect(url, function(err, db) {
-//    var dbo = db.db("mmodb");
-//  for (var index in highscoreTable){  
-//      console.log("naam" + highscoreTable[index].name)
-//      
-//          console.log("naam4" + highscoreTable[index].name)
-//          //if (err) throw err;
-//          
-//          var query = {}
-//           query = { username: highscoreTable[index].name };
-//          console.log("naam2" + highscoreTable[index].name)
-//          dbo.collection("highscore8table").find(query).toArray(function(err, result) {
-//              console.log("query")
-//              console.log( query)
-//              console.log("bla")
-//              console.log("naam3" + highscoreTable[index].name)
-//            //if (err) throw err;
-//             
-//            if(result.length){ 
-//                var newHighscore = result[0].highscore + highscoreTable[index].score
-//                var newWinscore = result[0].winscore + highscoreTable[index].win
-//                MongoClient.connect(url, function(err, db) {
-//                  if (err) throw err;
-//                  var dbo = db.db("mmodb");
-//                  var myquery = { username: highscoreTable[index].name };
-//                  var newvalues = { $set: {username: highscoreTable[index].name, highscore: newHighscore, winscore: newWinscore } };
-//                  dbo.collection("highscore8table").update(myquery, newvalues, function(err, res) {
-//                   // if (err) throw err;
-//                    console.log("1 document updated");
-//                    db.close();
-//                  });
-//                }); 
-//                result = [];
-//                query = {}
-//            }else{
-//            MongoClient.connect(url, function(err, db) {
-//              if (err) throw err;
-//              var dbo = db.db("mmodb");
-//              var myobj = { username: highscoreTable[index].name, highscore: highscoreTable[index].score, winscore: highscoreTable[index].win };
-//              dbo.collection("highscore8table").insert(myobj, function(err, res) {
-//                if (err) throw err;
-//                console.log("1 document inserted");
-//                db.close();
-//              });
-//            });
-//                result = [];
-//                query = {}
-//            }  })}})
-
-}
-    
-    
-    
-    
-    
-    
-);
+});
 
 setInterval(function() {
   io.sockets.emit('state', players, bullets, itemboxes);
