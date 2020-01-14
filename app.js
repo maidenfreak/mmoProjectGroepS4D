@@ -284,7 +284,7 @@ socket.on('new player', function( playertype, name) {
          }     
 
 function calculateWinner(){
-  //var winscore = 0  
+  //var winscore = 0
     if(swatscore  >= rebelsCount){
        // return "The SWAT unit has won the match with " + swatscore + " kills & " + rebelsCount + " deaths.";
       for (var id in players){
@@ -384,7 +384,7 @@ socket.on('playerLobby', function(playername, joined){
 socket.on('disconnect', function(){
   delete players[socket.id];
   endGame();
-  calculateWinner();
+  //calculateWinner();
 });
 
 socket.on('leaveGame', function(){
