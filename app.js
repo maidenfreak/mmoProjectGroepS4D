@@ -262,7 +262,7 @@ socket.on('new player', function( playertype, name) {
   if(playertype == "militant"){players[socket.id] = new militant(socket.id, name)}
   else if(playertype == "guerrilla"){players[socket.id] = new guerrilla(socket.id, name)}
   else if(playertype == "vigilante"){players[socket.id] = new vigilante(socket.id, name)}
-  else if(playertype == "seperatist"){players[socket.id] = new seperatist(socket.id, name)}
+  else if(playertype == "separatist"){players[socket.id] = new separatist(socket.id, name)}
   else if(playertype == "grenadier"){players[socket.id] = new grenadier(socket.id, name)}
   else if(playertype == "breacher"){players[socket.id] = new breacher(socket.id, name)}
   else if(playertype == "observer"){players[socket.id] = new observer(socket.id, name)}
