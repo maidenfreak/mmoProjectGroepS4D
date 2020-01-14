@@ -1,5 +1,4 @@
 const express = require('express');
-//const mongoose = require('mongoose');
 const app = express();
 const passport = require('passport');
 const flash = require('connect-flash');
@@ -18,6 +17,10 @@ const highscoreSchema = new Schema({
     winscore: {type: Number, required: false, unique:false}
 })
 const newModel = mongoose.model('highscoretable12', highscoreSchema)
+
+//andere javascript bestanden die server side draaien
+const collision = require('./collisionDetection.js');
+
 var players = {};
 const playersInLobby = [];
 const itemboxes = [];
@@ -252,9 +255,7 @@ class swat extends character {
                 
             } 
 
-        }
-   
-   
+        } 
   
 //creates a new player
 socket.on('new player', function( playertype, name) {  
@@ -268,10 +269,7 @@ socket.on('new player', function( playertype, name) {
   else if(playertype == "charger"){players[socket.id] = new charger(socket.id, name)}
   socket.emit('playerteam', players[socket.id]);
   endGame();
-
-  //console.log("rebels " + rebelsCount);
-
-  });
+});
     
   function randomFunc(myArr) {      
             var l = myArr.length, temp, index;  
@@ -338,75 +336,65 @@ function endGame(){
             rebelsCount += 1;
           }
       }
-
-     
-
-     //console.log("swat" + swatCount)
-     //console.log("rebels" + rebelsCount)
-
       return swatCount, rebelsCount; 
     }    
     
 socket.on('startGameServer', function(){
-    hussledArray = randomFunc(playersInLobby)     
-    teamconfig =  typeplayers.reduce(function(teamconfig, field, index) {
-      teamconfig[hussledArray[index]] = field;
-      return teamconfig;
-    }, {})
+  hussledArray = randomFunc(playersInLobby)     
+  teamconfig =  typeplayers.reduce(function(teamconfig, field, index) {
+    teamconfig[hussledArray[index]] = field;
+    return teamconfig;
+  }, {});
 
-    if(playersInLobby.length > 1){
-      io.emit('startGame');
-      playersInLobby.length = 0;
-    }
-    boxPlacement(null);
-  });
+  if(playersInLobby.length > 1){
+    io.emit('startGame');
+    playersInLobby.length = 0;
+  }
+  boxPlacement(null);
+});
 
-  socket.on('teamconfig', function(){
-     io.emit('teamconfigReturn', teamconfig);
-  });
+socket.on('teamconfig', function(){
+  io.emit('teamconfigReturn', teamconfig);
+});
   
+socket.on('connectedPeopleLobby', function(){
+  var amountOfPlayers = playersInLobby.length;
+  io.emit('connectedPeopleLobbyReturn', amountOfPlayers);
+});
 
-  socket.on('connectedPeopleLobby', function(){
-    var amountOfPlayers = playersInLobby.length;
-    io.emit('connectedPeopleLobbyReturn', amountOfPlayers);
-  });
-
-  socket.on('playerLobby', function(playername, joined){
-    var playerAlreadyInLobby = false;
-
-    for(i=0; i<playersInLobby.length; i++){
-      if(playersInLobby[i] == playername){
-        playerAlreadyInLobby = true;
-      }
+socket.on('playerLobby', function(playername, joined){
+  var playerAlreadyInLobby = false;
+  for(i=0; i<playersInLobby.length; i++){
+    if(playersInLobby[i] == playername){
+      playerAlreadyInLobby = true;
     }
-    if(joined == 'true'){
-      if(playerAlreadyInLobby == true){
-        return console.log('you are already in the lobby!');
-      }else{
-        playersInLobby.push(playername);
-        io.emit('playerLobbies', playersInLobby);
-      }
-    }
-    else if(joined == 'false'){
+  }
+  if(joined == 'true'){
+    if(playerAlreadyInLobby == true){
+      return console.log('you are already in the lobby!');
+    }else{
+      playersInLobby.push(playername);
       io.emit('playerLobbies', playersInLobby);
     }
-  });
+  }else if(joined == 'false'){
+    io.emit('playerLobbies', playersInLobby);
+  }
+});
   
-  socket.on('disconnect', function(){
-    delete players[socket.id];
-    endGame()
-  });
+socket.on('disconnect', function(){
+  delete players[socket.id];
+  endGame();
+});
 
-  socket.on('leaveGame', function(){
-    delete players[socket.id];
-    endGame()
-      
-  });
+socket.on('leaveGame', function(){
+  delete players[socket.id];
+  endGame();   
+});
 
-  socket.on("anglePush", function(angle){
-    var player = players[socket.id] || {};
-    player.angle = angle;
-  });
+socket.on("anglePush", function(angle){
+  var player = players[socket.id] || {};
+  player.angle = angle;
+});
 
   socket.on('movement', function(data, objectArray) {
     var player = players[socket.id] || {};
@@ -421,8 +409,8 @@ socket.on('startGameServer', function(){
 
     }
 
-    if (data.left && player.x>=10 && checkCollisionLeft(player, players, objectArray, 9) == false ) {
-      var packageValues = checkCollisionPackageLeft(player, itemboxes , 9);
+    if (data.left && player.x>=10 && collision.checkCollisionLeft(player, players, objectArray, 9) == false ) {
+      var packageValues = collision.checkCollisionPackageLeft(player, itemboxes , 9);
       if(packageValues[0] == true){
         addBoxItems(player, packageValues[1]);
       }
@@ -432,8 +420,8 @@ socket.on('startGameServer', function(){
         player.x -= 2;
       }
     }
-    if (data.up && player.y>=1 && checkCollisionUp(player, players, objectArray, 9) == false) {
-      var packageValues = checkCollisionPackageUp(player, itemboxes , 9);
+    if (data.up && player.y>=1 && collision.checkCollisionUp(player, players, objectArray, 9) == false) {
+      var packageValues = collision.checkCollisionPackageUp(player, itemboxes , 9);
       if(packageValues[0] == true){
         addBoxItems(player, packageValues[1]);
       }
@@ -443,8 +431,8 @@ socket.on('startGameServer', function(){
         player.y -= 2;
         }
     }
-    if (data.right && player.x<=630 && checkCollisionRight(player, players, objectArray, 9) == false) {
-      var packageValues = checkCollisionPackageRight(player, itemboxes , 9);
+    if (data.right && player.x<=630 && collision.checkCollisionRight(player, players, objectArray, 9) == false) {
+      var packageValues = collision.checkCollisionPackageRight(player, itemboxes , 9);
       if(packageValues[0] == true){
         addBoxItems(player, packageValues[1]);
       }
@@ -454,8 +442,8 @@ socket.on('startGameServer', function(){
         player.x += 2;
         }
     }
-    if (data.down && player.y<=630 && checkCollisionDown(player, players, objectArray, 9) == false) {
-      var packageValues = checkCollisionPackageDown(player, itemboxes , 9);
+    if (data.down && player.y<=630 && collision.checkCollisionDown(player, players, objectArray, 9) == false) {
+      var packageValues = collision.checkCollisionPackageDown(player, itemboxes , 9);
       if(packageValues[0] == true){
         addBoxItems(player, packageValues[1]);
       }
@@ -477,36 +465,36 @@ function addBoxItems (player, packageData){
 }
 
 //Maakt aan de hand van de meegegeven gegevens een bullet en stopt deze in een array.
-  socket.on('shoot-bullet', function(data, targetX, targetY){
-    var player = players[socket.id] || {};
-    if(players[socket.id] == undefined) return;
+socket.on('shoot-bullet', function(data, targetX, targetY){
+  var player = players[socket.id] || {};
+  if(players[socket.id] == undefined) return;
 
-    if(player.currentAmmo > 0){
-      player.currentAmmo -= 1
-      var newBullet = data;
-      if(targetX > player.x){
-        newBullet.x = player.x //+ 11
-      }
-      if(targetX < player.x){
-        newBullet.x = player.x //- 11
-      }
-      if(targetY > player.y){
-        newBullet.y = player.y //+ 11
-      }      
-      if(targetY < player.y){
-        newBullet.y = player.y //- 11
-      }
-      newBullet.targetX = targetX;
-      newBullet.targetY = targetY;
-      newBullet.comesFrom = player.name;
-      newBullet.damage = player.weapondamage
-      var bulletSpeed = calculateBulletSpeed(newBullet);
-      newBullet.xSpeed = bulletSpeed[0];
-      newBullet.ySpeed = bulletSpeed[1];
-      bullets.push(newBullet);
-      socket.emit('updatedAmmo', player.currentAmmo);
+  if(player.currentAmmo > 0){
+    player.currentAmmo -= 1
+    var newBullet = data;
+    if(targetX > player.x){
+      newBullet.x = player.x //+ 11
     }
-  })
+    if(targetX < player.x){
+      newBullet.x = player.x //- 11
+    }
+    if(targetY > player.y){
+      newBullet.y = player.y //+ 11
+    }      
+    if(targetY < player.y){
+      newBullet.y = player.y //- 11
+    }
+    newBullet.targetX = targetX;
+    newBullet.targetY = targetY;
+    newBullet.comesFrom = player.name;
+    newBullet.damage = player.weapondamage;
+    var bulletSpeed = calculateBulletSpeed(newBullet);
+    newBullet.xSpeed = bulletSpeed[0];
+    newBullet.ySpeed = bulletSpeed[1];
+    bullets.push(newBullet);
+    socket.emit('updatedAmmo', player.currentAmmo);
+  }
+});
 
   function addKiller(naam, bullets){
     for (var id in players) {
@@ -563,14 +551,14 @@ function addBoxItems (player, packageData){
          bullet.isHit = true
         }
 
-       if(bullet.x >= 0 && bullet.x <= 640 && checkCollisionLeft(bullet, {}, objectArray, 2) == false && checkCollisionRight(bullet, {}, objectArray, 2) == false){
+       if(bullet.x >= 0 && bullet.x <= 640 && collision.checkCollisionLeft(bullet, {}, objectArray, 2) == false && collision.checkCollisionRight(bullet, {}, objectArray, 2) == false){
         bullet.x += bullet.xSpeed
        }
        else {
         bullet.x = -10
       }
 
-      if(bullet.y >= 0 && bullet.y <= 640 && checkCollisionUp(bullet, {}, objectArray, 2) == false && checkCollisionDown(bullet, {}, objectArray, 2) == false){
+      if(bullet.y >= 0 && bullet.y <= 640 && collision.checkCollisionUp(bullet, {}, objectArray, 2) == false && collision.checkCollisionDown(bullet, {}, objectArray, 2) == false){
         bullet.y += bullet.ySpeed
       }
       else {
@@ -744,159 +732,6 @@ function getHighscore(){
       });
 
     });   
-}
-
-function checkCollisionRight(player, playerArray, objectArray, radius){
-  for(i=0; i<objectArray.length; i++){
-    if(objectArray[i].position == "vertical"){
-      if(player.x + radius >= objectArray[i].x && player.x + radius <= objectArray[i].x + objectArray[i].width){
-        if(player.y - radius <= objectArray[i].y && player.y + radius >= objectArray[i].y + objectArray[i].height || player.y - radius >= objectArray[i].y && player.y + radius <= objectArray[i].y + objectArray[i].height){ 
-          return true;
-        }
-        else if(player.y - radius >= objectArray[i].y && player.y - radius <= objectArray[i].y + objectArray[i].height || player.y + radius >= objectArray[i].y && player.y + radius <= objectArray[i].y + objectArray[i].height){
-          return true;
-        }
-      }
-    }
-  }
-  for(var id in playerArray){
-    var otherPlayer = playerArray[id];
-    if(otherPlayer.name == player.name){
-    }
-    else if(player.x + radius >= otherPlayer.x - radius && player.x + radius <= otherPlayer.x + radius){
-      if(player.y - radius <= otherPlayer.y + radius && player.y - radius >= otherPlayer.y - radius || player.y + radius >= otherPlayer.y - radius && player.y + radius <= otherPlayer.y + radius){
-        return true;
-      }
-    }
-  }
-  return false;
-}
-function checkCollisionPackageRight(player, objectArray, radius){
-  for(i=0; i<objectArray.length; i++){
-    if(player.x + radius >= objectArray[i][0] && player.x + radius <= objectArray[i][0] + objectArray[i][2]){
-      if(player.y - radius <= objectArray[i][1] && player.y + radius >= objectArray[i][1] + objectArray[i][3] || player.y - radius >= objectArray[i][1] && player.y + radius <= objectArray[i][1] + objectArray[i][3]){ 
-        return [true, objectArray[i]];
-      }
-      else if(player.y - radius >= objectArray[i][1] && player.y - radius <= objectArray[i][1] + objectArray[i][3] || player.y + radius >= objectArray[i][1] && player.y + radius <= objectArray[i][1] + objectArray[i][3]){
-        return [true, objectArray[i]];
-      }
-    }
-  }
-  return [false, null];
-}
-function checkCollisionDown(player, playerArray, objectArray, radius){
-  for(i=0; i<objectArray.length; i++){
-    if(objectArray[i].position == "horizontal"){
-      if(player.y + radius >= objectArray[i].y && player.y + radius <= objectArray[i].y + objectArray[i].height){
-        if(player.x - radius <= objectArray[i].x && player.x + radius >= objectArray[i].x + objectArray[i].width || player.x - radius >= objectArray[i].x && player.x + radius <= objectArray[i].x + objectArray[i].width){
-          return true;
-        }
-        else if(player.x - radius >= objectArray[i].x && player.x - radius <= objectArray[i].x + objectArray[i].width || player.x + radius >= objectArray[i].x && player.x + radius <= objectArray[i].x + objectArray[i].width){
-          return true;
-        }
-      }
-    }
-  }
-  for(var id in playerArray){
-    var otherPlayer = playerArray[id];
-    if(otherPlayer.name == player.name){
-    }
-    else if(player.y + radius >= otherPlayer.y - radius && player.y + radius <= otherPlayer.y + radius){
-      if(player.x - radius <= otherPlayer.x + radius && player.x - radius >= otherPlayer.x - radius || player.x + radius >= otherPlayer.x - radius && player.x + radius <= otherPlayer.x + radius){
-        return true;
-      }
-    }
-  }
-  return false;
-}
-function checkCollisionPackageDown(player, objectArray, radius){
-  for(i=0; i<objectArray.length; i++){
-    if(player.y + radius >= objectArray[i][1] && player.y + radius <= objectArray[i][1] + objectArray[i][3]){
-      if(player.x - radius <= objectArray[i][0] && player.x + radius >= objectArray[i][0] + objectArray[i][2] || player.x - radius >= objectArray[i][0] && player.x + radius <= objectArray[i][0] + objectArray[i][2]){
-        return [true, objectArray[i]];
-      }
-      else if(player.x - radius >= objectArray[i][0] && player.x - radius <= objectArray[i][0] + objectArray[i][2] || player.x + radius >= objectArray[i][0] && player.x + radius <= objectArray[i][0] + objectArray[i][2]){
-        return [true, objectArray[i]];
-      }
-    }
-  }
-  return [false, null];
-}
-function checkCollisionLeft(player, playerArray, objectArray, radius){
-  for(i=0; i<objectArray.length; i++){
-    if(objectArray[i].position == "vertical"){
-      if(player.x - radius >= objectArray[i].x && player.x - radius <= objectArray[i].x + objectArray[i].width){
-        if(player.y - radius >= objectArray[i].y && player.y + radius <= objectArray[i].y + objectArray[i].height || player.y - radius <= objectArray[i].y && player.y + radius >= objectArray[i].y + objectArray[i].height){
-          return true;
-        }
-        else if(player.y - radius >= objectArray[i].y && player.y - radius <= objectArray[i].y + objectArray[i].height || player.y + radius >= objectArray[i].y && player.y + radius <= objectArray[i].y + objectArray[i].height){
-          return true;
-        }
-      }
-    }
-  }
-  for(var id in playerArray){
-    var otherPlayer = playerArray[id];
-    if(otherPlayer.name == player.name){
-    }
-    else if(player.x - radius <= otherPlayer.x + radius && player.x - radius >= otherPlayer.x - radius){
-      if(player.y - radius <= otherPlayer.y + radius && player.y - radius >= otherPlayer.y - radius || player.y + radius >= otherPlayer.y - radius && player.y + radius <= otherPlayer.y + radius){
-        return true;
-      }
-    }
-  }
-  return false;
-}
-function checkCollisionPackageLeft(player, objectArray, radius){
-  for(i=0; i<objectArray.length; i++){
-    if(player.x - radius >= objectArray[i][0] && player.x - radius <= objectArray[i][0] + objectArray[i][2]){
-      if(player.y - radius >= objectArray[i][1] && player.y + radius <= objectArray[i][1] + objectArray[i][3] || player.y - radius <= objectArray[i][1] && player.y + radius >= objectArray[i][1] + objectArray[i][3]){
-        return [true, objectArray[i]];
-      }
-      else if(player.y - radius >= objectArray[i][1] && player.y - radius <= objectArray[i][1] + objectArray[i][3] || player.y + radius >= objectArray[i][1] && player.y + radius <= objectArray[i][1] + objectArray[i][3]){
-        return [true, objectArray[i]];
-      }
-    }
-  }
-  return [false, null];
-}
-function checkCollisionUp(player, playerArray, objectArray, radius){
-  for(i=0; i<objectArray.length; i++){
-    if(objectArray[i].position == "horizontal"){   
-      if(player.y - radius >= objectArray[i].y && player.y - radius <= objectArray[i].y + objectArray[i].height){
-        if(player.x - radius <= objectArray[i].x && player.x + radius >= objectArray[i].x + objectArray[i].width || player.x - radius >= objectArray[i].x && player.x + radius <= objectArray[i].x + objectArray[i].width){
-          return true;
-        }
-        else if(player.x - radius >= objectArray[i].x && player.x - radius <= objectArray[i].x + objectArray[i].width || player.x + radius >= objectArray[i].x && player.x + radius <= objectArray[i].x + objectArray[i].width){
-          return true;
-        }
-      }
-    }
-  }
-  for(var id in playerArray){
-    var otherPlayer = playerArray[id];
-    if(otherPlayer.name == player.name){
-    }
-    else if(player.y - radius <= otherPlayer.y + radius && player.y - radius >= otherPlayer.y - radius){
-      if(player.x - radius <= otherPlayer.x + radius && player.x - radius >= otherPlayer.x - radius || player.x + radius >= otherPlayer.x - radius && player.x + radius <= otherPlayer.x + radius){
-        return true;
-      }
-    }
-  }
-  return false;
-}
-function checkCollisionPackageUp(player, objectArray, radius){
-  for(i=0; i<objectArray.length; i++){
-    if(player.y - radius >= objectArray[i][1] && player.y - radius <= objectArray[i][1] + objectArray[i][3]){
-      if(player.x - radius <= objectArray[i][0] && player.x + radius >= objectArray[i][0] + objectArray[i][2] || player.x - radius >= objectArray[i][0] && player.x + radius <= objectArray[i][0] + objectArray[i][2]){
-        return [true, objectArray[i]];
-      }
-      else if(player.x - radius >= objectArray[i][0] && player.x - radius <= objectArray[i][0] + objectArray[i][2] || player.x + radius >= objectArray[i][0] && player.x + radius <= objectArray[i][0] + objectArray[i][2]){
-        return [true, objectArray[i]];
-      }
-    }
-  }
-  return [false, null];
 }
 
 function calculateBulletSpeed(bullet){
