@@ -334,7 +334,9 @@ socket.on('startGameServer', function(){
 socket.on('teamconfig', function(){
   io.emit('teamconfigReturn', teamconfig);
 });
-  
+socket.on('getHighscore', function(){
+  socket.emit('getHighscoreReturn', getHighscore());
+});  
 socket.on('connectedPeopleLobby', function(){
   var amountOfPlayers = playersInLobby.length;
   io.emit('connectedPeopleLobbyReturn', amountOfPlayers);
@@ -573,25 +575,44 @@ http.listen(3000, function(){
 
               
 
-// return complete highscore in een array, gesorteerd op de highscore en winscore.
+ //return complete highscore in een array, gesorteerd op de highscore en winscore.
 function getHighscore(){
     var MongoClient = require('mongodb').MongoClient;
     var url = "mongodb://localhost:27017/";
 
     MongoClient.connect(url, function(err, db) {
       if (err) throw err;
-      var dbo = db.db("mydb");
+      var dbo = db.db("mmodb");
       var sort = { highscore: 1, winscore: 1 };
-      dbo.collection("highscoretable2").find().sort(sort).toArray(function(err, result) {
-          if (err) throw err;
+      dbo.collection("highscoretable12").find().sort(sort).toArray(function(err, result) {
+        //  if (err) throw err;
+          highscore = result
           console.log(result);
-          db.close();
+         // db.close();
           return result
 
-      });
+//      });
 
-    });   
-}
+    });
+ })
+};   
+//function getHighscore() {
+//  return new Promise(function(resolve, reject) {
+//      var sort = { highscore: 1, winscore: 1 };
+//      var dbo = db.db("mmodb");
+//     dbo.collection("highscoretable12").find().sort(sort).toArray( function(err, docs) {
+//      if (err) {
+//        // Reject the Promise with an error
+//        return reject(err)
+//      }
+//
+//      // Resolve (or fulfill) the promise with data
+//      return resolve(docs)
+//    })
+//  })
+//}
+    
+
 
 function calculateBulletSpeed(bullet){
     var vx = bullet.targetX - bullet.x

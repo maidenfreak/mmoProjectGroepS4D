@@ -12,14 +12,28 @@
 
       <div id="test">
           <script>
+             
+socket.emit('getHighscore');
+socket.on("getHighscoreReturn", function (getHighscore) {
+//    for (var id in getHighscore){
+//        highscore.add(getHighscore[id]);
+//    }
+    var highscore = getHighscore;
+    console.log(highscore)
+    console.log("getHighscore")
+    /*var highscoreArray = highscore
+    console.log(highscoreArray)
+    console.log("highscoreArray")
+    var topTenArray = highscoreArray.slice(0, 9);
+    var indexPlayer = highscoreArray.findIndex(players[socket.id].name)
+    var playerInfo = highscoreArray.find(players[socket.id].name)
+    var html = makeTableHTML(topTenArray, indexPlayer, playerInfo)
+    console.log(html)
+    document.getElementById("test").innerHTML = html;
+    */
+});
               
 
-              
-//var highscoreArray = getHighcore()
-//var topTenArray = highscoreArray.slice(0, 9);
-//var indexPlayer = highscoreArray.findIndex(players[socket.id].name)
-//var playerInfo = highscoreArray.find(players[socket.id].name)
-//makeTableHTML(topTenArray, indexPlayer, playerInfo) 
 
 
               
