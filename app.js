@@ -1,5 +1,5 @@
 const express = require('express');
-const mongoose = require('mongoose');
+//const mongoose = require('mongoose');
 const app = express();
 const passport = require('passport');
 const flash = require('connect-flash');
@@ -9,7 +9,15 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
-
+const mongoose = require('mongoose')
+mongoose.connect('mongodb://localhost:27017/mmodb', {useNewUrlParser: true});
+const Schema = mongoose.Schema
+const highscoreSchema = new Schema({
+    name: {type: String, required: true, unique: true} ,
+    highscore: {type: Number, required: false, unique:false},
+    winscore: {type: Number, required: false, unique:false}
+})
+const newModel = mongoose.model('highscoretable12', highscoreSchema)
 var players = {};
 const playersInLobby = [];
 const itemboxes = [];
@@ -280,7 +288,10 @@ socket.on('new player', function( playertype, name) {
    function calculateWinner(){  
     if(swatscore  >= rebelsCount){
        // return "The SWAT unit has won the match with " + swatscore + " kills & " + rebelsCount + " deaths.";
-     updateHighscore()
+for (var id in players){
+    updateHighscore(players[id])
+}
+        
      
      swatCount = 0;
      rebelsCount = 0;
@@ -295,7 +306,10 @@ socket.on('new player', function( playertype, name) {
       }
       else if(rebelscore >= swatCount){
        // return "The rebel unit has won the match with " + rebelscore + " kills & " + swatCount + " deaths.";
-     updateHighscore()
+    for (var id in players){
+        updateHighscore(players[id])
+}
+     //updateHighscore()
      swatCount = 0;
      rebelsCount = 0;
      swatscore = 0;
@@ -565,53 +579,58 @@ function addBoxItems (player, packageData){
      }
    })
   
-function updateHighscore(){
+function updateHighscore(player){
     //in server.js
     
-const mongoose = require('mongoose')
-mongoose.connect('mongodb://localhost:27017/mmodb', {useNewUrlParser: true});
-const Schema = mongoose.Schema
-const highscoreSchema = new Schema({
-    name: {type: String, required: true, unique: true} ,
-    highscore: {type: Number, required: false, unique:false},
-    winscore: {type: Number, required: false, unique:false}
-})
-const newModel = mongoose.model('highscoretable11', highscoreSchema)
+//const mongoose = require('mongoose')
+//mongoose.connect('mongodb://localhost:27017/mmodb', {useNewUrlParser: true});
+//const Schema = mongoose.Schema
+//const highscoreSchema = new Schema({
+//    name: {type: String, required: true, unique: true} ,
+//    highscore: {type: Number, required: false, unique:false},
+//    winscore: {type: Number, required: false, unique:false}
+//})
+//const newModel = mongoose.model('highscoretable12', highscoreSchema)
 
-for (var i in players) {
-   var currentPlayer = players[i]
+//for (var i in players) {
+   var currentPlayer = player
     //console.log("currentplayer" + currentPlayer.score)
     //newModel.find({ name: currentPlayer.name}, function (err, docs) {
     //console.log(!newModel.find({ name: currentPlayer.name}))
-   var newmodule
-        if (!(newModel.find({ name: currentPlayer.name}))){
-            const newDocument = newModel({name: currentPlayer.name, highscore: currentPlayer.score, winscore: currentPlayer.win})
-            console.log("1 document inserted");
-            newDocument.save()
-       // }
-        }else{
-            //var currentPlayer = docs
+    //var testquery = newModel.find({ name: currentPlayer.name})
+   newModel.find({name: currentPlayer.name},function(err, doc) {
+        if (doc.length){
             console.log(currentPlayer.score)
-            var objectPlayer = newModel.find({ name: currentPlayer.name})
+            //var objectPlayer = newModel.find({ name: currentPlayer.name})
           //  console.log(objectPlayer)
           //  newModel.findOne({name: currentPlayer.name},function(err, doc) {
              //   console.log(doc)
   //doc = the first (!!!) doc that have question in his `question` attribute 
 
-            var newHighscore = objectPlayer.highscore + currentPlayer.score
-            console.log("doc" + objectPlayer.highscore)
-            console.log("currentplayer" + currentPlayer.score)
-            console.log(newHighscore)
-            var newWinscore = objectPlayer.winscore + currentPlayer.win
-            console.log(newWinscore)
+            var newHighscore = doc[0].highscore + currentPlayer.score
+            var newWinscore = doc[0].winscore + currentPlayer.win
+            //console.log("doc" + doc.highscore)
+            //console.log("currentplayer" + currentPlayer.score)
+            //console.log(newHighscore)
+            
+           // console.log(newWinscore)
             newModel.updateOne({ name: currentPlayer.name }, { $set: {  highscore: newHighscore, winscore: newWinscore } })
             console.log("1 document updated");
+            
+       // }
+        }else{
+            const newDocument = newModel({name: currentPlayer.name, highscore: currentPlayer.score, winscore: currentPlayer.win})
+            console.log("1 document inserted");
+            newDocument.save()
+            //var currentPlayer = docs
+            
 //           
   //  }
     //) 
 }
  }
-}
+)}
+                   // }
 //}
   //  )
  // }
