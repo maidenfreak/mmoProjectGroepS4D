@@ -283,11 +283,31 @@ socket.on('new player', function( playertype, name) {
             return myArr;    
          }     
 
-function calculateWinner(){  
-    if(swatscore  >= rebelsCount || rebelscore >= swatCount ){
+function calculateWinner(){
+  //var winscore = 0  
+    if(swatscore  >= rebelsCount){
        // return "The SWAT unit has won the match with " + swatscore + " kills & " + rebelsCount + " deaths.";
-    for (var id in players){
-        updateHighscore(players[id])
+      for (var id in players){
+        if(players[id].teamname == "swat"){
+          players[id].win = 1
+        }
+      updateHighscore(players[id])
+    }
+     swatCount = 0;
+     rebelsCount = 0;
+     swatscore = 0;
+     rebelscore = 0;
+     itemboxes.length = 0;
+     io.emit('endOfGame');
+     delete players[socket.id];
+    }
+
+    if(rebelscore >= swatCount){
+      for (var id in players){
+        if(players[id].teamname == "rebels"){
+          players[id].win = 1        
+        }
+      updateHighscore(players[id])
     }
      swatCount = 0;
      rebelsCount = 0;
