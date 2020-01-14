@@ -354,7 +354,7 @@ socket.on('startGameServer', function(){
 });
 
 socket.on('teamconfig', function(){
-  io.emit('teamconfigReturn', teamconfig);
+  socket.emit('teamconfigReturn', teamconfig);
 });
   
 socket.on('connectedPeopleLobby', function(){
