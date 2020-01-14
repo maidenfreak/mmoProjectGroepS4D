@@ -394,64 +394,58 @@ socket.on("anglePush", function(angle){
   player.angle = angle;
 });
 
-  socket.on('movement', function(data, objectArray) {
-    var player = players[socket.id] || {};
-
-    if(player.hp <= 0){
-      player.x = -30
-      player.y = -30
-      player.isDead = true
-
-      //calculateWinner()
-
-
+socket.on('movement', function(data, objectArray) {
+  var player = players[socket.id] || {};
+  if(player.hp <= 0){
+    player.x = -30;
+    player.y = -30;
+    player.isDead = true;
+  }
+  if (data.left && player.x>=10 && collision.checkCollisionLeft(player, players, objectArray, 9) == false ) {
+    var packageValues = collision.checkCollisionPackageLeft(player, itemboxes , 9);
+    if(packageValues[0] == true){
+      addBoxItems(player, packageValues[1]);
     }
-
-    if (data.left && player.x>=10 && collision.checkCollisionLeft(player, players, objectArray, 9) == false ) {
-      var packageValues = collision.checkCollisionPackageLeft(player, itemboxes , 9);
-      if(packageValues[0] == true){
-        addBoxItems(player, packageValues[1]);
-      }
-      if(data.up || data.down){
-        player.x-=1.41
-      } else {
-        player.x -= 2;
-      }
+    if(data.up || data.down){
+      player.x-=1.41;
+    } else {
+      player.x -= 2;
     }
-    if (data.up && player.y>=1 && collision.checkCollisionUp(player, players, objectArray, 9) == false) {
-      var packageValues = collision.checkCollisionPackageUp(player, itemboxes , 9);
-      if(packageValues[0] == true){
-        addBoxItems(player, packageValues[1]);
-      }
-      if(data.left || data.right){
-        player.y-=1.41}
-        else{
-        player.y -= 2;
-        }
+  }
+  if (data.up && player.y>=11 && collision.checkCollisionUp(player, players, objectArray, 9) == false) {
+    var packageValues = collision.checkCollisionPackageUp(player, itemboxes , 9);
+    if(packageValues[0] == true){
+      addBoxItems(player, packageValues[1]);
     }
-    if (data.right && player.x<=630 && collision.checkCollisionRight(player, players, objectArray, 9) == false) {
-      var packageValues = collision.checkCollisionPackageRight(player, itemboxes , 9);
-      if(packageValues[0] == true){
-        addBoxItems(player, packageValues[1]);
-      }
-      if(data.up || data.down){
-        player.x+=1.41}
-        else{
-        player.x += 2;
-        }
+    if(data.left || data.right){
+      player.y-=1.41;
+    } else {
+      player.y -= 2;
     }
-    if (data.down && player.y<=630 && collision.checkCollisionDown(player, players, objectArray, 9) == false) {
-      var packageValues = collision.checkCollisionPackageDown(player, itemboxes , 9);
-      if(packageValues[0] == true){
-        addBoxItems(player, packageValues[1]);
-      }
-      if(data.left || data.right){
-        player.y+=1.41}
-        else{
-        player.y += 2;
-        }
+  }
+  if (data.right && player.x<=630 && collision.checkCollisionRight(player, players, objectArray, 9) == false) {
+    var packageValues = collision.checkCollisionPackageRight(player, itemboxes , 9);
+    if(packageValues[0] == true){
+      addBoxItems(player, packageValues[1]);
     }
-  });
+    if(data.up || data.down){
+      player.x+=1.41;
+    } else {
+      player.x += 2;
+    }
+  }
+  if (data.down && player.y<=630 && collision.checkCollisionDown(player, players, objectArray, 9) == false) {
+    var packageValues = collision.checkCollisionPackageDown(player, itemboxes , 9);
+    if(packageValues[0] == true){
+      addBoxItems(player, packageValues[1]);
+    }
+    if(data.left || data.right){
+      player.y+=1.41;
+    } else {
+      player.y += 2;
+    }
+  }
+});
 
 function addBoxItems (player, packageData){
   if(packageData[5] == 0){
