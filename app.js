@@ -354,7 +354,9 @@ socket.on('startGameServer', function(){
 socket.on('teamconfig', function(){
   socket.emit('teamconfigReturn', teamconfig);
 });
-  
+socket.on('getHighscore', function(){
+  getHighscore();
+});  
 socket.on('connectedPeopleLobby', function(){
   var amountOfPlayers = playersInLobby.length;
   io.emit('connectedPeopleLobbyReturn', amountOfPlayers);
@@ -395,64 +397,58 @@ socket.on("anglePush", function(angle){
   player.angle = angle;
 });
 
-  socket.on('movement', function(data, objectArray) {
-    var player = players[socket.id] || {};
-
-    if(player.hp <= 0){
-      player.x = -30
-      player.y = -30
-      player.isDead = true
-
-      //calculateWinner()
-
-
+socket.on('movement', function(data, objectArray) {
+  var player = players[socket.id] || {};
+  if(player.hp <= 0){
+    player.x = -30;
+    player.y = -30;
+    player.isDead = true;
+  }
+  if (data.left && player.x>=10 && collision.checkCollisionLeft(player, players, objectArray, 9) == false ) {
+    var packageValues = collision.checkCollisionPackageLeft(player, itemboxes , 9);
+    if(packageValues[0] == true){
+      addBoxItems(player, packageValues[1]);
     }
-
-    if (data.left && player.x>=10 && collision.checkCollisionLeft(player, players, objectArray, 9) == false ) {
-      var packageValues = collision.checkCollisionPackageLeft(player, itemboxes , 9);
-      if(packageValues[0] == true){
-        addBoxItems(player, packageValues[1]);
-      }
-      if(data.up || data.down){
-        player.x-=1.41
-      } else {
-        player.x -= 2;
-      }
+    if(data.up || data.down){
+      player.x-=1.41;
+    } else {
+      player.x -= 2;
     }
-    if (data.up && player.y>=1 && collision.checkCollisionUp(player, players, objectArray, 9) == false) {
-      var packageValues = collision.checkCollisionPackageUp(player, itemboxes , 9);
-      if(packageValues[0] == true){
-        addBoxItems(player, packageValues[1]);
-      }
-      if(data.left || data.right){
-        player.y-=1.41}
-        else{
-        player.y -= 2;
-        }
+  }
+  if (data.up && player.y>=11 && collision.checkCollisionUp(player, players, objectArray, 9) == false) {
+    var packageValues = collision.checkCollisionPackageUp(player, itemboxes , 9);
+    if(packageValues[0] == true){
+      addBoxItems(player, packageValues[1]);
     }
-    if (data.right && player.x<=630 && collision.checkCollisionRight(player, players, objectArray, 9) == false) {
-      var packageValues = collision.checkCollisionPackageRight(player, itemboxes , 9);
-      if(packageValues[0] == true){
-        addBoxItems(player, packageValues[1]);
-      }
-      if(data.up || data.down){
-        player.x+=1.41}
-        else{
-        player.x += 2;
-        }
+    if(data.left || data.right){
+      player.y-=1.41;
+    } else {
+      player.y -= 2;
     }
-    if (data.down && player.y<=630 && collision.checkCollisionDown(player, players, objectArray, 9) == false) {
-      var packageValues = collision.checkCollisionPackageDown(player, itemboxes , 9);
-      if(packageValues[0] == true){
-        addBoxItems(player, packageValues[1]);
-      }
-      if(data.left || data.right){
-        player.y+=1.41}
-        else{
-        player.y += 2;
-        }
+  }
+  if (data.right && player.x<=630 && collision.checkCollisionRight(player, players, objectArray, 9) == false) {
+    var packageValues = collision.checkCollisionPackageRight(player, itemboxes , 9);
+    if(packageValues[0] == true){
+      addBoxItems(player, packageValues[1]);
     }
-  });
+    if(data.up || data.down){
+      player.x+=1.41;
+    } else {
+      player.x += 2;
+    }
+  }
+  if (data.down && player.y<=630 && collision.checkCollisionDown(player, players, objectArray, 9) == false) {
+    var packageValues = collision.checkCollisionPackageDown(player, itemboxes , 9);
+    if(packageValues[0] == true){
+      addBoxItems(player, packageValues[1]);
+    }
+    if(data.left || data.right){
+      player.y+=1.41;
+    } else {
+      player.y += 2;
+    }
+  }
+});
 
 function addBoxItems (player, packageData){
   if(packageData[5] == 0){
@@ -580,6 +576,31 @@ function updateHighscore(player){
     }
   })
  }
+
+//return complete highscore in een array, gesorteerd op de highscore en winscore.
+  function getHighscore(){
+    var MongoClient = require('mongodb').MongoClient;
+    var url = "mongodb://localhost:27017/";
+    var arrayName = [];
+    var arrayHighscore = [];
+    var arrayWinscore = [];
+
+    MongoClient.connect(url, function(err, db) {
+      if (err) throw err;
+      var dbo = db.db("mmodb");
+      var sort = { highscore: 1, winscore: 1 };
+
+      dbo.collection("highscoretable12").find().sort(sort).toArray(function(err, result) {
+        for(var x in result){
+          arrayName.push (result[x].name);
+          arrayWinscore.push (result[x].winscore);
+          arrayHighscore.push(result[x].highscore);
+        }
+        socket.emit('getHighscoreReturn', result);
+        db.close(); 
+      });
+    });
+  };  
 });
 
 setInterval(function() {
@@ -594,25 +615,24 @@ http.listen(3000, function(){
 
               
 
-// return complete highscore in een array, gesorteerd op de highscore en winscore.
-function getHighscore(){
-    var MongoClient = require('mongodb').MongoClient;
-    var url = "mongodb://localhost:27017/";
+ 
+//function getHighscore() {
+//  return new Promise(function(resolve, reject) {
+//      var sort = { highscore: 1, winscore: 1 };
+//      var dbo = db.db("mmodb");
+//     dbo.collection("highscoretable12").find().sort(sort).toArray( function(err, docs) {
+//      if (err) {
+//        // Reject the Promise with an error
+//        return reject(err)
+//      }
+//
+//      // Resolve (or fulfill) the promise with data
+//      return resolve(docs)
+//    })
+//  })
+//}
+    
 
-    MongoClient.connect(url, function(err, db) {
-      if (err) throw err;
-      var dbo = db.db("mydb");
-      var sort = { highscore: 1, winscore: 1 };
-      dbo.collection("highscoretable2").find().sort(sort).toArray(function(err, result) {
-          if (err) throw err;
-          console.log(result);
-          db.close();
-          return result
-
-      });
-
-    });   
-}
 
 function calculateBulletSpeed(bullet){
     var vx = bullet.targetX - bullet.x
