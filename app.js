@@ -262,7 +262,7 @@ socket.on('new player', function( playertype, name) {
   if(playertype == "militant"){players[socket.id] = new militant(socket.id, name)}
   else if(playertype == "guerrilla"){players[socket.id] = new guerrilla(socket.id, name)}
   else if(playertype == "vigilante"){players[socket.id] = new vigilante(socket.id, name)}
-  else if(playertype == "seperatist"){players[socket.id] = new seperatist(socket.id, name)}
+  else if(playertype == "separatist"){players[socket.id] = new separatist(socket.id, name)}
   else if(playertype == "grenadier"){players[socket.id] = new grenadier(socket.id, name)}
   else if(playertype == "breacher"){players[socket.id] = new breacher(socket.id, name)}
   else if(playertype == "observer"){players[socket.id] = new observer(socket.id, name)}
@@ -283,11 +283,31 @@ socket.on('new player', function( playertype, name) {
             return myArr;    
          }     
 
-function calculateWinner(){  
-    if(swatscore  >= rebelsCount || rebelscore >= swatCount ){
+function calculateWinner(){
+  //var winscore = 0  
+    if(swatscore  >= rebelsCount){
        // return "The SWAT unit has won the match with " + swatscore + " kills & " + rebelsCount + " deaths.";
-    for (var id in players){
-        updateHighscore(players[id])
+      for (var id in players){
+        if(players[id].teamname == "swat"){
+          players[id].win = 1
+        }
+      updateHighscore(players[id])
+    }
+     swatCount = 0;
+     rebelsCount = 0;
+     swatscore = 0;
+     rebelscore = 0;
+     itemboxes.length = 0;
+     io.emit('endOfGame');
+     delete players[socket.id];
+    }
+
+    if(rebelscore >= swatCount){
+      for (var id in players){
+        if(players[id].teamname == "rebels"){
+          players[id].win = 1        
+        }
+      updateHighscore(players[id])
     }
      swatCount = 0;
      rebelsCount = 0;
@@ -332,7 +352,7 @@ socket.on('startGameServer', function(){
 });
 
 socket.on('teamconfig', function(){
-  io.emit('teamconfigReturn', teamconfig);
+  socket.emit('teamconfigReturn', teamconfig);
 });
 socket.on('getHighscore', function(){
   socket.emit('getHighscoreReturn', getHighscore());
@@ -376,64 +396,58 @@ socket.on("anglePush", function(angle){
   player.angle = angle;
 });
 
-  socket.on('movement', function(data, objectArray) {
-    var player = players[socket.id] || {};
-
-    if(player.hp <= 0){
-      player.x = -30
-      player.y = -30
-      player.isDead = true
-
-      //calculateWinner()
-
-
+socket.on('movement', function(data, objectArray) {
+  var player = players[socket.id] || {};
+  if(player.hp <= 0){
+    player.x = -30;
+    player.y = -30;
+    player.isDead = true;
+  }
+  if (data.left && player.x>=10 && collision.checkCollisionLeft(player, players, objectArray, 9) == false ) {
+    var packageValues = collision.checkCollisionPackageLeft(player, itemboxes , 9);
+    if(packageValues[0] == true){
+      addBoxItems(player, packageValues[1]);
     }
-
-    if (data.left && player.x>=10 && collision.checkCollisionLeft(player, players, objectArray, 9) == false ) {
-      var packageValues = collision.checkCollisionPackageLeft(player, itemboxes , 9);
-      if(packageValues[0] == true){
-        addBoxItems(player, packageValues[1]);
-      }
-      if(data.up || data.down){
-        player.x-=1.41
-      } else {
-        player.x -= 2;
-      }
+    if(data.up || data.down){
+      player.x-=1.41;
+    } else {
+      player.x -= 2;
     }
-    if (data.up && player.y>=1 && collision.checkCollisionUp(player, players, objectArray, 9) == false) {
-      var packageValues = collision.checkCollisionPackageUp(player, itemboxes , 9);
-      if(packageValues[0] == true){
-        addBoxItems(player, packageValues[1]);
-      }
-      if(data.left || data.right){
-        player.y-=1.41}
-        else{
-        player.y -= 2;
-        }
+  }
+  if (data.up && player.y>=11 && collision.checkCollisionUp(player, players, objectArray, 9) == false) {
+    var packageValues = collision.checkCollisionPackageUp(player, itemboxes , 9);
+    if(packageValues[0] == true){
+      addBoxItems(player, packageValues[1]);
     }
-    if (data.right && player.x<=630 && collision.checkCollisionRight(player, players, objectArray, 9) == false) {
-      var packageValues = collision.checkCollisionPackageRight(player, itemboxes , 9);
-      if(packageValues[0] == true){
-        addBoxItems(player, packageValues[1]);
-      }
-      if(data.up || data.down){
-        player.x+=1.41}
-        else{
-        player.x += 2;
-        }
+    if(data.left || data.right){
+      player.y-=1.41;
+    } else {
+      player.y -= 2;
     }
-    if (data.down && player.y<=630 && collision.checkCollisionDown(player, players, objectArray, 9) == false) {
-      var packageValues = collision.checkCollisionPackageDown(player, itemboxes , 9);
-      if(packageValues[0] == true){
-        addBoxItems(player, packageValues[1]);
-      }
-      if(data.left || data.right){
-        player.y+=1.41}
-        else{
-        player.y += 2;
-        }
+  }
+  if (data.right && player.x<=630 && collision.checkCollisionRight(player, players, objectArray, 9) == false) {
+    var packageValues = collision.checkCollisionPackageRight(player, itemboxes , 9);
+    if(packageValues[0] == true){
+      addBoxItems(player, packageValues[1]);
     }
-  });
+    if(data.up || data.down){
+      player.x+=1.41;
+    } else {
+      player.x += 2;
+    }
+  }
+  if (data.down && player.y<=630 && collision.checkCollisionDown(player, players, objectArray, 9) == false) {
+    var packageValues = collision.checkCollisionPackageDown(player, itemboxes , 9);
+    if(packageValues[0] == true){
+      addBoxItems(player, packageValues[1]);
+    }
+    if(data.left || data.right){
+      player.y+=1.41;
+    } else {
+      player.y += 2;
+    }
+  }
+});
 
 function addBoxItems (player, packageData){
   if(packageData[5] == 0){
