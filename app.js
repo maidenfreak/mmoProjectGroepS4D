@@ -280,7 +280,7 @@ socket.on('new player', function( playertype, name) {
    function calculateWinner(){  
     if(swatscore  >= rebelsCount){
        // return "The SWAT unit has won the match with " + swatscore + " kills & " + rebelsCount + " deaths.";
-     //updateHighscore()
+     updateHighscore()
      
      swatCount = 0;
      rebelsCount = 0;
@@ -295,7 +295,7 @@ socket.on('new player', function( playertype, name) {
       }
       else if(rebelscore >= swatCount){
        // return "The rebel unit has won the match with " + rebelscore + " kills & " + swatCount + " deaths.";
-     //updateHighscore()
+     updateHighscore()
      swatCount = 0;
      rebelsCount = 0;
      swatscore = 0;
@@ -576,36 +576,43 @@ const highscoreSchema = new Schema({
     highscore: {type: Number, required: false, unique:false},
     winscore: {type: Number, required: false, unique:false}
 })
-const newModel = mongoose.model('highscoretable9', highscoreSchema)
+const newModel = mongoose.model('highscoretable11', highscoreSchema)
 
 for (var i in players) {
-    currentPlayer = players[i]
-    console.log("currentplayer" + currentPlayer.score)
+   var currentPlayer = players[i]
+    //console.log("currentplayer" + currentPlayer.score)
     //newModel.find({ name: currentPlayer.name}, function (err, docs) {
+    //console.log(!newModel.find({ name: currentPlayer.name}))
+   var newmodule
         if (!(newModel.find({ name: currentPlayer.name}))){
             const newDocument = newModel({name: currentPlayer.name, highscore: currentPlayer.score, winscore: currentPlayer.win})
             console.log("1 document inserted");
             newDocument.save()
+       // }
         }else{
             //var currentPlayer = docs
-            //console.log(currentPlayer.score)
-            //var objectPlayer = newModel.find({ name: currentPlayer.name})
+            console.log(currentPlayer.score)
+            var objectPlayer = newModel.find({ name: currentPlayer.name})
           //  console.log(objectPlayer)
-            newModel.findOne({name: currentPlayer.name},function(err, doc) {
-                console.log(doc)
+          //  newModel.findOne({name: currentPlayer.name},function(err, doc) {
+             //   console.log(doc)
   //doc = the first (!!!) doc that have question in his `question` attribute 
 
-            var newHighscore = doc.highscore + currentPlayer.score
-            console.log("doc" + doc.highscore)
+            var newHighscore = objectPlayer.highscore + currentPlayer.score
+            console.log("doc" + objectPlayer.highscore)
             console.log("currentplayer" + currentPlayer.score)
             console.log(newHighscore)
-            var newWinscore = doc.winscore + currentPlayer.win
+            var newWinscore = objectPlayer.winscore + currentPlayer.win
             console.log(newWinscore)
             newModel.updateOne({ name: currentPlayer.name }, { $set: {  highscore: newHighscore, winscore: newWinscore } })
             console.log("1 document updated");
-           
-                          }) }
-        }}
+//           
+  //  }
+    //) 
+}
+ }
+}
+//}
   //  )
  // }
 //}
