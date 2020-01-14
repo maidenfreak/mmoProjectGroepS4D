@@ -283,44 +283,22 @@ socket.on('new player', function( playertype, name) {
             return myArr;    
          }     
 
-   function calculateWinner(){  
-    if(swatscore  >= rebelsCount){
+function calculateWinner(){  
+    if(swatscore  >= rebelsCount || rebelscore >= swatCount ){
        // return "The SWAT unit has won the match with " + swatscore + " kills & " + rebelsCount + " deaths.";
-for (var id in players){
-    updateHighscore(players[id])
-}
-        
-     
-     swatCount = 0;
-     rebelsCount = 0;
-     swatscore = 0;
-     rebelscore = 0;
-     itemboxes.length = 0;
-//     $(function () {
-//     location.assign('/highscore');
-//      });
-          io.emit('endOfGame');
-          delete players[socket.id];
-      }
-      else if(rebelscore >= swatCount){
-       // return "The rebel unit has won the match with " + rebelscore + " kills & " + swatCount + " deaths.";
     for (var id in players){
         updateHighscore(players[id])
-}
-     //updateHighscore()
+    }
      swatCount = 0;
      rebelsCount = 0;
      swatscore = 0;
      rebelscore = 0;
      itemboxes.length = 0;
-//     $(function () {
-//     location.assign('/highscore');
-//      });
-          io.emit('endOfGame');   
-          delete players[socket.id];
-      }
+     io.emit('endOfGame');
+     delete players[socket.id];
     }
-//  }
+}
+
    
 
       
