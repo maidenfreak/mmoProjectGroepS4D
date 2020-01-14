@@ -35,6 +35,7 @@ socket.on('playerteam', function(player){
             var innerDiv = document.createElement('div');
             innerDiv.id = 'bullet';
             iDiv.appendChild(innerDiv);
+            
         }
         eenmaalUitvoeren = true;
     }
