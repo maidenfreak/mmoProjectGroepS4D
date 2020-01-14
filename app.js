@@ -384,6 +384,7 @@ socket.on('playerLobby', function(playername, joined){
 socket.on('disconnect', function(){
   delete players[socket.id];
   endGame();
+  calculateWinner();
 });
 
 socket.on('leaveGame', function(){
