@@ -284,7 +284,7 @@ socket.on('new player', function( playertype, name) {
          }     
 
 function calculateWinner(){
-  //var winscore = 0  
+  //var winscore = 0
     if(swatscore  >= rebelsCount){
        // return "The SWAT unit has won the match with " + swatscore + " kills & " + rebelsCount + " deaths.";
       for (var id in players){
@@ -384,6 +384,7 @@ socket.on('playerLobby', function(playername, joined){
 socket.on('disconnect', function(){
   delete players[socket.id];
   endGame();
+  //calculateWinner();
 });
 
 socket.on('leaveGame', function(){
@@ -595,7 +596,7 @@ function updateHighscore(player){
           arrayWinscore.push (result[x].winscore);
           arrayHighscore.push(result[x].highscore);
         }
-        socket.emit('getHighscoreReturn', result);
+        socket.emit('getHighscoreReturn', arrayName, arrayHighscore, arrayWinscore);
         db.close(); 
       });
     });
