@@ -596,7 +596,7 @@ function updateHighscore(player){
           arrayWinscore.push (result[x].winscore);
           arrayHighscore.push(result[x].highscore);
         }
-        socket.emit('getHighscoreReturn', result);
+        socket.emit('getHighscoreReturn', arrayName, arrayHighscore, arrayWinscore);
         db.close(); 
       });
     });
