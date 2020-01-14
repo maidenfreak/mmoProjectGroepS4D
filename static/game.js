@@ -123,7 +123,6 @@ function shootBullet(event){
   var x = values[0];
   var y = values[1];
   var coords = "x" + x + "y" + y;
-  console.log(coords);
   socket.emit('shoot-bullet', {x: 300, y: 300, speedY: 5, isHit: false, damage: 0},x,y); 
 }
 
@@ -190,8 +189,13 @@ socket.on('state', function(players, bullets, itemboxes) {
 
   //for loop die de itemboxes tekent op het canvas
   for(i=0; i<itemboxes.length; i++){
-    var ammobox = document.getElementById("ammobox")
-    context.drawImage(ammobox,itemboxes[i][0],itemboxes[i][1]);
+    var ammobox = document.getElementById("ammobox");
+    var healthbox = document.getElementById("healthbox");
+    if(itemboxes[i][5] == 0){
+      context.drawImage(ammobox,itemboxes[i][0],itemboxes[i][1]);
+    }else if(itemboxes[i][5] == 1){
+      context.drawImage(healthbox, itemboxes[i][0], itemboxes[i][1]);
+    }
   }
 
   //for loop die de rooms tekent op het canvas
@@ -232,9 +236,6 @@ function checkRoom(players, roomsArray){
     }
   }
 }
-
-/*let itemBox1 = new itemBox("itemBox1", 0, 0, 20, 25);
-let itemBox2 = new itemBox("itemBox2", 0, 0, 20, 25);*/
 
 //alle objecten die worden getekend.
 let wall1 = new object("wall1", 160, 0, 2, 25); wall1.pushToArray();
