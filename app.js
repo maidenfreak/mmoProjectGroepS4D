@@ -151,8 +151,8 @@ class rebels extends character {
                 this.weapondamage = 30;
                 this.isDead = false;
                 this.score = 0;
-                this.maxAmmo = 20;
-                this.currentAmmo = 20;
+                this.maxAmmo = 25;
+                this.currentAmmo = 25;
                 this.classname = "Vigilante";
                 this.fireRate = 100;
             }        }
@@ -167,8 +167,8 @@ class rebels extends character {
                 this.weapondamage = 20;
                 this.isDead = false;
                 this.score = 0;
-                this.maxAmmo = 20;
-                this.currentAmmo = 20;
+                this.maxAmmo = 30;
+                this.currentAmmo = 30;
                 this.classname = "Separatist"; 
                 this.fireRate = 0;
             }        }
