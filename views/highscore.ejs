@@ -21,8 +21,10 @@ th {
   background-color: #11114f;
   color: white;
 }
-highscore{
+
+    #highscore{
         padding:20px;
+        margin: 20px;
     }   
 </style>
 <body>
@@ -32,7 +34,6 @@ highscore{
         
       <h1>Highscore Ninbo</h1>
 
-      <div id="test">
           <div id="highscore">
           <script>
            var playername='<%= name %>';
@@ -66,7 +67,7 @@ function getIndexPlayer(nameArray){
     
     var html = makeTableHTML(topTenNameArray, topTenHighArray, topTenWinArray, indexNumber, nameArray, highArray, winArray)//, indexPlayer, playerInfo)
     console.log(html)
-    document.getElementById("test").innerHTML = html;
+    document.getElementById("highscore").innerHTML = html;
     
 });
               
@@ -132,7 +133,7 @@ function makeTableHTML(nameArray, highArray, winArray, indexNumber, namePlayerAr
 //          db.close();
 //        if(result.length){              
           </script>
-      </div>
+     
       
 </div>
     </div>
