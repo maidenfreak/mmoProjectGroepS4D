@@ -12,36 +12,60 @@
 
       <div id="test">
           <script>
+           var playername='<%= name %>';  
+socket.emit('getHighscore');
+socket.on("getHighscoreReturn", function (nameArray, highArray, winArray) {
+    
+    console.log(nameArray);
+    //console.log(highscoreArray);
+    //console.log(winscoreArray);
+    var highscoreArray = nameArray
+    console.log(highscoreArray)
+    console.log("highscoreArray")
+    var topTenNameArray = nameArray.slice(0, 9);
+    var topTenHighArray = highArray.slice(0, 9);
+    var topTenWinArray = winArray.slice(0, 9);
+    //var playerInfo = highscoreArray.find(playername)
+   // var indexPlayer = highscoreArray.findIndex(playername)
+    
+    var html = makeTableHTML(topTenNameArray, topTenHighArray, topTenWinArray)//, indexPlayer, playerInfo)
+    console.log(html)
+    document.getElementById("test").innerHTML = html;
+    
+});
               
 
-              
-//var highscoreArray = getHighcore()
-//var topTenArray = highscoreArray.slice(0, 9);
-//var indexPlayer = highscoreArray.findIndex(players[socket.id].name)
-//var playerInfo = highscoreArray.find(players[socket.id].name)
-//makeTableHTML(topTenArray, indexPlayer, playerInfo) 
 
 
               
-function makeTableHTML(myArray, playerIndex, playerInfo) {
+function makeTableHTML(nameArray, highArray, winArray) { //, playerIndex, playerInfo) {
+//    var result = "<table border=1>";
+//    for(var i=0; i<myArray.length; i++) {
+//        result += "<tr>";
+//        result += "<td>" +i +"</td>";
+//        for(var j=0; j<myArray[i].length; j++){
+//            result += "<td>"+myArray[i][j]+"</td>";
+//        }
+//        result += "</tr>";
+//    }
     var result = "<table border=1>";
-    for(var i=0; i<myArray.length; i++) {
-        result += "<tr>";
-        result += "<td>" +i +1 +"</td>";
-        for(var j=0; j<myArray[i].length; j++){
-            result += "<td>"+myArray[i][j]+"</td>";
-        }
-        result += "</tr>";
-    }
-    if(!myArray.find(player)){
-        result += "<tr>";
-        result += "<td>" +playerIndex+"</td>";
-        result += "<td>" +playerInfo[0]+"</td>";
-        result += "<td>" +playerInfo[1]+"</td>";
-        result += "<td>" +playerInfo[2]+"</td>";
-        result += "</tr>";
-    }
-    result += "</table>";
+   for(var i=0; i<nameArray.length; i++) { 
+       result += "<tr>";
+        result += "<td>" +i +"</td>";
+       result += "<td>"+nameArray[i]+"</td>";
+       result += "<td>"+highArray[i]+"</td>";
+       result += "<td>"+winArray[i]+"</td>";
+       result += "</tr>";
+   }
+//    if(!myArray.find(player)){
+//        result += "<tr>";
+//        result += "<td>" +playerInfo[0]+"</td>";
+//        result += "<td>" +playerInfo[0]+"</td>";
+//        result += "<td>" +playerInfo[1]+"</td>";
+//        result += "<td>" +playerInfo[2]+"</td>";
+//        result += "</tr>";
+//    }
+//    result += "</table>";
 
     return result;
 }

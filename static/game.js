@@ -3,6 +3,8 @@ var canvas = document.getElementById('canvas');
 canvas.width = 640;
 canvas.height = 640;
 var context = canvas.getContext('2d');
+var clientPlayer = {};
+var bulletDelayed = false;
 
 const objects = [];
 const roomsArray = [];
@@ -96,16 +98,8 @@ var movement = {
     }
   });
 
-setInterval(function() {
-  socket.emit('checkBullets', objects);
-}, 1000 / 60);
-
-setInterval(function() {
-  socket.emit('movement', movement, objects);
-}, 1000 / 60);
-
-socket.on('message', function(data) {
-  console.log(data);
+socket.on('playerteam', function(player){
+  clientPlayer=player;
 });
 
 //Functie die kijk op welke positie de muis staat, geeft x en y coordinaat terug
@@ -116,7 +110,6 @@ function getCursorPosition(canvas, event){
   return [x,y]
 }
 
-
 //Wanneer er geklikt wordt geeft deze de coordinaten van de muis.
 function shootBullet(event){ 
   var values = getCursorPosition(canvas, event)
@@ -125,9 +118,6 @@ function shootBullet(event){
   var coords = "x" + x + "y" + y;
   socket.emit('shoot-bullet', {x: 300, y: 300, speedY: 5, isHit: false, damage: 0},x,y); 
 }
-
-var bulletDelayed=false;
-var thisplayer; 
 
 function bulletTimer(fireRate){
   setTimeout(func, fireRate);
@@ -141,10 +131,9 @@ canvas.onclick = function(event){
     bulletDelayed=true;
     var fireRate=1000;
     shootBullet(event)
-    bulletTimer(thisplayer.fireRate);
+    bulletTimer(clientPlayer.fireRate);
  }
 }
-
  
 //deze socket staat op een interval en wordt continu uitgevoerd om het spel te updaten
 socket.on('state', function(players, bullets, itemboxes) {
@@ -153,7 +142,6 @@ socket.on('state', function(players, bullets, itemboxes) {
   //update de kant waar de speler naartoe kijkt wanneer er met de muis over het canvas bewogen wordt.
   canvas.onmousemove = function(event){
     var player = players[socket.id];
-    thisplayer=player;
     mouseX = parseInt(event.clientX - canvas.offsetLeft);
     mouseY = parseInt(event.clientY - canvas.offsetTop);
     var dx = mouseX - player.x;
@@ -165,16 +153,16 @@ socket.on('state', function(players, bullets, itemboxes) {
 
   //tekent de verschillende spelers op het canvas.
   for (var id in players) {
-    var player = players[id]; 
+    var playert = players[id]; 
     context.fillStyle = "#FFD49C";
     context.beginPath();        
     context.font = "20px Arial";
-    if(player.hp > 0){
-      context.arc(player.x, player.y, 10, 0, 2 * Math.PI);
+    if(playert.hp > 0){
+      context.arc(playert.x, playert.y, 10, 0, 2 * Math.PI);
       context.fill();
-      context.fillStyle = player.color;
+      context.fillStyle = playert.color;
       context.beginPath(); 
-      context.arc(player.x, player.y, 10, 1.3+player.angle, 1.8+player.angle + Math.PI);
+      context.arc(playert.x, playert.y, 10, 1.3+playert.angle, 1.8+playert.angle + Math.PI);
     }    
     context.fill();  
   }
@@ -209,16 +197,10 @@ socket.on('state', function(players, bullets, itemboxes) {
   }
 });
 
-var myname
-socket.on('playerteam', function(player){
-  console.log(player.name);
-  myname=player.name;
-})
-
 function checkRoom(players, roomsArray){
   for (i=0; i<roomsArray.length; i++){
     for (var id in players){
-      if (players[id].name==myname){
+      if (players[id].name==clientPlayer.name){
         if (players[id].x>roomsArray[i].x && players[id].x<roomsArray[i].x+roomsArray[i].size && players[id].y>roomsArray[i].y && players[id].y<roomsArray[i].y+roomsArray[i].size){
           for (j=0; j<roomsArray.length; j++){
             if (roomsArray[j].roomnum==roomsArray[i].roomnum){
@@ -236,6 +218,11 @@ function checkRoom(players, roomsArray){
     }
   }
 }
+
+setInterval(function() {
+  socket.emit('checkBullets', objects);
+  socket.emit('movement', movement, objects);
+}, 1000 / 60);
 
 //alle objecten die worden getekend.
 let wall1 = new object("wall1", 160, 0, 2, 25); wall1.pushToArray();
