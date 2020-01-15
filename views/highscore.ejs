@@ -40,59 +40,30 @@ th {
            console.log(playername)
 socket.emit('getHighscore');
 socket.on("getHighscoreReturn", function (nameArray, highArray, winArray) {
-    
-    console.log(nameArray);
-    //console.log(highscoreArray);
-    //console.log(winscoreArray);
-    var highscoreArray = nameArray
-    console.log(highscoreArray)
-    console.log("highscoreArray")
     var topTenNameArray = nameArray.slice(0, 10);
     var topTenHighArray = highArray.slice(0, 10);
     var topTenWinArray = winArray.slice(0, 10);
-    
-   // var playerInfo = nameArray.find(playername)
-   // var indexPlayer = nameArray.findIndex(playername)
     var indexNumber = getIndexPlayer(nameArray)
-    
-    
-    
-function getIndexPlayer(nameArray){    
+    function getIndexPlayer(nameArray){    
     for (i in nameArray){
         if(nameArray[i] == playername){
             return i
+            }
         }
     }
-}
     
-    var html = makeTableHTML(topTenNameArray, topTenHighArray, topTenWinArray, indexNumber, nameArray, highArray, winArray)//, indexPlayer, playerInfo)
-    console.log(html)
+    var html = makeTableHTML(topTenNameArray, topTenHighArray, topTenWinArray, indexNumber, nameArray, highArray, winArray)
     document.getElementById("highscore").innerHTML = html;
     
 });
-              
-
-
-
-              
+            
 function makeTableHTML(nameArray, highArray, winArray, indexNumber, namePlayerArray, highPlayerArray, winPlayerArray ) { //, playerIndex, playerInfo) {
-//    var result = "<table border=1>";
-//    for(var i=0; i<myArray.length; i++) {
-//        result += "<tr>";
-//        result += "<td>" +i +"</td>";
-//        for(var j=0; j<myArray[i].length; j++){
-//            result += "<td>"+myArray[i][j]+"</td>";
-//        }
-//        result += "</tr>";
-//    }
    var  numberIndex = parseInt(indexNumber)
-    var indexPlayer = numberIndex + 1
-    var result = "<table border=1>";
-     result += "<tr><th>Rank</th><th>Username</th><th>Total Kills</th><th>Total Wins</th></tr>"
+   var indexPlayer = numberIndex + 1
+   var result = "<table border=1>";
+   result += "<tr><th>Rank</th><th>Username</th><th>Total Kills</th><th>Total Wins</th></tr>"
    for(var i=0; i<nameArray.length; i++) { 
        if( nameArray[i] == playername){
-           
-       
        var index = i + 1
        result += "<tr>";
         result += "<td style='font-weight:bold'  >" + index +"</td>";
@@ -100,7 +71,7 @@ function makeTableHTML(nameArray, highArray, winArray, indexNumber, namePlayerAr
        result += "<td style='font-weight:bold'  >"+highArray[i]+"</td>";
        result += "<td style='font-weight:bold'  >"+winArray[i]+"</td>";
        result += "</tr>";
-           }else{
+      }else{
         var index = i + 1
        result += "<tr>";
        result += "<td>" + index +"</td>";
@@ -122,28 +93,12 @@ function makeTableHTML(nameArray, highArray, winArray, indexNumber, namePlayerAr
 
     return result;
 }
-//   var MongoClient = require('mongodb').MongoClient;
-//  var url = "mongodb://localhost:27017/";
-//  MongoClient.connect(url, function(err, db) {
-//      if (err) throw err;
-//      var dbo = db.db("mmodb");
-//      var query = { username: player.name };
-//      dbo.collection("highscoretable").find(query).toArray(function(err, result) {
-//        if (err) throw err;
-//          db.close();
-//        if(result.length){              
-          </script>
-      </div>
-      <br>
-      <button id="lobbyButton" type="button" onclick="loadLobby()">Lobby</button>
+</script>
+  
+      
 </div>
     </div>
     </div>
     </div>
 </body>
 <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
-<script>
-  function loadLobby(){
-    location.assign('/');
-  }
-</script>
