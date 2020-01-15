@@ -151,8 +151,8 @@ class rebels extends character {
                 this.weapondamage = 30;
                 this.isDead = false;
                 this.score = 0;
-                this.maxAmmo = 20;
-                this.currentAmmo = 20;
+                this.maxAmmo = 25;
+                this.currentAmmo = 25;
                 this.classname = "Vigilante";
                 this.fireRate = 100;
             }        }
@@ -167,8 +167,8 @@ class rebels extends character {
                 this.weapondamage = 20;
                 this.isDead = false;
                 this.score = 0;
-                this.maxAmmo = 20;
-                this.currentAmmo = 20;
+                this.maxAmmo = 30;
+                this.currentAmmo = 30;
                 this.classname = "Separatist"; 
                 this.fireRate = 0;
             }        }
@@ -284,7 +284,7 @@ socket.on('new player', function( playertype, name) {
          }     
 
 function calculateWinner(){
-  //var winscore = 0  
+  //var winscore = 0
     if(swatscore  >= rebelsCount){
        // return "The SWAT unit has won the match with " + swatscore + " kills & " + rebelsCount + " deaths.";
       for (var id in players){
@@ -384,7 +384,9 @@ socket.on('playerLobby', function(playername, joined){
 socket.on('disconnect', function(){
   delete players[socket.id];
   endGame();
- // calculateWinner();
+
+  //calculateWinner();
+
 });
 
 socket.on('leaveGame', function(){
