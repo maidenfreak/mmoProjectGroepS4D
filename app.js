@@ -151,8 +151,8 @@ class rebels extends character {
                 this.weapondamage = 30;
                 this.isDead = false;
                 this.score = 0;
-                this.maxAmmo = 20;
-                this.currentAmmo = 20;
+                this.maxAmmo = 25;
+                this.currentAmmo = 25;
                 this.classname = "Vigilante";
                 this.fireRate = 100;
             }        }
@@ -167,8 +167,8 @@ class rebels extends character {
                 this.weapondamage = 20;
                 this.isDead = false;
                 this.score = 0;
-                this.maxAmmo = 20;
-                this.currentAmmo = 20;
+                this.maxAmmo = 30;
+                this.currentAmmo = 30;
                 this.classname = "Separatist"; 
                 this.fireRate = 0;
             }        }
@@ -384,7 +384,9 @@ socket.on('playerLobby', function(playername, joined){
 socket.on('disconnect', function(){
   delete players[socket.id];
   endGame();
+
   //calculateWinner();
+
 });
 
 socket.on('leaveGame', function(){
@@ -588,7 +590,7 @@ function updateHighscore(player){
     MongoClient.connect(url, function(err, db) {
       if (err) throw err;
       var dbo = db.db("mmodb");
-      var sort = { highscore: 1, winscore: 1 };
+      var sort = { highscore: -1, winscore: -1 };
 
       dbo.collection("highscoretable12").find().sort(sort).toArray(function(err, result) {
         for(var x in result){

@@ -4,15 +4,40 @@
   var socket = io();
 
 </script>
+<style>
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even){background-color: #f2f2f2}
+
+th {
+  background-color: #11114f;
+  color: white;
+}
+
+    #highscore{
+        padding:20px;
+        margin: 20px;
+    }   
+</style>
 <body>
 <div id="content">
   <div id="wrapper">
     <div id="game">
+        
       <h1>Highscore Ninbo</h1>
 
-      <div id="test">
+          <div id="highscore">
           <script>
-           var playername='<%= name %>';  
+           var playername='<%= name %>';
+           console.log(playername)
 socket.emit('getHighscore');
 socket.on("getHighscoreReturn", function (nameArray, highArray, winArray) {
     
@@ -22,15 +47,27 @@ socket.on("getHighscoreReturn", function (nameArray, highArray, winArray) {
     var highscoreArray = nameArray
     console.log(highscoreArray)
     console.log("highscoreArray")
-    var topTenNameArray = nameArray.slice(0, 9);
-    var topTenHighArray = highArray.slice(0, 9);
-    var topTenWinArray = winArray.slice(0, 9);
-    //var playerInfo = highscoreArray.find(playername)
-   // var indexPlayer = highscoreArray.findIndex(playername)
+    var topTenNameArray = nameArray.slice(0, 10);
+    var topTenHighArray = highArray.slice(0, 10);
+    var topTenWinArray = winArray.slice(0, 10);
     
-    var html = makeTableHTML(topTenNameArray, topTenHighArray, topTenWinArray)//, indexPlayer, playerInfo)
+   // var playerInfo = nameArray.find(playername)
+   // var indexPlayer = nameArray.findIndex(playername)
+    var indexNumber = getIndexPlayer(nameArray)
+    
+    
+    
+function getIndexPlayer(nameArray){    
+    for (i in nameArray){
+        if(nameArray[i] == playername){
+            return i
+        }
+    }
+}
+    
+    var html = makeTableHTML(topTenNameArray, topTenHighArray, topTenWinArray, indexNumber, nameArray, highArray, winArray)//, indexPlayer, playerInfo)
     console.log(html)
-    document.getElementById("test").innerHTML = html;
+    document.getElementById("highscore").innerHTML = html;
     
 });
               
@@ -38,7 +75,7 @@ socket.on("getHighscoreReturn", function (nameArray, highArray, winArray) {
 
 
               
-function makeTableHTML(nameArray, highArray, winArray) { //, playerIndex, playerInfo) {
+function makeTableHTML(nameArray, highArray, winArray, indexNumber, namePlayerArray, highPlayerArray, winPlayerArray ) { //, playerIndex, playerInfo) {
 //    var result = "<table border=1>";
 //    for(var i=0; i<myArray.length; i++) {
 //        result += "<tr>";
@@ -48,24 +85,40 @@ function makeTableHTML(nameArray, highArray, winArray) { //, playerIndex, player
 //        }
 //        result += "</tr>";
 //    }
+   var  numberIndex = parseInt(indexNumber)
+    var indexPlayer = numberIndex + 1
     var result = "<table border=1>";
+     result += "<tr><th>Rank</th><th>Username</th><th>Total Kills</th><th>Total Wins</th></tr>"
    for(var i=0; i<nameArray.length; i++) { 
+       if( nameArray[i] == playername){
+           
+       
+       var index = i + 1
        result += "<tr>";
-        result += "<td>" +i +"</td>";
+        result += "<td style='font-weight:bold'  >" + index +"</td>";
+       result += "<td style='font-weight:bold'  >"+nameArray[i]+"</td>";
+       result += "<td style='font-weight:bold'  >"+highArray[i]+"</td>";
+       result += "<td style='font-weight:bold'  >"+winArray[i]+"</td>";
+       result += "</tr>";
+           }else{
+        var index = i + 1
+       result += "<tr>";
+       result += "<td>" + index +"</td>";
        result += "<td>"+nameArray[i]+"</td>";
        result += "<td>"+highArray[i]+"</td>";
        result += "<td>"+winArray[i]+"</td>";
-       result += "</tr>";
+       result += "</tr>"; 
+           }
    }
-//    if(!myArray.find(player)){
-//        result += "<tr>";
-//        result += "<td>" +playerInfo[0]+"</td>";
-//        result += "<td>" +playerInfo[0]+"</td>";
-//        result += "<td>" +playerInfo[1]+"</td>";
-//        result += "<td>" +playerInfo[2]+"</td>";
-//        result += "</tr>";
-//    }
-//    result += "</table>";
+    if(!(nameArray.includes(playername))){
+        result += "<tr>";
+        result += "<td style='font-weight:bold'  >" + indexPlayer +"</td>";
+        result += "<td style='font-weight:bold'  >" +namePlayerArray[indexNumber]+"</td>";
+        result += "<td style='font-weight:bold'  >" +highPlayerArray[indexNumber]+"</td>";
+        result += "<td style='font-weight:bold'  >" +winPlayerArray[indexNumber]+"</td>";
+        result += "</tr>";
+    }
+    result += "</table>";
 
     return result;
 }
@@ -84,6 +137,7 @@ function makeTableHTML(nameArray, highArray, winArray) { //, playerIndex, player
       <br>
       <button id="lobbyButton" type="button" onclick="loadLobby()">Lobby</button>
 </div>
+    </div>
     </div>
     </div>
 </body>
