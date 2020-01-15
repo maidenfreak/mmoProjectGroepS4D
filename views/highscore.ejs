@@ -81,9 +81,15 @@ function makeTableHTML(nameArray, highArray, winArray) { //, playerIndex, player
 //        if(result.length){              
           </script>
       </div>
-      
+      <br>
+      <button id="lobbyButton" type="button" onclick="loadLobby()">Lobby</button>
 </div>
     </div>
     </div>
 </body>
 <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+<script>
+  function loadLobby(){
+    location.assign('/');
+  }
+</script>
