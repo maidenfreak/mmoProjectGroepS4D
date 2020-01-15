@@ -384,7 +384,9 @@ socket.on('playerLobby', function(playername, joined){
 socket.on('disconnect', function(){
   delete players[socket.id];
   endGame();
+
   //calculateWinner();
+
 });
 
 socket.on('leaveGame', function(){
@@ -588,7 +590,7 @@ function updateHighscore(player){
     MongoClient.connect(url, function(err, db) {
       if (err) throw err;
       var dbo = db.db("mmodb");
-      var sort = { highscore: 1, winscore: 1 };
+      var sort = { highscore: -1, winscore: -1 };
 
       dbo.collection("highscoretable12").find().sort(sort).toArray(function(err, result) {
         for(var x in result){
