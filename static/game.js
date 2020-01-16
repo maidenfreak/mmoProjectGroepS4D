@@ -8,6 +8,7 @@ var bulletDelayed = false;
 
 const objects = [];
 const roomsArray = [];
+const deadArray = [];
 
 class room {
   constructor(roomnum, x, y){
@@ -54,6 +55,16 @@ class object {
     context.fill();
   }
 }
+
+socket.on("playerKilled",function(player){
+  deadArray.push([player.x-10,player.y-10]);
+  if(player.teamname="rebels"){
+    snd2.play();
+  }
+  else if(player.teamname="swat"){
+    snd5.play();
+  }
+});
 
 var movement = {
     up: false,
@@ -132,11 +143,25 @@ canvas.onclick = function(event){
     var fireRate=1000;
     shootBullet(event)
     bulletTimer(clientPlayer.fireRate);
- }
+  }
+  if(clientPlayer.currentAmmo<=0){
+    snd7.play();
+  }
 }
+
+socket.on("playSoundEffect",function(gunshot){
+ if(gunshot.x+200<clientPlayer.x || gunshot.x-200>clientPlayer.x && gunshot.y+200<clientPlayer.y || gunshot.y-200<clientPlayer.y){
+   play_multi_sound('multiaudio1');
+ }
+ else{
+   play_multi_sound('multiaudio6');
+ }
+});
+
  
 //deze socket staat op een interval en wordt continu uitgevoerd om het spel te updaten
 socket.on('state', function(players, bullets, itemboxes) {
+  clientPlayer=players[socket.id];
   context.clearRect(0, 0, 640, 640);
   if(players[socket.id] === undefined){
     for (i=0; i<roomsArray.length; i++){
@@ -154,6 +179,11 @@ socket.on('state', function(players, bullets, itemboxes) {
       var angle = Math.atan2(dy, dx);
       socket.emit("anglePush", angle);
     }
+  }
+
+  for(i=0;i<deadArray.length;i++){
+    var tombstone = document.getElementById("reddead");
+    context.drawImage(tombstone,deadArray[i][0],deadArray[i][1]);
   }
   
 

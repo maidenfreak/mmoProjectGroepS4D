@@ -292,16 +292,12 @@ function calculateWinner(){
     rebelsCount = 0;
     swatscore = 0;
     rebelscore = 0;
-    if(itemboxes.length > 3){
-      itemboxes.length = 0;
-      boxPlacement(null);
-    }
-    //itemboxes.length = 0;
+    itemboxes.length = 0;
     copyPlayers = players 
     //console.log(copyPlayers)
     io.emit('endOfGame');   
-    for(var id in players){
-      delete players[id];
+    for(var test in players){
+      delete players[test];
      } 
   }
     if(rebelscore >= swatCount){
@@ -315,16 +311,12 @@ function calculateWinner(){
      rebelsCount = 0;
      swatscore = 0;
      rebelscore = 0;
-     if(itemboxes.length > 3){
-       itemboxes.length = 0;
-       boxPlacement(null);
-     }
-     //itemboxes.length = 0;
+     itemboxes.length = 0;
      copyPlayers = players  
      //console.log(copyPlayers)
      io.emit('endOfGame');   
-     for(var id in players){
-      delete players[id];
+     for(var test in players){
+      delete players[test];
      }  
     }
 }
@@ -396,7 +388,7 @@ socket.on('playerLobby', function(playername, joined){
 socket.on('disconnect', function(){
   delete players[socket.id];
   endGame();
-  //calculateWinner(); 
+  calculateWinner(); 
 });
 
 socket.on('leaveGame', function(){
@@ -502,6 +494,7 @@ socket.on('shoot-bullet', function(data, targetX, targetY){
     newBullet.ySpeed = bulletSpeed[1];
     bullets.push(newBullet);
     socket.emit('updatedAmmo', player.currentAmmo);
+    io.emit("playSoundEffect", player);
   }
 });
 
@@ -689,7 +682,6 @@ function boxPlacement(box){
         coordinatesBox3 = randomBoxPlacement();
       }
     }
-    
     itemboxes.push([coordinatesBox1[0], coordinatesBox1[1], 20, 20, 10, 0]);
     itemboxes.push([coordinatesBox2[0], coordinatesBox2[1], 20, 20, 10, 0]);
     itemboxes.push([coordinatesBox3[0], coordinatesBox3[1], 20, 20, 40, 1]);

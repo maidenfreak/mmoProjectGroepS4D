@@ -1,5 +1,6 @@
 <link href="style.css" rel="stylesheet" type="text/css">
 <script src="/socket.io/socket.io.js"></script>
+<script src="sounds.js" type="text/javascript"></script>
 <script>
   var socket = io();
   socket.emit('playerLobby', '<%= name %>', 'false');
@@ -24,7 +25,7 @@
       </div>
       <button id="startButton" type="button" onclick="startTheGame()">Start</button>
       <br>
-      <button id="joinButton" type="button" onclick="joinedLobby()">Join</button>
+      <button id="joinButton" type="button" onclick="joinedLobby(); playSound('Join'); playSound('Lobbymusic')">Join</button>
       <br>    
       <ul id="players"></ul>
       <br>
@@ -45,14 +46,13 @@
 </div>
 </body>
 <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
-<script src="../static/lobby.js"></script>
 <script>
   var playername='<%= name %>';
   var gameInProgress = false;
   var socket = io();
 
-  socket.on('startGame', function() {
-    gameInProgress = true;
+  socket.on('startGame',function(){
+    gameInProgress=true;
     location.assign('index');
   });
 
@@ -87,11 +87,9 @@
   function loadHighscores(){
     location.assign('/highscore');
   }
-
   function loadSpectator(){
     if(gameInProgress == true){
       location.assign('/index');
     } 
   }
-
 </script>
