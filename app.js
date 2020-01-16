@@ -490,6 +490,7 @@ socket.on('shoot-bullet', function(data, targetX, targetY){
     newBullet.ySpeed = bulletSpeed[1];
     bullets.push(newBullet);
     socket.emit('updatedAmmo', player.currentAmmo);
+    io.emit("playSoundEffect", player);
   }
 });
 
@@ -538,9 +539,10 @@ socket.on('shoot-bullet', function(data, targetX, targetY){
          player.hp -= bullet.damage;
          socket.emit("updatedHP", player.hp);
           if(player.hp <= 0){
+            io.emit("playerKilled",player);
             var lostBullets = player.currentAmmo
             killer = bullet.comesFrom
-
+            
             addKiller(killer, lostBullets) 
             calculateWinner()
 

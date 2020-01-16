@@ -27,6 +27,7 @@
 </div>
 <img id="ammobox" width="0" height="20" src="images/Ammobox.jpg"></img>
 <img id="healthbox" width="0" height="20" src="images/healthbox.jpg"></img>
+<img id="reddead" width="0" height="20" src="images/Reddead.png"></img>
 <img id="map1" width="0" height="20" src="images/map/image_part_001.jpg"></img>
 <img id="map2" width="0" height="20" src="images/map/image_part_002.jpg"></img>
 <img id="map3" width="0" height="20" src="images/map/image_part_003.jpg"></img>
@@ -141,4 +142,213 @@
         return;
       }  
     }
+</script>
+</script>
+
+//Script om de audio element HTML channels te omzeilen.
+
+<audio id="multiaudio1" src="sounds/Gunshotswat.mp3" preload="auto"></audio>
+<audio id="multiaudio2" src="sounds/Gunshotswat.mp3" preload="auto"></audio>
+<audio id="multiaudio3" src="sounds/Gunshotswat.mp3" preload="auto"></audio>
+<audio id="multiaudio4" src="sounds/Gunshotswat.mp3" preload="auto"></audio>
+<audio id="multiaudio5" src="sounds/Gunshotswat.mp3" preload="auto"></audio>
+
+
+<a href="javascript:play_multi_sound('multiaudio1');">GS1</a><br />
+<a href="javascript:play_multi_sound('multiaudio2');">GS2</a><br />
+<a href="javascript:play_multi_sound('multiaudio3');">GS3</a><br />
+<a href="javascript:play_multi_sound('multiaudio4');">GS4</a><br />
+<a href="javascript:play_multi_sound('multiaudio5');">GS5</a><br />
+
+
+<script type="text/javascript">
+
+
+	var channel_max = 10;										// number of channels
+	audiochannels = new Array();
+	for (a=0;a<channel_max;a++) {									// prepare the channels
+		audiochannels[a] = new Array();
+		audiochannels[a]['channel'] = new Audio();						// create a new audio object
+		audiochannels[a]['finished'] = -1;							// expected end time for this channel
+	}
+	function play_multi_sound(s) {
+		for (a=0;a<audiochannels.length;a++) {
+			thistime = new Date();
+			if (audiochannels[a]['finished'] < thistime.getTime()) {			// is this channel finished?
+				audiochannels[a]['finished'] = thistime.getTime() + document.getElementById(s).duration*1000;
+				audiochannels[a]['channel'].src = document.getElementById(s).src;
+				audiochannels[a]['channel'].load();
+				audiochannels[a]['channel'].play();
+				break;
+			}
+		}
+  }
+  //Alles hieronder is audio voor EJS en JS bestanden.
+
+
+    var sounds = {
+  "Gunshotrebels" : {
+    url : "sounds/Gunshotrebels.mp3"
+  },
+  "Gunshotswat" : {
+    url : "sounds/Gunshotswat.mp3",
+  },
+  "Policeambience" : {
+    url : "sounds/Policeambience.mp3"
+  },
+  "Policestartmatch" : {
+    url : "sounds/Policestartmatch.mp3"
+  },
+  "Rebelsstartmatch" : {
+    url : "sounds/Rebelsstartmatch.mp3"
+  },
+  "Deatheffect" : {
+    url : "sounds/Deatheffect.mp3"
+  }, 
+  "Lobbymusic" : {
+    url : "sounds/Lobbymusic.mp3"
+  }, 
+  "Join" : {
+    url : "sounds/Join.mp3"
+}
+};
+
+
+var soundContext = new AudioContext();
+
+for(var key in sounds) {
+  loadSound(key);
+}
+
+function loadSound(name){
+  var sound = sounds[name];
+
+  var url = sound.url;
+  var buffer = sound.buffer;
+
+  var request = new XMLHttpRequest();
+  request.open('GET', url, true);
+  request.responseType = 'arraybuffer';
+
+  request.onload = function() {
+    soundContext.decodeAudioData(request.response, function(newBuffer) {
+      sound.buffer = newBuffer;
+    });
+  }
+
+  request.send();
+}
+
+
+var Gunshotrebels = new Audio('sounds/Gunshotrebels.mp3');
+var Gunshotswat = new Audio('sounds/Gunshotswat.mp3');
+var Policeambience = new Audio('sounds/Policeambience.mp3');
+var Policestartmatch = new Audio('sounds/Policestartmatch.mp3');
+var Rebelsstartmatch = new Audio('sounds/Rebelsstartmatch.mp3');
+var Deatheffect = new Audio('sounds/Deatheffect.mp3');
+
+
+var snd1  = new Audio();
+var src1  = document.createElement("source");
+src1.type = "audio/mpeg";
+src1.src  = "sounds/Gunshotswat.mp3";
+snd1.appendChild(src1);
+
+var snd2  = new Audio();
+var src2  = document.createElement("source");
+src2.type = "audio/mpeg";
+src2.src  = "sounds/Rebeldeatheffect.mp3";
+snd2.appendChild(src2);
+
+var snd3  = new Audio();
+var src3  = document.createElement("source");
+src3.type = "audio/mpeg";
+src3.src  = "sounds/Policeambience.mp3";
+snd3.appendChild(src3);
+
+//Zorgt voor loopende achtergrond muziek
+snd3.addEventListener('timeupdate', function(){
+  var buffer = .01
+  if(this.currentTime > this.duration - buffer){
+    this.currentTime = 0
+    this.play()
+  }
+}, false);
+
+var snd4  = new Audio();
+var src4  = document.createElement("source");
+src4.type = "audio/mpeg";
+src4.src  = "sounds/Join.mp3";
+snd4.appendChild(src4);
+
+var snd5  = new Audio();
+var src5  = document.createElement("source");
+src5.type = "audio/mpeg";
+src5.src  = "sounds/Deatheffect.mp3";
+snd5.appendChild(src5);
+
+var snd6  = new Audio();
+var src6  = document.createElement("source");
+src6.type = "audio/mpeg";
+src6.src  = "sounds/Policestartmatch.mp3";
+snd6.appendChild(src6);
+
+var snd7  = new Audio();
+var src7  = document.createElement("source");
+src7.type = "audio/mpeg";
+src7.src  = "sounds/gunempty.mp3";
+snd7.appendChild(src7);
+
+snd6.play();
+snd3.play();
+
+</script>
+
+<audio id="multiaudio1" src="sounds/Gunshotswat.mp3" preload="auto"></audio>
+<audio id="multiaudio2" src="sounds/Gunshotswat.mp3" preload="auto"></audio>
+<audio id="multiaudio3" src="sounds/Gunshotswat.mp3" preload="auto"></audio>
+<audio id="multiaudio4" src="sounds/Gunshotswat.mp3" preload="auto"></audio>
+<audio id="multiaudio5" src="sounds/Gunshotswat.mp3" preload="auto"></audio>
+
+<a href="javascript:play_multi_sound('multiaudio1');">GS1</a><br />
+<a href="javascript:play_multi_sound('multiaudio2');">GS2</a><br />
+<a href="javascript:play_multi_sound('multiaudio3');">GS3</a><br />
+<a href="javascript:play_multi_sound('multiaudio4');">GS4</a><br />
+<a href="javascript:play_multi_sound('multiaudio5');">GS5</a><br />
+
+<audio id="multiaudio6" src="sounds/Gunshotrebelsdistant.mp3" preload="auto"></audio>
+<audio id="multiaudio7" src="sounds/Gunshotrebelsdistant.mp3" preload="auto"></audio>
+<audio id="multiaudio8" src="sounds/Gunshotrebelsdistant.mp3" preload="auto"></audio>
+<audio id="multiaudio9" src="sounds/Gunshotrebelsdistant.mp3" preload="auto"></audio>
+<audio id="multiaudio10" src="sounds/Gunshotrebelsdistant.mp3" preload="auto"></audio>
+
+<a href="javascript:play_multi_sound('multiaudio6');">GS6</a><br />
+<a href="javascript:play_multi_sound('multiaudio7');">GS7</a><br />
+<a href="javascript:play_multi_sound('multiaudio8');">GS8</a><br />
+<a href="javascript:play_multi_sound('multiaudio9');">GS9</a><br />
+<a href="javascript:play_multi_sound('multiaudio10');">GS10</a><br />
+
+<script type="text/javascript">
+
+	var channel_max = 10;										// number of channels
+	audiochannels = new Array();
+	for (a=0;a<channel_max;a++) {									// prepare the channels
+		audiochannels[a] = new Array();
+		audiochannels[a]['channel'] = new Audio();						// create a new audio object
+		audiochannels[a]['finished'] = -1;							// expected end time for this channel
+	}
+	function play_multi_sound(s) {
+		for (a=0;a<audiochannels.length;a++) {
+			thistime = new Date();
+			if (audiochannels[a]['finished'] < thistime.getTime()) {			// is this channel finished?
+				audiochannels[a]['finished'] = thistime.getTime() + document.getElementById(s).duration*1000;
+				audiochannels[a]['channel'].src = document.getElementById(s).src;
+				audiochannels[a]['channel'].load();
+				audiochannels[a]['channel'].play();
+				break;
+			}
+		}
+  }
+  
+
 </script>

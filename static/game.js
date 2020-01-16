@@ -8,6 +8,7 @@ var bulletDelayed = false;
 
 const objects = [];
 const roomsArray = [];
+const deadArray = [];
 
 class room {
   constructor(roomnum, x, y){
@@ -54,6 +55,16 @@ class object {
     context.fill();
   }
 }
+
+socket.on("playerKilled",function(player){
+  deadArray.push([player.x-10,player.y-10]);
+  if(player.teamname="rebels"){
+    snd2.play();
+  }
+  else if(player.teamname="swat"){
+    snd5.play();
+  }
+});
 
 var movement = {
     up: false,
@@ -112,6 +123,7 @@ function getCursorPosition(canvas, event){
 
 //Wanneer er geklikt wordt geeft deze de coordinaten van de muis.
 function shootBullet(event){ 
+  
   var values = getCursorPosition(canvas, event)
   var x = values[0];
   var y = values[1];
@@ -122,7 +134,7 @@ function shootBullet(event){
 function bulletTimer(fireRate){
   setTimeout(func, fireRate);
   function func() {
-    bulletDelayed=false
+  bulletDelayed=false
   }
 }
 
@@ -133,7 +145,18 @@ canvas.onclick = function(event){
     shootBullet(event)
     bulletTimer(clientPlayer.fireRate);
  }
+ if(clientPlayer.currentAmmo<=0){
+   snd7.play();
+ }
 }
+socket.on("playSoundEffect",function(gunshot){
+  if(gunshot.x+200<clientPlayer.x || gunshot.x-200>clientPlayer.x && gunshot.y+200<clientPlayer.y || gunshot.y-200<clientPlayer.y){
+    play_multi_sound('multiaudio1');
+  }
+  else{
+    play_multi_sound('multiaudio6');
+  }
+});
  
 //deze socket staat op een interval en wordt continu uitgevoerd om het spel te updaten
 socket.on('state', function(players, bullets, itemboxes) {
@@ -142,6 +165,7 @@ socket.on('state', function(players, bullets, itemboxes) {
   //update de kant waar de speler naartoe kijkt wanneer er met de muis over het canvas bewogen wordt.
   canvas.onmousemove = function(event){
     var player = players[socket.id];
+    clientPlayer=players[socket.id];
     mouseX = parseInt(event.clientX - canvas.offsetLeft);
     mouseY = parseInt(event.clientY - canvas.offsetTop);
     var dx = mouseX - player.x;
@@ -149,7 +173,10 @@ socket.on('state', function(players, bullets, itemboxes) {
     var angle = Math.atan2(dy, dx);
     socket.emit("anglePush", angle);
   }
-  
+  for(i=0;i<deadArray.length;i++){
+    var tombstone = document.getElementById("reddead");
+    context.drawImage(tombstone,deadArray[i][0],deadArray[i][1]);
+  }
 
   //tekent de verschillende spelers op het canvas.
   for (var id in players) {
@@ -179,8 +206,10 @@ socket.on('state', function(players, bullets, itemboxes) {
   for(i=0; i<itemboxes.length; i++){
     var ammobox = document.getElementById("ammobox");
     var healthbox = document.getElementById("healthbox");
+
     if(itemboxes[i][5] == 0){
       context.drawImage(ammobox,itemboxes[i][0],itemboxes[i][1]);
+      
     }else if(itemboxes[i][5] == 1){
       context.drawImage(healthbox, itemboxes[i][0], itemboxes[i][1]);
     }
