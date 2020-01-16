@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
+var copyPlayers = {}
 const mongoose = require('mongoose')
 mongoose.connect('mongodb://localhost:27017/mmodb', {useNewUrlParser: true});
 const Schema = mongoose.Schema
@@ -298,6 +299,8 @@ function calculateWinner(){
      swatscore = 0;
      rebelscore = 0;
      itemboxes.length = 0;
+     copyPlayers = players 
+     console.log(copyPlayers)
      io.emit('endOfGame');
      delete players[socket.id];
     }
@@ -314,6 +317,8 @@ function calculateWinner(){
      swatscore = 0;
      rebelscore = 0;
      itemboxes.length = 0;
+     copyPlayers = players  
+     console.log(copyPlayers)
      io.emit('endOfGame');
      delete players[socket.id];
     }
@@ -357,6 +362,10 @@ socket.on('teamconfig', function(){
 socket.on('getHighscore', function(){
   getHighscore();
 });  
+socket.on('getMatchHighscore', function(){    
+socket.emit('getMatchHighscoreReturn', copyPlayers);    
+});    
+    
 socket.on('connectedPeopleLobby', function(){
   var amountOfPlayers = playersInLobby.length;
   io.emit('connectedPeopleLobbyReturn', amountOfPlayers);
