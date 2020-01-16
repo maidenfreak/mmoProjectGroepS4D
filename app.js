@@ -268,7 +268,6 @@ socket.on('new player', function( playertype, name) {
   else if(playertype == "observer"){players[socket.id] = new observer(socket.id, name)}
   else if(playertype == "charger"){players[socket.id] = new charger(socket.id, name)}
   socket.emit('playerteam', players[socket.id]);
-  endGame();
 });
     
   function randomFunc(myArr) {      
@@ -298,8 +297,9 @@ function calculateWinner(){
      swatscore = 0;
      rebelscore = 0;
      itemboxes.length = 0;
-     io.emit('endOfGame');
      delete players[socket.id];
+     io.emit('endOfGame');
+     
     }
 
     if(rebelscore >= swatCount){
@@ -314,8 +314,9 @@ function calculateWinner(){
      swatscore = 0;
      rebelscore = 0;
      itemboxes.length = 0;
-     io.emit('endOfGame');
      delete players[socket.id];
+     io.emit('endOfGame');
+     
     }
 }
 
@@ -341,6 +342,7 @@ socket.on('startGameServer', function(){
   hussledArray = randomFunc(playersInLobby)     
   teamconfig =  typeplayers.reduce(function(teamconfig, field, index) {
     teamconfig[hussledArray[index]] = field;
+    endGame();
     return teamconfig;
   }, {});
 
@@ -382,14 +384,17 @@ socket.on('playerLobby', function(playername, joined){
 });
   
 socket.on('disconnect', function(){
-  delete players[socket.id];
+  if(/*Object.entries(players).length !== 0 && */players[socket.id]){
+    delete players[socket.id];
   endGame();
-  //calculateWinner();
+  console.log("lengte van object " + Object.entries(players).length)
+  calculateWinner();
+  }  
 });
 
 socket.on('leaveGame', function(){
   delete players[socket.id];
-  endGame();   
+  //endGame();   
 });
 
 socket.on("anglePush", function(angle){
