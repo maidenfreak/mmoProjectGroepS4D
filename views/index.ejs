@@ -106,8 +106,10 @@
         socket.emit('new player' , classname, playername);
     });
     socket.on("endOfGame", function () {
+
       leaveButtonPressed = true;
-      location.assign('/highscore');
+      location.assign('/matchhighscore');
+
     });
     
     $(function () {

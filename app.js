@@ -8,7 +8,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
-var copyPlayers = {}
+var arrayMatchName = []
 const mongoose = require('mongoose')
 mongoose.connect('mongodb://localhost:27017/mmodb', {useNewUrlParser: true});
 const Schema = mongoose.Schema
@@ -150,8 +150,7 @@ class rebels extends character {
                 this.currentAmmo = 25;
                 this.classname = "Vigilante";
                 this.fireRate = 100;
-            }        
-          }
+            }        }
         //rebels 4
         class separatist extends rebels {
              constructor(id,name, hp, maxHP, score, x, y, weapondamage, teamscore, color, teamname, isDead, maxAmmo, currentAmmo, classname, win, angle){
@@ -167,8 +166,7 @@ class rebels extends character {
                 this.currentAmmo = 30;
                 this.classname = "Separatist"; 
                 this.fireRate = 0;
-            }        
-          }
+            }        }
 
 //swat subclass welke erft van character class.
 class swat extends character {
@@ -177,8 +175,10 @@ class swat extends character {
         this.teamscore = 0;
         this.color = "blue";
         this.teamname = "swat";
-        this.win = 0;  
-    }  
+        this.win = 0;
+       
+    }
+     
 }
         //swat 1
         class grenadier extends swat {
@@ -196,6 +196,7 @@ class swat extends character {
                 this.classname = "Grenadier";
                 this.fireRate = 200;
             }
+    
         }
         //swat 2
         class breacher extends swat {
@@ -244,8 +245,11 @@ class swat extends character {
                 this.maxAmmo = 20;
                 this.currentAmmo = 20;
                 this.classname = "Charger";
-                this.fireRate = 300;  
+                this.fireRate = 300;
+                
+                
             } 
+
         } 
   
 //creates a new player
@@ -275,6 +279,7 @@ socket.on('new player', function( playertype, name) {
          }     
 
 function calculateWinner(){
+  arrayMatchName = []
   //var winscore = 0
   if(swatscore  >= rebelsCount){
     // return "The SWAT unit has won the match with " + swatscore + " kills & " + rebelsCount + " deaths.";
@@ -289,8 +294,9 @@ function calculateWinner(){
     swatscore = 0;
     rebelscore = 0;
     itemboxes.length = 0;
-    copyPlayers = players 
-    //console.log(copyPlayers)
+    for(var x in players){
+          arrayMatchName.push ([players[x].name, players[x].score, players[x].win, players[x].teamname ]);
+        }  
     io.emit('endOfGame');   
     for(var test in players){
       delete players[test];
@@ -308,14 +314,16 @@ function calculateWinner(){
      swatscore = 0;
      rebelscore = 0;
      itemboxes.length = 0;
-     copyPlayers = players  
-     //console.log(copyPlayers)
+     for(var x in players){
+          arrayMatchName.push ([players[x].name, players[x].score, players[x].win, players[x].teamname ]);
+    }
      io.emit('endOfGame');   
      for(var test in players){
       delete players[test];
      }  
     }
 }
+
       
 function endGame(){
      swatCount = 0;
@@ -352,8 +360,12 @@ socket.on('teamconfig', function(){
 socket.on('getHighscore', function(){
   getHighscore();
 });  
-socket.on('getMatchHighscore', function(){    
-socket.emit('getMatchHighscoreReturn', copyPlayers);    
+socket.on('getMatchHighscore', function(){ 
+ var sortedArray = arrayMatchName.sort( function(a, b) {
+  return (b[1] - a[1] ) || (b[2] - a[2]);
+});
+    
+    socket.emit('getMatchHighscoreReturn', sortedArray)
 });    
     
 socket.on('connectedPeopleLobby', function(){
@@ -383,7 +395,7 @@ socket.on('playerLobby', function(playername, joined){
 socket.on('disconnect', function(){
   delete players[socket.id];
   endGame();
-  calculateWinner(); 
+  //calculateWinner(); 
 });
 
 socket.on('leaveGame', function(){
@@ -507,6 +519,7 @@ socket.on('shoot-bullet', function(data, targetX, targetY){
         calculateAmmo(player, bullets);       
       }
     }  
+
   }
 
   function calculateAmmo(player, bullets){
@@ -516,6 +529,7 @@ socket.on('shoot-bullet', function(data, targetX, targetY){
       player.currentAmmo = player.maxAmmo;
     }    
     io.to(player.id).emit("addAmmo", oldAmmo, player.currentAmmo);
+
   }
 
   function calculateHealth(player, health){
@@ -540,7 +554,7 @@ socket.on('shoot-bullet', function(data, targetX, targetY){
           if(player.hp <= 0){
             var lostBullets = player.currentAmmo
             killer = bullet.comesFrom
-            io.emit("playerKilled",player);
+
             addKiller(killer, lostBullets) 
             calculateWinner()
 
@@ -613,6 +627,11 @@ http.listen(3000, function(){
   console.log('listening on *:3000');
 });
 
+
+
+              
+
+ 
 //function getHighscore() {
 //  return new Promise(function(resolve, reject) {
 //      var sort = { highscore: 1, winscore: 1 };
@@ -629,6 +648,8 @@ http.listen(3000, function(){
 //  })
 //}
     
+
+
 function calculateBulletSpeed(bullet){
     var vx = bullet.targetX - bullet.x
     var vy = bullet.targetY - bullet.y
@@ -694,4 +715,5 @@ function boxPlacement(box){
 }
 
 setInterval(serverGameLoop, 16);
+
 
