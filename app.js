@@ -151,8 +151,8 @@ class rebels extends character {
                 this.weapondamage = 30;
                 this.isDead = false;
                 this.score = 0;
-                this.maxAmmo = 20;
-                this.currentAmmo = 20;
+                this.maxAmmo = 25;
+                this.currentAmmo = 25;
                 this.classname = "Vigilante";
                 this.fireRate = 100;
             }        }
@@ -167,8 +167,8 @@ class rebels extends character {
                 this.weapondamage = 20;
                 this.isDead = false;
                 this.score = 0;
-                this.maxAmmo = 20;
-                this.currentAmmo = 20;
+                this.maxAmmo = 30;
+                this.currentAmmo = 30;
                 this.classname = "Separatist"; 
                 this.fireRate = 0;
             }        }
@@ -390,6 +390,7 @@ socket.on('disconnect', function(){
   console.log("lengte van object " + Object.entries(players).length)
   calculateWinner();
   }  
+
 });
 
 socket.on('leaveGame', function(){
@@ -420,7 +421,7 @@ socket.on('movement', function(data, objectArray) {
       player.x -= 2;
     }
   }
-  if (data.up && player.y>=11 && collision.checkCollisionUp(player, players, objectArray, 9) == false) {
+  if (data.up && player.y>=11 && collision.checkCollisionUp(player, players, objectArray, 10) == false) {
     var packageValues = collision.checkCollisionPackageUp(player, itemboxes , 9);
     if(packageValues[0] == true){
       addBoxItems(player, packageValues[1]);
@@ -431,7 +432,7 @@ socket.on('movement', function(data, objectArray) {
       player.y -= 2;
     }
   }
-  if (data.right && player.x<=630 && collision.checkCollisionRight(player, players, objectArray, 9) == false) {
+  if (data.right && player.x<=630 && collision.checkCollisionRight(player, players, objectArray, 10) == false) {
     var packageValues = collision.checkCollisionPackageRight(player, itemboxes , 9);
     if(packageValues[0] == true){
       addBoxItems(player, packageValues[1]);
@@ -442,7 +443,7 @@ socket.on('movement', function(data, objectArray) {
       player.x += 2;
     }
   }
-  if (data.down && player.y<=630 && collision.checkCollisionDown(player, players, objectArray, 9) == false) {
+  if (data.down && player.y<=630 && collision.checkCollisionDown(player, players, objectArray, 10) == false) {
     var packageValues = collision.checkCollisionPackageDown(player, itemboxes , 9);
     if(packageValues[0] == true){
       addBoxItems(player, packageValues[1]);
@@ -593,7 +594,7 @@ function updateHighscore(player){
     MongoClient.connect(url, function(err, db) {
       if (err) throw err;
       var dbo = db.db("mmodb");
-      var sort = { highscore: 1, winscore: 1 };
+      var sort = { highscore: -1, winscore: -1 };
 
       dbo.collection("highscoretable12").find().sort(sort).toArray(function(err, result) {
         for(var x in result){
