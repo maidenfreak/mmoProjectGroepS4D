@@ -554,7 +554,7 @@ socket.on('shoot-bullet', function(data, targetX, targetY){
           if(player.hp <= 0){
             var lostBullets = player.currentAmmo
             killer = bullet.comesFrom
-
+            io.emit("playerKilled",player)
             addKiller(killer, lostBullets) 
             calculateWinner()
 
