@@ -138,16 +138,22 @@ canvas.onclick = function(event){
 //deze socket staat op een interval en wordt continu uitgevoerd om het spel te updaten
 socket.on('state', function(players, bullets, itemboxes) {
   context.clearRect(0, 0, 640, 640);
-  checkRoom(players, roomsArray);
-  //update de kant waar de speler naartoe kijkt wanneer er met de muis over het canvas bewogen wordt.
-  canvas.onmousemove = function(event){
-    var player = players[socket.id];
-    mouseX = parseInt(event.clientX - canvas.offsetLeft);
-    mouseY = parseInt(event.clientY - canvas.offsetTop);
-    var dx = mouseX - player.x;
-    var dy = mouseY - player.y;
-    var angle = Math.atan2(dy, dx);
-    socket.emit("anglePush", angle);
+  if(players[socket.id] === undefined){
+    for (i=0; i<roomsArray.length; i++){
+      roomsArray[i].visible = true;
+    }
+  }else{
+    checkRoom(players, roomsArray);
+    //update de kant waar de speler naartoe kijkt wanneer er met de muis over het canvas bewogen wordt.
+    canvas.onmousemove = function(event){
+      var player = players[socket.id];
+      mouseX = parseInt(event.clientX - canvas.offsetLeft);
+      mouseY = parseInt(event.clientY - canvas.offsetTop);
+      var dx = mouseX - player.x;
+      var dy = mouseY - player.y;
+      var angle = Math.atan2(dy, dx);
+      socket.emit("anglePush", angle);
+    }
   }
   
 

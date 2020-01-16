@@ -71,13 +71,13 @@ app.delete('/logout', (req, res) => {
   req.logOut()
   res.redirect('/login')
 })
-
+/*
 function checkGameStarted(req, res, next){
   if(req.gameStarted()){
     return res.redirect('/index.ejs')
   }
 }
-
+*/
 var path = require('path');
 var server = http;
 
@@ -286,30 +286,32 @@ socket.on('new player', function( playertype, name) {
 
 function calculateWinner(){
   //var winscore = 0
-    if(swatscore  >= rebelsCount){
-       // return "The SWAT unit has won the match with " + swatscore + " kills & " + rebelsCount + " deaths.";
-      for (var id in players){
-        if(players[id].teamname == "swat"){
-          console.log(players[id] +"swat heeft gewonnen")
-          players[id].win = 1
-        }
+  if(swatscore  >= rebelsCount){
+    // return "The SWAT unit has won the match with " + swatscore + " kills & " + rebelsCount + " deaths.";
+    for (var id in players){
+      if(players[id].teamname == "swat"){
+        players[id].win = 1
+      }
       updateHighscore(players[id])
     }
-     swatCount = 0;
-     rebelsCount = 0;
-     swatscore = 0;
-     rebelscore = 0;
-     itemboxes.length = 0;
-     copyPlayers = players 
-     console.log(copyPlayers)
-     io.emit('endOfGame');
-     delete players[socket.id]; 
-    }
+    swatCount = 0;
+    rebelsCount = 0;
+    swatscore = 0;
+    rebelscore = 0;
+    itemboxes.length = 0;
+    copyPlayers = players 
+    //console.log(copyPlayers)
+    io.emit('endOfGame');
+    
+    for(var test in players){
+      console.log(players[test]);
+      delete players[test];
+     } 
+  }
 
     if(rebelscore >= swatCount){
       for (var id in players){
         if(players[id].teamname == "rebels"){
-          console.log(players[id] + "rebels hebben gewonnen")
           players[id].win = 1        
         }
       updateHighscore(players[id])
@@ -320,9 +322,13 @@ function calculateWinner(){
      rebelscore = 0;
      itemboxes.length = 0;
      copyPlayers = players  
-     console.log(copyPlayers)
+     //console.log(copyPlayers)
      io.emit('endOfGame');
-     delete players[socket.id];
+     
+     for(var test in players){
+      console.log(players[test]);
+      delete players[test];
+     }  
     }
 }
 
@@ -393,6 +399,7 @@ socket.on('playerLobby', function(playername, joined){
 socket.on('disconnect', function(){
   delete players[socket.id];
   endGame();
+  calculateWinner(); 
 });
 
 socket.on('leaveGame', function(){
