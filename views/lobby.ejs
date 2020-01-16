@@ -30,6 +30,8 @@
       <ul id="players"></ul>
       <br>
       <button id="HighscoreButton" type="button" onclick="loadHighscores()">Highscores</button>
+      <br>
+      <button id="spectatorButton" type="button" onclick="loadSpectator()">Spectator mode</button>
     </div>
     <div id="chat">
         <div id="chattitle">
@@ -44,10 +46,15 @@
 </div>
 </body>
 <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
-<script src="../static/lobby.js"></script>
 <script>
   var playername='<%= name %>';
+  var gameInProgress = false;
   var socket = io();
+
+  socket.on('startGame',function(){
+    gameInProgress=true;
+    location.assign('index');
+  });
 
   socket.on('playerLobbies', function(allPlayers){
     $('#players').empty();
@@ -79,5 +86,10 @@
 
   function loadHighscores(){
     location.assign('/highscore');
+  }
+  function loadSpectator(){
+    if(gameInProgress == true){
+      location.assign('/index');
+    } 
   }
 </script>

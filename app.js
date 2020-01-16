@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
+var copyPlayers = {}
 const mongoose = require('mongoose')
 mongoose.connect('mongodb://localhost:27017/mmodb', {useNewUrlParser: true});
 const Schema = mongoose.Schema
@@ -70,12 +71,6 @@ app.delete('/logout', (req, res) => {
   req.logOut()
   res.redirect('/login')
 })
-
-function checkGameStarted(req, res, next){
-  if(req.gameStarted()){
-    return res.redirect('/index.ejs')
-  }
-}
 
 var path = require('path');
 var server = http;
@@ -285,23 +280,26 @@ socket.on('new player', function( playertype, name) {
 
 function calculateWinner(){
   //var winscore = 0
-    if(swatscore  >= rebelsCount){
-       // return "The SWAT unit has won the match with " + swatscore + " kills & " + rebelsCount + " deaths.";
-      for (var id in players){
-        if(players[id].teamname == "swat"){
-          players[id].win = 1
-        }
+  if(swatscore  >= rebelsCount){
+    // return "The SWAT unit has won the match with " + swatscore + " kills & " + rebelsCount + " deaths.";
+    for (var id in players){
+      if(players[id].teamname == "swat"){
+        players[id].win = 1
+      }
       updateHighscore(players[id])
     }
-     swatCount = 0;
-     rebelsCount = 0;
-     swatscore = 0;
-     rebelscore = 0;
-     itemboxes.length = 0;
-     io.emit('endOfGame');
-     delete players[socket.id];
-    }
-
+    swatCount = 0;
+    rebelsCount = 0;
+    swatscore = 0;
+    rebelscore = 0;
+    itemboxes.length = 0;
+    copyPlayers = players 
+    //console.log(copyPlayers)
+    io.emit('endOfGame');   
+    for(var test in players){
+      delete players[test];
+     } 
+  }
     if(rebelscore >= swatCount){
       for (var id in players){
         if(players[id].teamname == "rebels"){
@@ -314,12 +312,14 @@ function calculateWinner(){
      swatscore = 0;
      rebelscore = 0;
      itemboxes.length = 0;
-     io.emit('endOfGame');
-     delete players[socket.id];
+     copyPlayers = players  
+     //console.log(copyPlayers)
+     io.emit('endOfGame');   
+     for(var test in players){
+      delete players[test];
+     }  
     }
 }
-
-   
 
       
 function endGame(){
@@ -357,6 +357,10 @@ socket.on('teamconfig', function(){
 socket.on('getHighscore', function(){
   getHighscore();
 });  
+socket.on('getMatchHighscore', function(){    
+socket.emit('getMatchHighscoreReturn', copyPlayers);    
+});    
+    
 socket.on('connectedPeopleLobby', function(){
   var amountOfPlayers = playersInLobby.length;
   io.emit('connectedPeopleLobbyReturn', amountOfPlayers);
@@ -380,18 +384,17 @@ socket.on('playerLobby', function(playername, joined){
     io.emit('playerLobbies', playersInLobby);
   }
 });
-  
+ 
 socket.on('disconnect', function(){
   delete players[socket.id];
   endGame();
-
-  //calculateWinner();
-
+  calculateWinner(); 
 });
 
 socket.on('leaveGame', function(){
   delete players[socket.id];
-  endGame();   
+  endGame();  
+  calculateWinner(); 
 });
 
 socket.on("anglePush", function(angle){
@@ -485,6 +488,7 @@ socket.on('shoot-bullet', function(data, targetX, targetY){
     newBullet.targetY = targetY;
     newBullet.comesFrom = player.name;
     newBullet.damage = player.weapondamage;
+    newBullet.teamname = player.teamname
     var bulletSpeed = calculateBulletSpeed(newBullet);
     newBullet.xSpeed = bulletSpeed[0];
     newBullet.ySpeed = bulletSpeed[1];
@@ -535,14 +539,15 @@ socket.on('shoot-bullet', function(data, targetX, targetY){
     for(var i = 0; i < bullets.length; i++){
        var bullet = bullets[i]
        var killer;
-       if(bullet.x >= player.x - 10 && bullet.x <= player.x + 10 && bullet.y >= player.y - 10 && bullet.y <= player.y + 10 && bullet.comesFrom != player.name){
-         player.hp -= bullet.damage;
+       if(bullet.x >= player.x - 10 && bullet.x <= player.x + 10 && bullet.y >= player.y - 10 && bullet.y <= player.y + 10 && bullet.comesFrom != player.name && bullet.teamname != player.teamname){
+        console.log("teamname player: " + player.teamname)
+        console.log("teamname bullet: " + bullet.teamname) 
+        player.hp -= bullet.damage;
          socket.emit("updatedHP", player.hp);
           if(player.hp <= 0){
-            io.emit("playerKilled",player);
             var lostBullets = player.currentAmmo
             killer = bullet.comesFrom
-            
+
             addKiller(killer, lostBullets) 
             calculateWinner()
 
