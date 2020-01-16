@@ -108,11 +108,8 @@
         socket.emit('new player' , classname, playername);
     });
     socket.on("endOfGame", function () {
-       // socket.emit('leaveGame');
-      $(function () {
-        leaveButtonPressed = true;
-        location.assign('/highscore');
-      });  
+      leaveButtonPressed = true;
+      location.assign('/highscore');
     });
     
     $(function () {
@@ -129,12 +126,10 @@
     });
 
     function joinedLobby(){
-      $(function () {
-        leaveButtonPressed = true;
-        socket.emit('leaveGame');
-        socket.emit('playerLobby', '<%= name %>', 'false');
-        location.assign('/');
-      });
+      leaveButtonPressed = true;
+      socket.emit('leaveGame');
+      socket.emit('playerLobby', '<%= name %>', 'false');
+      location.assign('/');
     }
 
     window.onbeforeunload = function(){

@@ -289,6 +289,7 @@ function calculateWinner(){
        // return "The SWAT unit has won the match with " + swatscore + " kills & " + rebelsCount + " deaths.";
       for (var id in players){
         if(players[id].teamname == "swat"){
+          console.log(players[id] +"swat heeft gewonnen")
           players[id].win = 1
         }
       updateHighscore(players[id])
@@ -298,13 +299,14 @@ function calculateWinner(){
      swatscore = 0;
      rebelscore = 0;
      itemboxes.length = 0;
-     io.emit('endOfGame');
      delete players[socket.id];
+     io.emit('endOfGame');  
     }
 
     if(rebelscore >= swatCount){
       for (var id in players){
         if(players[id].teamname == "rebels"){
+          console.log(players[id] + "rebels hebben gewonnen")
           players[id].win = 1        
         }
       updateHighscore(players[id])
@@ -314,12 +316,10 @@ function calculateWinner(){
      swatscore = 0;
      rebelscore = 0;
      itemboxes.length = 0;
-     io.emit('endOfGame');
      delete players[socket.id];
+     io.emit('endOfGame');
     }
 }
-
-   
 
       
 function endGame(){
@@ -380,18 +380,16 @@ socket.on('playerLobby', function(playername, joined){
     io.emit('playerLobbies', playersInLobby);
   }
 });
-  
+ 
 socket.on('disconnect', function(){
   delete players[socket.id];
   endGame();
-
-  //calculateWinner();
-
 });
 
 socket.on('leaveGame', function(){
   delete players[socket.id];
-  endGame();   
+  endGame();  
+  calculateWinner(); 
 });
 
 socket.on("anglePush", function(angle){
