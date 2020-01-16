@@ -150,7 +150,8 @@ class rebels extends character {
                 this.currentAmmo = 25;
                 this.classname = "Vigilante";
                 this.fireRate = 100;
-            }        }
+            }        
+          }
         //rebels 4
         class separatist extends rebels {
              constructor(id,name, hp, maxHP, score, x, y, weapondamage, teamscore, color, teamname, isDead, maxAmmo, currentAmmo, classname, win, angle){
@@ -166,7 +167,8 @@ class rebels extends character {
                 this.currentAmmo = 30;
                 this.classname = "Separatist"; 
                 this.fireRate = 0;
-            }        }
+            }        
+          }
 
 //swat subclass welke erft van character class.
 class swat extends character {
@@ -175,10 +177,8 @@ class swat extends character {
         this.teamscore = 0;
         this.color = "blue";
         this.teamname = "swat";
-        this.win = 0;
-       
-    }
-     
+        this.win = 0;  
+    }  
 }
         //swat 1
         class grenadier extends swat {
@@ -196,7 +196,6 @@ class swat extends character {
                 this.classname = "Grenadier";
                 this.fireRate = 200;
             }
-    
         }
         //swat 2
         class breacher extends swat {
@@ -245,11 +244,8 @@ class swat extends character {
                 this.maxAmmo = 20;
                 this.currentAmmo = 20;
                 this.classname = "Charger";
-                this.fireRate = 300;
-                
-                
+                this.fireRate = 300;  
             } 
-
         } 
   
 //creates a new player
@@ -320,7 +316,6 @@ function calculateWinner(){
      }  
     }
 }
-
       
 function endGame(){
      swatCount = 0;
@@ -512,7 +507,6 @@ socket.on('shoot-bullet', function(data, targetX, targetY){
         calculateAmmo(player, bullets);       
       }
     }  
-
   }
 
   function calculateAmmo(player, bullets){
@@ -522,7 +516,6 @@ socket.on('shoot-bullet', function(data, targetX, targetY){
       player.currentAmmo = player.maxAmmo;
     }    
     io.to(player.id).emit("addAmmo", oldAmmo, player.currentAmmo);
-
   }
 
   function calculateHealth(player, health){
@@ -547,7 +540,7 @@ socket.on('shoot-bullet', function(data, targetX, targetY){
           if(player.hp <= 0){
             var lostBullets = player.currentAmmo
             killer = bullet.comesFrom
-
+            io.emit("playerKilled",player);
             addKiller(killer, lostBullets) 
             calculateWinner()
 
@@ -620,11 +613,6 @@ http.listen(3000, function(){
   console.log('listening on *:3000');
 });
 
-
-
-              
-
- 
 //function getHighscore() {
 //  return new Promise(function(resolve, reject) {
 //      var sort = { highscore: 1, winscore: 1 };
@@ -641,8 +629,6 @@ http.listen(3000, function(){
 //  })
 //}
     
-
-
 function calculateBulletSpeed(bullet){
     var vx = bullet.targetX - bullet.x
     var vy = bullet.targetY - bullet.y

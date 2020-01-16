@@ -57,6 +57,7 @@ class object {
 }
 
 socket.on("playerKilled",function(player){
+  console.log("tombstone");
   deadArray.push([player.x-10,player.y-10]);
   if(player.teamname="rebels"){
     snd2.play();
