@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
+var copyPlayers = {}
 const mongoose = require('mongoose')
 mongoose.connect('mongodb://localhost:27017/mmodb', {useNewUrlParser: true});
 const Schema = mongoose.Schema
@@ -289,6 +290,7 @@ function calculateWinner(){
        // return "The SWAT unit has won the match with " + swatscore + " kills & " + rebelsCount + " deaths.";
       for (var id in players){
         if(players[id].teamname == "swat"){
+          console.log(players[id] +"swat heeft gewonnen")
           players[id].win = 1
         }
       updateHighscore(players[id])
@@ -298,13 +300,16 @@ function calculateWinner(){
      swatscore = 0;
      rebelscore = 0;
      itemboxes.length = 0;
+     copyPlayers = players 
+     console.log(copyPlayers)
      io.emit('endOfGame');
-     delete players[socket.id];
+     delete players[socket.id]; 
     }
 
     if(rebelscore >= swatCount){
       for (var id in players){
         if(players[id].teamname == "rebels"){
+          console.log(players[id] + "rebels hebben gewonnen")
           players[id].win = 1        
         }
       updateHighscore(players[id])
@@ -314,12 +319,12 @@ function calculateWinner(){
      swatscore = 0;
      rebelscore = 0;
      itemboxes.length = 0;
+     copyPlayers = players  
+     console.log(copyPlayers)
      io.emit('endOfGame');
      delete players[socket.id];
     }
 }
-
-   
 
       
 function endGame(){
@@ -357,6 +362,10 @@ socket.on('teamconfig', function(){
 socket.on('getHighscore', function(){
   getHighscore();
 });  
+socket.on('getMatchHighscore', function(){    
+socket.emit('getMatchHighscoreReturn', copyPlayers);    
+});    
+    
 socket.on('connectedPeopleLobby', function(){
   var amountOfPlayers = playersInLobby.length;
   io.emit('connectedPeopleLobbyReturn', amountOfPlayers);
@@ -380,16 +389,16 @@ socket.on('playerLobby', function(playername, joined){
     io.emit('playerLobbies', playersInLobby);
   }
 });
-  
+ 
 socket.on('disconnect', function(){
   delete players[socket.id];
   endGame();
-  //calculateWinner();
 });
 
 socket.on('leaveGame', function(){
   delete players[socket.id];
-  endGame();   
+  endGame();  
+  calculateWinner(); 
 });
 
 socket.on("anglePush", function(angle){

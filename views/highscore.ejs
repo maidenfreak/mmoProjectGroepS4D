@@ -4,86 +4,109 @@
   var socket = io();
 
 </script>
+
 <body>
-<div id="content">
-  <div id="wrapper">
-    <div id="game">
-      <h1>Highscore Ninbo</h1>
+    <div id="content">
+      <div id="wrapper">
+        <div id="game">
+          <h1>Highscore Ninbo</h1>
+              <div id="highscore">
+                <script>
+                var playername='<%= name %>';
 
-      <div id="test">
-          <script>
-           var playername='<%= name %>';  
-socket.emit('getHighscore');
-socket.on("getHighscoreReturn", function (nameArray, highArray, winArray) {
-    
-    console.log(nameArray);
-    //console.log(highscoreArray);
-    //console.log(winscoreArray);
-    var highscoreArray = nameArray
-    console.log(highscoreArray)
-    console.log("highscoreArray")
-    var topTenNameArray = nameArray.slice(0, 9);
-    var topTenHighArray = highArray.slice(0, 9);
-    var topTenWinArray = winArray.slice(0, 9);
-    //var playerInfo = highscoreArray.find(playername)
-   // var indexPlayer = highscoreArray.findIndex(playername)
-    
-    var html = makeTableHTML(topTenNameArray, topTenHighArray, topTenWinArray)//, indexPlayer, playerInfo)
-    console.log(html)
-    document.getElementById("test").innerHTML = html;
-    
-});
-              
-
-
-
-              
-function makeTableHTML(nameArray, highArray, winArray) { //, playerIndex, playerInfo) {
-//    var result = "<table border=1>";
-//    for(var i=0; i<myArray.length; i++) {
-//        result += "<tr>";
-//        result += "<td>" +i +"</td>";
-//        for(var j=0; j<myArray[i].length; j++){
-//            result += "<td>"+myArray[i][j]+"</td>";
-//        }
-//        result += "</tr>";
-//    }
-    var result = "<table border=1>";
-   for(var i=0; i<nameArray.length; i++) { 
-       result += "<tr>";
-        result += "<td>" +i +"</td>";
-       result += "<td>"+nameArray[i]+"</td>";
-       result += "<td>"+highArray[i]+"</td>";
-       result += "<td>"+winArray[i]+"</td>";
-       result += "</tr>";
-   }
-//    if(!myArray.find(player)){
-//        result += "<tr>";
-//        result += "<td>" +playerInfo[0]+"</td>";
-//        result += "<td>" +playerInfo[0]+"</td>";
-//        result += "<td>" +playerInfo[1]+"</td>";
-//        result += "<td>" +playerInfo[2]+"</td>";
-//        result += "</tr>";
-//    }
-//    result += "</table>";
-
-    return result;
-}
-//   var MongoClient = require('mongodb').MongoClient;
-//  var url = "mongodb://localhost:27017/";
-//  MongoClient.connect(url, function(err, db) {
-//      if (err) throw err;
-//      var dbo = db.db("mmodb");
-//      var query = { username: player.name };
-//      dbo.collection("highscoretable").find(query).toArray(function(err, result) {
-//        if (err) throw err;
-//          db.close();
-//        if(result.length){              
-          </script>
-      </div>
+                socket.emit('getHighscore');
+                socket.on("getHighscoreReturn", function (nameArray, highArray, winArray) {
+                    var topTenNameArray = nameArray.slice(0, 10);
+                    var topTenHighArray = highArray.slice(0, 10);
+                    var topTenWinArray = winArray.slice(0, 10);
+                    var indexNumber = getIndexPlayer(nameArray)
+                    function getIndexPlayer(nameArray){    
+                    for (i in nameArray){
+                        if(nameArray[i] == playername){
+                            return i
+                            }
+                        }
+                    }
+                    var html1 = makeTableHTML(topTenNameArray, topTenHighArray, topTenWinArray, indexNumber, nameArray, highArray, winArray)
+                    //var html2 = makeMatchHighscore(players)
+                    document.getElementById("highscore").innerHTML = html1;
+                    
+                });
       
-</div>
-    </div>
+               // socket.emit('getMatchHighscore');
+              //  socket.on("getMatchHighscoreReturn", function (copyPlayers) {
+//                    console.log(copyPlayers)
+//                    var html2 = makeMatchHighscore(copyPlayers)
+//                    document.getElementById("highscore").innerHTML = html2;
+//                });    
+//                    
+                function makeMatchHighscore(players){
+                    var result = "<table border=1>";
+                   result += "<tr><th>Rank</th><th>Username</th><th>Total Kills</th><th>Total Wins</th></tr>"
+                   var count = 0;
+                   // console.log(players)
+                    for( var id in players){
+                        var player = players[id]
+                        //console.log(player)
+                        count +=1
+                      result += "<tr>";
+                       result += "<td>" + count +"</td>";
+                       result += "<td>"+player.name+"</td>";
+                       result += "<td>"+player.score+"</td>";
+                       result += "<td>"+player.win+"</td>";
+                       result += "</tr>";   
+                       
+                    }
+                    result += "</table>";
+                    return result; 
+                    
+                    }
+                function makeTableHTML(nameArray, highArray, winArray, indexNumber, namePlayerArray, highPlayerArray, winPlayerArray ) { //, playerIndex, playerInfo) {
+                   var  numberIndex = parseInt(indexNumber)
+                   var indexPlayer = numberIndex + 1
+                   var result = "<table border=1>";
+                   result += "<tr><th>Rank</th><th>Username</th><th>Total Kills</th><th>Total Wins</th></tr>"
+                   for(var i=0; i<nameArray.length; i++) { 
+                       if( nameArray[i] == playername){
+                       var index = i + 1
+                       result += "<tr>";
+                        result += "<td style='font-weight:bold'  >" + index +"</td>";
+                       result += "<td style='font-weight:bold'  >"+nameArray[i]+"</td>";
+                       result += "<td style='font-weight:bold'  >"+highArray[i]+"</td>";
+                       result += "<td style='font-weight:bold'  >"+winArray[i]+"</td>";
+                       result += "</tr>";
+                      }else{
+                        var index = i + 1
+                       result += "<tr>";
+                       result += "<td>" + index +"</td>";
+                       result += "<td>"+nameArray[i]+"</td>";
+                       result += "<td>"+highArray[i]+"</td>";
+                       result += "<td>"+winArray[i]+"</td>";
+                       result += "</tr>"; 
+                           }
+                   }
+                    if(!(nameArray.includes(playername)) && namePlayerArray.includes(playername) ){
+                        result += "<tr>";
+                        result += "<td style='font-weight:bold'  >" + indexPlayer +"</td>";
+                        result += "<td style='font-weight:bold'  >" +namePlayerArray[indexNumber]+"</td>";
+                        result += "<td style='font-weight:bold'  >" +highPlayerArray[indexNumber]+"</td>";
+                        result += "<td style='font-weight:bold'  >" +winPlayerArray[indexNumber]+"</td>";
+                        result += "</tr>";
+                    }
+                    result += "</table>";
+
+                    return result;
+                }
+                  function loadLobby(){
+                      location.assign('/');
+                    }
+                </script>
+                  
+                </div>
+            <br>
+            <button id="lobbyButton" type="button" onclick="loadLobby()">Return to lobby</button>
+            </div>
+        </div>
     </div>
 </body>
 <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
