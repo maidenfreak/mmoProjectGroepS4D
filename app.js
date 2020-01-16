@@ -426,7 +426,7 @@ socket.on('movement', function(data, objectArray) {
       player.x -= 2;
     }
   }
-  if (data.up && player.y>=11 && collision.checkCollisionUp(player, players, objectArray, 9) == false) {
+  if (data.up && player.y>=11 && collision.checkCollisionUp(player, players, objectArray, 10) == false) {
     var packageValues = collision.checkCollisionPackageUp(player, itemboxes , 9);
     if(packageValues[0] == true){
       addBoxItems(player, packageValues[1]);
@@ -437,7 +437,7 @@ socket.on('movement', function(data, objectArray) {
       player.y -= 2;
     }
   }
-  if (data.right && player.x<=630 && collision.checkCollisionRight(player, players, objectArray, 9) == false) {
+  if (data.right && player.x<=630 && collision.checkCollisionRight(player, players, objectArray, 10) == false) {
     var packageValues = collision.checkCollisionPackageRight(player, itemboxes , 9);
     if(packageValues[0] == true){
       addBoxItems(player, packageValues[1]);
@@ -448,7 +448,7 @@ socket.on('movement', function(data, objectArray) {
       player.x += 2;
     }
   }
-  if (data.down && player.y<=630 && collision.checkCollisionDown(player, players, objectArray, 9) == false) {
+  if (data.down && player.y<=630 && collision.checkCollisionDown(player, players, objectArray, 10) == false) {
     var packageValues = collision.checkCollisionPackageDown(player, itemboxes , 9);
     if(packageValues[0] == true){
       addBoxItems(player, packageValues[1]);

@@ -1,7 +1,7 @@
     #chat {float: left;
     height: 690px;
     width: 260px;
-    background-color: white;
+    color: white;
     }
     #chattitle {border-bottom: 1px solid black;
     }
@@ -22,22 +22,23 @@
     width: 260px; 
     margin: 0px;
     }
-    form input { background: #dddddd; 
+    form input { background:rgba(150, 150, 150, 0.4); 
+    color: white;
     border: 0; 
-    padding: 10px; 
+    padding: 16px; 
     width: 260px;
     }
     #messages { list-style-type: none; 
-    background-color: white;
+    background:rgba(150, 150, 150, 0.2); 
     margin: 0; 
     padding: 0; 
-    height:523px ; 
+    height:642px ; 
     overflow: auto;
     }
     #messages li { padding: 5px 10px; 
     text-align:left ;
     }
-    #messages li:nth-child(odd) { background: #eee; 
+    #messages li:nth-child(odd) { background:rgba(150, 150, 150, 0.4);  
     }
     #players {list-style-type: none; 
     margin: 0; 
@@ -60,6 +61,7 @@
     text-align: center;
     color: white;
     font-size: small;
+    background:rgba(150, 150, 150, 0.2); 
     }
     #health-box {width: 30px; 
     margin: 10px;
