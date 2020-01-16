@@ -1,0 +1,82 @@
+<link href="style.css" rel="stylesheet" type="text/css">
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  var socket = io();
+  socket.emit('playerLobby', '<%= name %>', 'false');
+</script>
+<body>
+<div id="content">
+  <div id="wrapper">
+    <div id="game">
+      
+      <h1>Lobby</h1>
+      <h1>Hi <%= name %></h1>
+      <div id="logo"></div>
+      <div id="test">
+          <script>
+              var connectedPeople = 0;
+              socket.emit('connectedPeopleLobby');
+              socket.on('connectedPeopleLobbyReturn', function(amount){
+                connectedPeople = amount;
+                document.getElementById('test').innerHTML = "<h2> There are currently " + connectedPeople + "/8 people in the lobby.</h2>"
+              });   
+          </script>
+      </div>
+      <button id="startButton" type="button" onclick="startTheGame()">Start</button>
+      <br>
+      <button id="joinButton" type="button" onclick="joinedLobby()">Join</button>
+      <br>    
+      <ul id="players"></ul>
+      <br>
+      <button id="HighscoreButton" type="button" onclick="loadHighscores()">Highscores</button>
+    </div>
+    <div id="chat">
+        <div id="chattitle">
+          
+            <h1>Chat</h1></div>
+        <ul id="messages"></ul>
+        <form action="" id="form">
+          <input id="m" autocomplete="off" value=""/>
+        </form>
+    </div>
+  </div>
+</div>
+</body>
+<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+<script src="../static/lobby.js"></script>
+<script>
+  var playername='<%= name %>';
+  var socket = io();
+
+  socket.on('playerLobbies', function(allPlayers){
+    $('#players').empty();
+    for (i = 0; i<allPlayers.length; i++){
+          $('#players').append($('<li>').text(allPlayers[i]));
+    }
+  });
+
+  $(function () {
+    $('form').submit(function(e){
+      e.preventDefault(); // prevents page reloading
+      socket.emit('chat message', '<%= name %>: '+$('#m').val());
+      $('#m').val('');
+      return false;
+    });
+    socket.on('chat message', function(msg){
+      $('#messages').append($('<li>').text(msg));
+    });
+  }); 
+
+  function joinedLobby(){
+    socket.emit('playerLobby', '<%= name %>', 'true');
+    socket.emit('connectedPeopleLobby');
+  }
+  
+  function startTheGame(){
+    socket.emit('startGameServer');
+  }
+
+  function loadHighscores(){
+    location.assign('/highscore');
+  }
+</script>
