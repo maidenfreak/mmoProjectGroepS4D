@@ -4,29 +4,7 @@
   var socket = io();
 
 </script>
-<style>
-table {
-  border-collapse: collapse;
-  width: 100%;
-}
 
-th, td {
-  text-align: left;
-  padding: 8px;
-}
-
-tr:nth-child(even){background-color: #f2f2f2}
-
-th {
-  background-color: #11114f;
-  color: white;
-}
-
-    #highscore{
-        padding:20px;
-        margin: 20px;
-    }   
-</style>
 <body>
     <div id="content">
       <div id="wrapper">
@@ -49,12 +27,40 @@ th {
                             }
                         }
                     }
-
-                    var html = makeTableHTML(topTenNameArray, topTenHighArray, topTenWinArray, indexNumber, nameArray, highArray, winArray)
-                    document.getElementById("highscore").innerHTML = html;
+                    var html1 = makeTableHTML(topTenNameArray, topTenHighArray, topTenWinArray, indexNumber, nameArray, highArray, winArray)
+                    //var html2 = makeMatchHighscore(players)
+                    document.getElementById("highscore").innerHTML = html1;
                     
                 });
-            
+      
+               // socket.emit('getMatchHighscore');
+              //  socket.on("getMatchHighscoreReturn", function (copyPlayers) {
+//                    console.log(copyPlayers)
+//                    var html2 = makeMatchHighscore(copyPlayers)
+//                    document.getElementById("highscore").innerHTML = html2;
+//                });    
+//                    
+                function makeMatchHighscore(players){
+                    var result = "<table border=1>";
+                   result += "<tr><th>Rank</th><th>Username</th><th>Total Kills</th><th>Total Wins</th></tr>"
+                   var count = 0;
+                   // console.log(players)
+                    for( var id in players){
+                        var player = players[id]
+                        //console.log(player)
+                        count +=1
+                      result += "<tr>";
+                       result += "<td>" + count +"</td>";
+                       result += "<td>"+player.name+"</td>";
+                       result += "<td>"+player.score+"</td>";
+                       result += "<td>"+player.win+"</td>";
+                       result += "</tr>";   
+                       
+                    }
+                    result += "</table>";
+                    return result; 
+                    
+                    }
                 function makeTableHTML(nameArray, highArray, winArray, indexNumber, namePlayerArray, highPlayerArray, winPlayerArray ) { //, playerIndex, playerInfo) {
                    var  numberIndex = parseInt(indexNumber)
                    var indexPlayer = numberIndex + 1
