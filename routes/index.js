@@ -19,6 +19,9 @@ module.exports = function(app,passport){
     app.get('/highscore', isLoggedIn,(req,res) => {
         res.render('highscore.ejs', {name: req.user.name})
     });
+    app.get('/matchhighscore', isLoggedIn,(req,res) => {
+        res.render('matchhighscore.ejs', {name: req.user.name})
+    });
     app.post('/login',passport.authenticate('local-login',{
             successRedirect : '/',
             failureRedirect : '/login',

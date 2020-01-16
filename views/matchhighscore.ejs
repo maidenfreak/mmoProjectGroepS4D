@@ -1,0 +1,57 @@
+<link href="style.css" rel="stylesheet" type="text/css">
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  var socket = io();
+
+</script>
+
+<body>
+    <div id="content">
+      <div id="wrapper">
+        <div id="game">
+          <h1>Match highscore Ninbo</h1>
+              <div id="matchhighscore">
+                <script>
+                var playername='<%= name %>';
+
+ 
+                socket.emit('getMatchHighscore');
+                socket.on("getMatchHighscoreReturn", function (arrayMatchName) {
+                    var html2 = makeMatchHighscore(arrayMatchName)
+                    document.getElementById("matchhighscore").innerHTML = html2;
+                });    
+                   
+                function makeMatchHighscore(arrayMatchName){
+                   var result = "<table border=1>";
+                   result += "<tr><th>Rank</th><th>Username</th><th>Total Kills</th><th>Total Wins</th><th>Team</th></tr>"
+                   var count = 0;
+                    for( var id = 0; id < arrayMatchName.length; id++){
+                        if( arrayMatchName[id][0] == playername){
+                      result += "<tr style='font-weight:bold'>";
+                        }else{
+                          result += "<tr>";  
+                        }
+                        count +=1
+                        result += "<td>" + count +"</td>";
+                        for(var b = 0; b < arrayMatchName[id].length; b++){
+                        result += "<td>"+arrayMatchName[id][b]+"</td>";
+                        }          
+                       result += "</tr>";   
+                    }
+                    result += "</table>";
+                    return result; 
+                    
+                    }
+                function loadLobby(){
+                      location.assign('/');
+                    }
+                </script>
+                  
+                </div>
+            <br>
+            <button id="lobbyButton" type="button" onclick="loadLobby()">Return to lobby</button>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="https://code.jquery.com/jquery-1.11.1.js"></script>

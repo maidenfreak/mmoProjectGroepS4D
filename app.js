@@ -8,7 +8,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
-var copyPlayers = {}
+var arrayMatchName = []
 const mongoose = require('mongoose')
 mongoose.connect('mongodb://localhost:27017/mmodb', {useNewUrlParser: true});
 const Schema = mongoose.Schema
@@ -285,7 +285,7 @@ socket.on('new player', function( playertype, name) {
          }     
 
 function calculateWinner(){
-  //var winscore = 0
+    arrayMatchName = []
     if(swatscore  >= rebelsCount){
        // return "The SWAT unit has won the match with " + swatscore + " kills & " + rebelsCount + " deaths.";
       for (var id in players){
@@ -299,10 +299,13 @@ function calculateWinner(){
      swatscore = 0;
      rebelscore = 0;
      itemboxes.length = 0;
-     copyPlayers = players 
-     console.log(copyPlayers)
+     for(var x in players){
+        arrayMatchName.push ([players[x].name, players[x].score, players[x].win, players[x].teamname ]);
+        }
+        
      io.emit('endOfGame');
      delete players[socket.id];
+     
     }
 
     if(rebelscore >= swatCount){
@@ -317,14 +320,18 @@ function calculateWinner(){
      swatscore = 0;
      rebelscore = 0;
      itemboxes.length = 0;
-     copyPlayers = players  
-     console.log(copyPlayers)
+     for(var x in players){
+          arrayMatchName.push ([players[x].name, players[x].score, players[x].win, players[x].teamname ]);
+        }
+     console.log(arrayMatchName)
      io.emit('endOfGame');
      delete players[socket.id];
+  
     }
 }
 
-   
+
+  
 
       
 function endGame(){
@@ -362,9 +369,14 @@ socket.on('teamconfig', function(){
 socket.on('getHighscore', function(){
   getHighscore();
 });  
-socket.on('getMatchHighscore', function(){    
-socket.emit('getMatchHighscoreReturn', copyPlayers);    
+socket.on('getMatchHighscore', function(){ 
+ var sortedArray = arrayMatchName.sort( function(a, b) {
+  return (b[1] - a[1] ) || (b[2] - a[2]);
+});
+    
+    socket.emit('getMatchHighscoreReturn', sortedArray)
 });    
+ 
     
 socket.on('connectedPeopleLobby', function(){
   var amountOfPlayers = playersInLobby.length;
@@ -607,6 +619,7 @@ function updateHighscore(player){
           arrayWinscore.push (result[x].winscore);
           arrayHighscore.push(result[x].highscore);
         }
+
         socket.emit('getHighscoreReturn', arrayName, arrayHighscore, arrayWinscore);
         db.close(); 
       });
@@ -622,27 +635,7 @@ http.listen(3000, function(){
   console.log('listening on *:3000');
 });
 
-
-
-              
-
  
-//function getHighscore() {
-//  return new Promise(function(resolve, reject) {
-//      var sort = { highscore: 1, winscore: 1 };
-//      var dbo = db.db("mmodb");
-//     dbo.collection("highscoretable12").find().sort(sort).toArray( function(err, docs) {
-//      if (err) {
-//        // Reject the Promise with an error
-//        return reject(err)
-//      }
-//
-//      // Resolve (or fulfill) the promise with data
-//      return resolve(docs)
-//    })
-//  })
-//}
-    
 
 
 function calculateBulletSpeed(bullet){
