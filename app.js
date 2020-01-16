@@ -71,13 +71,7 @@ app.delete('/logout', (req, res) => {
   req.logOut()
   res.redirect('/login')
 })
-/*
-function checkGameStarted(req, res, next){
-  if(req.gameStarted()){
-    return res.redirect('/index.ejs')
-  }
-}
-*/
+
 var path = require('path');
 var server = http;
 
@@ -301,14 +295,11 @@ function calculateWinner(){
     itemboxes.length = 0;
     copyPlayers = players 
     //console.log(copyPlayers)
-    io.emit('endOfGame');
-    
+    io.emit('endOfGame');   
     for(var test in players){
-      console.log(players[test]);
       delete players[test];
      } 
   }
-
     if(rebelscore >= swatCount){
       for (var id in players){
         if(players[id].teamname == "rebels"){
@@ -323,10 +314,8 @@ function calculateWinner(){
      itemboxes.length = 0;
      copyPlayers = players  
      //console.log(copyPlayers)
-     io.emit('endOfGame');
-     
+     io.emit('endOfGame');   
      for(var test in players){
-      console.log(players[test]);
       delete players[test];
      }  
     }

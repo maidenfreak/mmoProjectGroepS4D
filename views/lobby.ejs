@@ -48,7 +48,13 @@
 <script src="../static/lobby.js"></script>
 <script>
   var playername='<%= name %>';
+  var gameInProgress = false;
   var socket = io();
+
+  socket.on('startGame', function() {
+    gameInProgress = true;
+    location.assign('index');
+  });
 
   socket.on('playerLobbies', function(allPlayers){
     $('#players').empty();
@@ -83,7 +89,9 @@
   }
 
   function loadSpectator(){
-    location.assign('/index');
+    if(gameInProgress == true){
+      location.assign('/index');
+    } 
   }
 
 </script>
