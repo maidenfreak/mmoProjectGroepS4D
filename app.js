@@ -492,6 +492,7 @@ socket.on('shoot-bullet', function(data, targetX, targetY){
     newBullet.targetY = targetY;
     newBullet.comesFrom = player.name;
     newBullet.damage = player.weapondamage;
+    newBullet.teamname = player.teamname
     var bulletSpeed = calculateBulletSpeed(newBullet);
     newBullet.xSpeed = bulletSpeed[0];
     newBullet.ySpeed = bulletSpeed[1];
@@ -541,8 +542,10 @@ socket.on('shoot-bullet', function(data, targetX, targetY){
     for(var i = 0; i < bullets.length; i++){
        var bullet = bullets[i]
        var killer;
-       if(bullet.x >= player.x - 10 && bullet.x <= player.x + 10 && bullet.y >= player.y - 10 && bullet.y <= player.y + 10 && bullet.comesFrom != player.name){
-         player.hp -= bullet.damage;
+       if(bullet.x >= player.x - 10 && bullet.x <= player.x + 10 && bullet.y >= player.y - 10 && bullet.y <= player.y + 10 && bullet.comesFrom != player.name && bullet.teamname != player.teamname){
+        console.log("teamname player: " + player.teamname)
+        console.log("teamname bullet: " + bullet.teamname) 
+        player.hp -= bullet.damage;
          socket.emit("updatedHP", player.hp);
           if(player.hp <= 0){
             var lostBullets = player.currentAmmo

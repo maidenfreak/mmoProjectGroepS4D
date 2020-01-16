@@ -116,7 +116,7 @@ function shootBullet(event){
   var x = values[0];
   var y = values[1];
   var coords = "x" + x + "y" + y;
-  socket.emit('shoot-bullet', {x: 300, y: 300, speedY: 5, isHit: false, damage: 0},x,y); 
+  socket.emit('shoot-bullet', {x: 300, y: 300, speedY: 5, isHit: false, damage: 0, teamname: ""},x,y); 
 }
 
 function bulletTimer(fireRate){
