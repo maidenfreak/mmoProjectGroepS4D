@@ -25,10 +25,8 @@
       <button id="startButton" type="button" onclick="startTheGame()">Start</button>
       <br>
       <button id="joinButton" type="button" onclick="joinedLobby()">Join</button>
-      <br>    
-      <ul id="players"></ul>
       <br>
-      <button id="HighscoreButton" type="button" onclick="loadHighscores()">Highscores</button>
+      <ul id="players"></ul>
     </div>
     <div id="chat">
         <div id="chattitle">
@@ -68,15 +66,15 @@
   }); 
 
   function joinedLobby(){
-    socket.emit('playerLobby', '<%= name %>', 'true');
-    socket.emit('connectedPeopleLobby');
+    $(function () {
+      socket.emit('playerLobby', '<%= name %>', 'true');
+      socket.emit('connectedPeopleLobby');
+    });
   }
   
   function startTheGame(){
-    socket.emit('startGameServer');
-  }
-
-  function loadHighscores(){
-    location.assign('/highscore');
+    $(function () {
+      socket.emit('startGameServer');
+    });
   }
 </script>
