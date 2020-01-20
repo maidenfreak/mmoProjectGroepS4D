@@ -249,19 +249,25 @@ var snd12  = new Audio();
 var src12  = document.createElement("source");
 src12.type = "audio/mpeg";
 src12.src  = "sounds/bulletonwall.mp3";
-src12.appendChild(src12);
+snd12.appendChild(src12);
 
 var snd13  = new Audio();
 var src13  = document.createElement("source");
 src13.type = "audio/mpeg";
 src13.src  = "sounds/enemyhitsound.mp3";
-src13.appendChild(src13);
+snd13.appendChild(src13);
 
 var snd14  = new Audio();
 var src14  = document.createElement("source");
 src14.type = "audio/mpeg";
 src14.src  = "sounds/hitbyenemy.mp3";
-src14.appendChild(src14);
+snd14.appendChild(src14);
+
+var snd15  = new Audio();
+var src15  = document.createElement("source");
+src15.type = "audio/mpeg";
+src15.src  = "sounds/bulletonwalldistant.mp3";
+snd15.appendChild(src15);
 
 snd6.play();
 snd3.play();
@@ -281,7 +287,7 @@ snd3.play();
 <audio id="multiaudio10" src="sounds/Gunshotrebelsdistant.mp3" preload="auto"></audio>
 
 <script type="text/javascript">
-	var channel_max = 10;										// number of channels
+	var channel_max = 15;										// number of channels
 	audiochannels = new Array();
 	for (a=0;a<channel_max;a++) {									// prepare the channels
 		audiochannels[a] = new Array();
