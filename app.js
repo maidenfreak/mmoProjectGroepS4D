@@ -97,7 +97,7 @@ class rebels extends character {
         super(id, name, score, angle)
         this.teamscore = 0;
         this.color = "red";
-        this.teamname = "rebels";
+        this.teamname = "Rebels";
         this.win = 0;
     }
 
@@ -174,7 +174,7 @@ class swat extends character {
         super(id, name, score, angle)
         this.teamscore = 0;
         this.color = "blue";
-        this.teamname = "swat";
+        this.teamname = "Swat";
         this.win = 0;
        
     }
@@ -284,7 +284,7 @@ function calculateWinner(){
   if(swatscore  >= rebelsCount){
     // return "The SWAT unit has won the match with " + swatscore + " kills & " + rebelsCount + " deaths.";
     for (var id in players){
-      if(players[id].teamname == "swat"){
+      if(players[id].teamname == "Swat"){
         players[id].win = 1
       }
       updateHighscore(players[id])
@@ -304,7 +304,7 @@ function calculateWinner(){
   }
     if(rebelscore >= swatCount){
       for (var id in players){
-        if(players[id].teamname == "rebels"){
+        if(players[id].teamname == "Rebels"){
           players[id].win = 1        
         }
       updateHighscore(players[id])
@@ -330,10 +330,10 @@ function endGame(){
      rebelsCount = 0;
       for(var id in players){
         var player = players[id];
-          if(player.teamname == "swat"){
+          if(player.teamname == "Swat"){
             swatCount += 1;
           }
-          else if(player.teamname == 'rebels'){
+          else if(player.teamname == 'Rebels'){
             rebelsCount += 1;
           }
       }
@@ -513,7 +513,7 @@ socket.on('shoot-bullet', function(data, targetX, targetY){
       var killer1 = naam
       if(player.name == killer1){ 
         player.score += 1
-        if(player.teamname == "swat"){
+        if(player.teamname == "Swat"){
           swatscore +=1;          
         }else{
           rebelscore +=1;
