@@ -577,33 +577,36 @@ socket.on('shoot-bullet', function(data, targetX, targetY){
        var killer;
        if(bullet.x >= player.x - 10 && bullet.x <= player.x + 10 && bullet.y >= player.y - 10 && bullet.y <= player.y + 10 && bullet.comesFrom != player.name && bullet.teamname != player.teamname){
         player.hp -= bullet.damage;
-         socket.emit("updatedHP", player.hp);
-          if(player.hp <= 0){
+        io.emit("playerHit", bullet, player);
+        socket.emit("updatedHP", player.hp);
+        if(player.hp <= 0){
             var lostBullets = player.currentAmmo
             killer = bullet.comesFrom
             io.emit("playerKilled",player)
             addKiller(killer, lostBullets)
             calculateWinner()
-
-          }
-         bullet.isHit = true
         }
-
-       if(bullet.x >= 0 && bullet.x <= 640 && collision.checkCollisionLeft(bullet, {}, objectArray, 2) == false && collision.checkCollisionRight(bullet, {}, objectArray, 2) == false){
+        bullet.isHit = true
+        }
+      var wallHit
+      if(bullet.x >= 0 && bullet.x <= 640 && collision.checkCollisionLeft(bullet, {}, objectArray, 2) == false && collision.checkCollisionRight(bullet, {}, objectArray, 2) == false){
         bullet.x += bullet.xSpeed
-       }
-       else {
-        bullet.x = -10
-      }
-
-      if(bullet.y >= 0 && bullet.y <= 640 && collision.checkCollisionUp(bullet, {}, objectArray, 2) == false && collision.checkCollisionDown(bullet, {}, objectArray, 2) == false){
-        bullet.y += bullet.ySpeed
+        
       }
       else {
+        io.emit("wallHit",bullet);
+        bullet.x = -10
+      }
+      if(bullet.y >= 0 && bullet.y <= 640 && collision.checkCollisionUp(bullet, {}, objectArray, 2) == false && collision.checkCollisionDown(bullet, {}, objectArray, 2) == false){
+        bullet.y += bullet.ySpeed
+        
+      }
+      else {
+        io.emit("wallHit",bullet);
         bullet.y = -10
       }
-     }
-   })
+    }
+  })
   
 function updateHighscore(player){
    var currentPlayer = player
