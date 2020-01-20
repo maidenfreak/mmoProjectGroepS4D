@@ -3,8 +3,7 @@
 <div id="content">
   <div id="wrapper">
     <div id="gamestats">
-      <div id="rebelscore"></div>
-      <div id="swatscore"></div>
+      <div id="score"></div>
     </div>
     <div id="stats">
       <div id="playername"><%= name %></div>
@@ -146,11 +145,12 @@
 
   
   var sounds = {
-  "Policeambience" : { url : "sounds/Policeambience.mp3"},
-  "Policestartmatch" : { url : "sounds/Policestartmatch.mp3"},
-  "Rebelsstartmatch" : { url : "sounds/Rebelsstartmatch.mp3"}, 
-  "Lobbymusic" : { url : "sounds/Lobbymusic.mp3"}, 
-  "Join" : { url : "sounds/Join.mp3"}
+  "Policeambience" : { url : "sounds/ambience.mp3"},
+  "Policestartmatch" : { url : "sounds/startmatchswat.mp3"},
+  "Rebelsstartmatch" : { url : "sounds/startmatchrebels.mp3"}, 
+  "Lobbymusic" : { url : "sounds/lobbymusic.mp3"}, 
+  "Join" : { url : "sounds/join.mp3"},
+  "Endgame" : { url : "sounds/endgame.mp3"}
   };
 
 var soundContext = new AudioContext();
@@ -272,6 +272,12 @@ var src15  = document.createElement("source");
 src15.type = "audio/mpeg";
 src15.src  = "sounds/bulletonwalldistant.mp3";
 snd15.appendChild(src15);
+
+var snd16  = new Audio();
+var src16  = document.createElement("source");
+src16.type = "audio/mpeg";
+src16.src  = "sounds/endgame.mp3";
+snd16.appendChild(src16);
 
 snd6.play();
 snd3.play();
