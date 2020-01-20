@@ -8,8 +8,6 @@ var addWeapon = true;
 
 var iDiv = document.getElementById('ammo');
 
-
-
 socket.on('playerteam', function(player){
     maxHealth = player.hp;
     maxAmmo = player.maxAmmo;
