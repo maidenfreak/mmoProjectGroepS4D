@@ -30,6 +30,8 @@ var swatCount = 0;
 var rebelsCount = 0 ;
 var rebelscore =0;
 var swatscore = 0;
+var rebelsActive = 0;
+var swatActive = 0;
 var typeplayers = ["militant", "grenadier", "guerrilla", "observer", "vigilante" ,"breacher", "separatist", "charger" ];
 var teamconfig = [];
 require('dotenv').config();
@@ -97,7 +99,7 @@ class rebels extends character {
         super(id, name, score, angle)
         this.teamscore = 0;
         this.color = "red";
-        this.teamname = "rebels";
+        this.teamname = "Rebels";
         this.win = 0;
     }
 
@@ -174,7 +176,7 @@ class swat extends character {
         super(id, name, score, angle)
         this.teamscore = 0;
         this.color = "blue";
-        this.teamname = "swat";
+        this.teamname = "Swat";
         this.win = 0;
        
     }
@@ -284,7 +286,7 @@ function calculateWinner(){
   if(swatscore  >= rebelsCount){
     // return "The SWAT unit has won the match with " + swatscore + " kills & " + rebelsCount + " deaths.";
     for (var id in players){
-      if(players[id].teamname == "swat"){
+      if(players[id].teamname == "Swat"){
         players[id].win = 1
       }
       updateHighscore(players[id])
@@ -304,7 +306,7 @@ function calculateWinner(){
   }
     if(rebelscore >= swatCount){
       for (var id in players){
-        if(players[id].teamname == "rebels"){
+        if(players[id].teamname == "Rebels"){
           players[id].win = 1        
         }
       updateHighscore(players[id])
@@ -330,13 +332,15 @@ function endGame(){
      rebelsCount = 0;
       for(var id in players){
         var player = players[id];
-          if(player.teamname == "swat"){
+          if(player.teamname == "Swat"){
             swatCount += 1;
           }
-          else if(player.teamname == 'rebels'){
+          else if(player.teamname == 'Rebels'){
             rebelsCount += 1;
           }
       }
+      swatActive = swatCount
+      rebelsActive = rebelsCount
       return swatCount, rebelsCount; 
     }    
     
@@ -405,8 +409,7 @@ socket.on('playerLobby', function(playername, joined, idSocket){
  
 socket.on('disconnect', function(){
   delete players[socket.id];
-  endGame();
-  //calculateWinner(); 
+  endGame(); 
 });
 
 socket.on('leaveGame', function(){
@@ -476,8 +479,10 @@ socket.on('movement', function(data, objectArray) {
 function addBoxItems (player, packageData){
   if(packageData[5] == 0){
     calculateAmmo(player, packageData[4]);
+    socket.emit("ammoBoxPickUp");
   }else if(packageData[5] == 1){
     calculateHealth(player, packageData[4]);
+    socket.emit("healthBoxPickUp");
   }
   boxPlacement(packageData);
 }
@@ -517,15 +522,21 @@ socket.on('shoot-bullet', function(data, targetX, targetY){
 });
 
   function addKiller(naam, bullets){
+    rebelsActive = rebelsCount
+    swatActive = swatCount
     for (var id in players) {
       var player = players[id];
       var killer1 = naam
       if(player.name == killer1){ 
         player.score += 1
-        if(player.teamname == "swat"){
-          swatscore +=1;          
+
+        if(player.teamname == "Swat"){
+          swatscore +=1; 
+          rebelsActive -=1;         
+
         }else{
           rebelscore +=1;
+          swatActive -=1;
         }
         calculateAmmo(player, bullets);       
       }
@@ -558,15 +569,13 @@ socket.on('shoot-bullet', function(data, targetX, targetY){
        var bullet = bullets[i]
        var killer;
        if(bullet.x >= player.x - 10 && bullet.x <= player.x + 10 && bullet.y >= player.y - 10 && bullet.y <= player.y + 10 && bullet.comesFrom != player.name && bullet.teamname != player.teamname){
-        console.log("teamname player: " + player.teamname)
-        console.log("teamname bullet: " + bullet.teamname) 
         player.hp -= bullet.damage;
          socket.emit("updatedHP", player.hp);
           if(player.hp <= 0){
             var lostBullets = player.currentAmmo
             killer = bullet.comesFrom
             io.emit("playerKilled",player)
-            addKiller(killer, lostBullets) 
+            addKiller(killer, lostBullets)
             calculateWinner()
 
           }
@@ -632,6 +641,7 @@ function updateHighscore(player){
 
 setInterval(function() {
   io.sockets.emit('state', players, bullets, itemboxes);
+  io.sockets.emit("updateScoreInHud", rebelsActive, swatActive);
 }, 1000 / 60);
 
 http.listen(3000, function(){

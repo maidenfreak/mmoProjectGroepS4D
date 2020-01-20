@@ -20,10 +20,21 @@
                     var html2 = makeMatchHighscore(arrayMatchName)
                     document.getElementById("matchhighscore").innerHTML = html2;
                 });    
-                   
+                 
+                function getWinnerTeamname(arrayMatchName){
+                    for (var i in arrayMatchName){
+                        if(arrayMatchName[i][2] == 1){
+                            return arrayMatchName[i][3]
+                        }
+                    }
+                }    
+                    
                 function makeMatchHighscore(arrayMatchName){
-                   var result = "<table border=1>";
-                   result += "<tr><th>Rank</th><th>Username</th><th>Total Kills</th><th>Total Wins</th><th>Team</th></tr>"
+                   var winningTeam =  getWinnerTeamname(arrayMatchName)
+                   var result = "<h3>" + winningTeam + " has won the match!</h3>";
+                    result += "<table border=1>";
+                    
+                   result += "<tr><th>Rank</th><th>Username</th><th>Total Kills</th><th>Won</th><th>Team</th></tr>"
                    var count = 0;
                     for( var id = 0; id < arrayMatchName.length; id++){
                         if( arrayMatchName[id][0] == playername){
@@ -34,7 +45,15 @@
                         count +=1
                         result += "<td>" + count +"</td>";
                         for(var b = 0; b < arrayMatchName[id].length; b++){
-                        result += "<td>"+arrayMatchName[id][b]+"</td>";
+                            if((arrayMatchName[id][b]) == 1 && b == 2){
+                                result += "<td>Winner!</td>";
+                                }else if((arrayMatchName[id][b]) == 0 && b == 2){
+                                    result += "<td>Loser</td>";
+                                }else{
+                                    result += "<td>"+arrayMatchName[id][b]+"</td>";
+                                }
+                        
+                            
                         }          
                        result += "</tr>";   
                     }

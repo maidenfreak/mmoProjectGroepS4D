@@ -13,7 +13,7 @@ var iDiv = document.getElementById('ammo');
 socket.on('playerteam', function(player){
     maxHealth = player.hp;
     maxAmmo = player.maxAmmo;
-    playerclass.innerHTML = player.classname;
+    playerclass.innerHTML = player.teamname + " - " + player.classname;
     if (addWeapon==true){
         var weaponWrapper = document.getElementById('weapon');
         var weaponDiv = document.createElement('div');
@@ -73,4 +73,8 @@ socket.on('addAmmo', function(oldAmmo, ammoPlayer){
         innerDiv.className = 'test';
         iDiv.appendChild(innerDiv);
     }
+});
+
+socket.on("updateScoreInHud", function(countrebel, countswat){
+    rebelscore.innerHTML = countswat + " VS " + countrebel;
 });
