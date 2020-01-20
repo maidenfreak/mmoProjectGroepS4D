@@ -577,7 +577,7 @@ socket.on('shoot-bullet', function(data, targetX, targetY){
        var killer;
        if(bullet.x >= player.x - 10 && bullet.x <= player.x + 10 && bullet.y >= player.y - 10 && bullet.y <= player.y + 10 && bullet.comesFrom != player.name && bullet.teamname != player.teamname){
         player.hp -= bullet.damage;
-        socket.emit("playerHit");
+        io.emit("playerHit", bullet, player);
         socket.emit("updatedHP", player.hp);
         if(player.hp <= 0){
             var lostBullets = player.currentAmmo

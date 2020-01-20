@@ -83,8 +83,14 @@ socket.on("wallHit",function(bullet){
 }
 });
 
-socket.on("playerHit", function(){
+socket.on("playerHit", function(bullet, player){
+  console.log(player.name, bullet.comesFrom)
+  if (clientPlayer.name==player.name){
   snd14.play();
+  }
+  if (clientPlayer.name==bullet.comesFrom){
+  snd13.play();
+  }
 });
   
 socket.on("ammoBoxPickUp",function(){
@@ -95,8 +101,8 @@ socket.on("healthBoxPickUp",function(){
   snd9.play();
 });
   
-socket.on("playSoundEffect",function(gunshot){
-  if(gunshot.x+200<clientPlayer.x && gunshot.x-200>clientPlayer.x && gunshot.y+200<clientPlayer.y && gunshot.y-200<clientPlayer.y){
+socket.on("playSoundEffect",function(bullet){
+  if(bullet.x<clientPlayer.x+200 && bullet.x>clientPlayer.x-200 && bullet.y<clientPlayer.y+200 && bullet.y>clientPlayer.y-200){
     play_multi_sound('multiaudio1');
   }
   else{
