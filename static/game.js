@@ -57,13 +57,50 @@ class object {
 }
 
 socket.on("playerKilled",function(player){
-  console.log("tombstone");
   deadArray.push([player.x-10,player.y-10]);
   if(player.teamname=="rebels"){
     snd2.play();
   }
   else if(player.teamname=="swat"){
     snd5.play();
+  }
+});
+
+socket.on("enemyHit",function(){
+
+});
+
+socket.on("wallHit",function(bullet){
+  if (bullet.x>-10 && bullet.y>-10){
+  if(bullet.x<clientPlayer.x+100 && bullet.x>clientPlayer.x-100 && bullet.y<clientPlayer.y+100 && bullet.y>clientPlayer.y-100){
+  snd12.play();
+  }
+  else if(bullet.x<clientPlayer.x+300 && bullet.x>clientPlayer.x-300 && bullet.y<clientPlayer.y+300 && bullet.y>clientPlayer.y-300){
+  snd15.play();
+  }
+  else{
+  }
+}
+});
+
+socket.on("playerHit", function(){
+  snd14.play();
+});
+  
+socket.on("ammoBoxPickUp",function(){
+  snd8.play();
+});
+
+socket.on("healthBoxPickUp",function(){
+  snd9.play();
+});
+  
+socket.on("playSoundEffect",function(gunshot){
+  if(gunshot.x+200<clientPlayer.x && gunshot.x-200>clientPlayer.x && gunshot.y+200<clientPlayer.y && gunshot.y-200<clientPlayer.y){
+    play_multi_sound('multiaudio1');
+  }
+  else{
+    play_multi_sound('multiaudio6');
   }
 });
 
@@ -150,23 +187,6 @@ canvas.onclick = function(event){
   }
 }
 
-socket.on("ammoBoxPickUp",function(){
-snd8.play();
-console.log("ammo");
-});
-socket.on("healthBoxPickUp",function(){
-snd9.play();
-console.log("health");
-});
-
-socket.on("playSoundEffect",function(gunshot){
- if(gunshot.x+200<clientPlayer.x || gunshot.x-200>clientPlayer.x && gunshot.y+200<clientPlayer.y || gunshot.y-200<clientPlayer.y){
-   play_multi_sound('multiaudio1');
- }
- else{
-   play_multi_sound('multiaudio6');
- }
-});
 
  
 //deze socket staat op een interval en wordt continu uitgevoerd om het spel te updaten
