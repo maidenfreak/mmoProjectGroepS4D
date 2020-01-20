@@ -6,16 +6,16 @@ var sounds = {
     url : "sounds/Gunshotswat.mp3",
   },
   "Policeambience" : {
-    url : "sounds/Policeambience.mp3"
+    url : "sounds/ambience.mp3"
   },
   "Policestartmatch" : {
-    url : "sounds/Policestartmatch.mp3"
+    url : "sounds/startmatchswat.mp3"
   },
   "Rebelsstartmatch" : {
-    url : "sounds/Rebelsstartmatch.mp3"
+    url : "sounds/startmatchrebels.mp3"
   },
   "Deatheffect" : {
-    url : "sounds/Deatheffect.mp3"
+    url : "sounds/deatheffectrebels.mp3"
   }, 
   "Lobbymusic" : {
     url : "sounds/Lobbymusic.mp3"
