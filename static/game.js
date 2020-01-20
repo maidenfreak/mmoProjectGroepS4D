@@ -59,10 +59,10 @@ class object {
 socket.on("playerKilled",function(player){
   console.log("tombstone");
   deadArray.push([player.x-10,player.y-10]);
-  if(player.teamname="rebels"){
+  if(player.teamname=="rebels"){
     snd2.play();
   }
-  else if(player.teamname="swat"){
+  else if(player.teamname=="swat"){
     snd5.play();
   }
 });
@@ -149,6 +149,15 @@ canvas.onclick = function(event){
     snd7.play();
   }
 }
+
+socket.on("ammoBoxPickUp",function(){
+snd8.play();
+console.log("ammo");
+});
+socket.on("healthBoxPickUp",function(){
+snd9.play();
+console.log("health");
+});
 
 socket.on("playSoundEffect",function(gunshot){
  if(gunshot.x+200<clientPlayer.x || gunshot.x-200>clientPlayer.x && gunshot.y+200<clientPlayer.y || gunshot.y-200<clientPlayer.y){
