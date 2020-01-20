@@ -30,6 +30,8 @@ var swatCount = 0;
 var rebelsCount = 0 ;
 var rebelscore =0;
 var swatscore = 0;
+var rebelsActive = 0;
+var swatActive = 0;
 var typeplayers = ["militant", "grenadier", "guerrilla", "observer", "vigilante" ,"breacher", "separatist", "charger" ];
 var teamconfig = [];
 require('dotenv').config();
@@ -337,6 +339,8 @@ function endGame(){
             rebelsCount += 1;
           }
       }
+      swatActive = swatCount
+      rebelsActive = rebelsCount
       return swatCount, rebelsCount; 
     }    
     
@@ -506,15 +510,19 @@ socket.on('shoot-bullet', function(data, targetX, targetY){
 });
 
   function addKiller(naam, bullets){
+    rebelsActive = rebelsCount
+    swatActive = swatCount
     for (var id in players) {
       var player = players[id];
       var killer1 = naam
       if(player.name == killer1){ 
         player.score += 1
         if(player.teamname == "swat"){
-          swatscore +=1;          
+          swatscore +=1; 
+          rebelsActive -=1;         
         }else{
           rebelscore +=1;
+          swatActive -=1;
         }
         calculateAmmo(player, bullets);       
       }
@@ -555,7 +563,7 @@ socket.on('shoot-bullet', function(data, targetX, targetY){
             var lostBullets = player.currentAmmo
             killer = bullet.comesFrom
             io.emit("playerKilled",player)
-            addKiller(killer, lostBullets) 
+            addKiller(killer, lostBullets)
             calculateWinner()
 
           }
@@ -621,6 +629,7 @@ function updateHighscore(player){
 
 setInterval(function() {
   io.sockets.emit('state', players, bullets, itemboxes);
+  io.sockets.emit("updateScoreInHud", rebelsActive, swatActive);
 }, 1000 / 60);
 
 http.listen(3000, function(){

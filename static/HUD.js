@@ -74,3 +74,7 @@ socket.on('addAmmo', function(oldAmmo, ammoPlayer){
         iDiv.appendChild(innerDiv);
     }
 });
+
+socket.on("updateScoreInHud", function(countrebel, countswat){
+    rebelscore.innerHTML = countswat + " VS " + countrebel;
+});
