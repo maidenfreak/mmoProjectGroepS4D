@@ -399,8 +399,10 @@ socket.on('playerLobby', function(playername, joined, idSocket){
   for(i=0; i<playersInLobby.length; i++){
     if(playersInLobby[i][0] == playername){
       playerAlreadyInLobby = true;
+      
     }
   }
+  socket.emit('chatmessage',"hi");
   if(joined == 'true'){
     if(playerAlreadyInLobby == true){
       return console.log('you are already in the lobby!');
