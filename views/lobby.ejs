@@ -48,11 +48,11 @@
 <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
 <script>
   var playername='<%= name %>';
-  var gameInProgress = false;
+  //var gameInProgress = false;
   var socket = io();
 
   socket.on('startGame',function(){
-    gameInProgress=true;
+    //gameInProgress=true;
     location.assign('index');
   });
 
@@ -65,6 +65,10 @@
 
   socket.on('gameAlreadyStarted', function(){
     alert("There is already a game in progress!");
+  });
+
+  socket.on('startSpectating', function(){
+    location.assign('/index');
   });
 
   $(function () {
@@ -92,8 +96,6 @@
     location.assign('/highscore');
   }
   function loadSpectator(){
-    if(gameInProgress == true){
-      location.assign('/index');
-    } 
+    socket.emit('checkIfGameIsGoing');
   }
 </script>

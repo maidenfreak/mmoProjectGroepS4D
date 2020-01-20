@@ -369,6 +369,13 @@ socket.on('startGameServer', function(){
   boxPlacement(null);
 });
 
+//checkt of er een game bezig is of niet
+socket.on('checkIfGameIsGoing', function(){
+  if(Object.entries(players).length !== 0){
+    socket.emit('startSpectating');
+  }
+});
+
 socket.on('teamconfig', function(){
   socket.emit('teamconfigReturn', teamconfig);
 });
@@ -647,29 +654,6 @@ setInterval(function() {
 http.listen(3000, function(){
   console.log('listening on *:3000');
 });
-
-
-
-              
-
- 
-//function getHighscore() {
-//  return new Promise(function(resolve, reject) {
-//      var sort = { highscore: 1, winscore: 1 };
-//      var dbo = db.db("mmodb");
-//     dbo.collection("highscoretable12").find().sort(sort).toArray( function(err, docs) {
-//      if (err) {
-//        // Reject the Promise with an error
-//        return reject(err)
-//      }
-//
-//      // Resolve (or fulfill) the promise with data
-//      return resolve(docs)
-//    })
-//  })
-//}
-    
-
 
 function calculateBulletSpeed(bullet){
     var vx = bullet.targetX - bullet.x
