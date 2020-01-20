@@ -465,8 +465,10 @@ socket.on('movement', function(data, objectArray) {
 function addBoxItems (player, packageData){
   if(packageData[5] == 0){
     calculateAmmo(player, packageData[4]);
+    socket.emit("ammoBoxPickUp");
   }else if(packageData[5] == 1){
     calculateHealth(player, packageData[4]);
+    socket.emit("healthBoxPickUp");
   }
   boxPlacement(packageData);
 }

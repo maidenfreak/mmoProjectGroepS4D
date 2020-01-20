@@ -150,6 +150,15 @@ canvas.onclick = function(event){
   }
 }
 
+socket.on("ammoBoxPickUp",function(){
+snd8.play();
+console.log("ammo");
+});
+socket.on("healthBoxPickUp",function(){
+snd9.play();
+console.log("health");
+});
+
 socket.on("playSoundEffect",function(gunshot){
  if(gunshot.x+200<clientPlayer.x || gunshot.x-200>clientPlayer.x && gunshot.y+200<clientPlayer.y || gunshot.y-200<clientPlayer.y){
    play_multi_sound('multiaudio1');
