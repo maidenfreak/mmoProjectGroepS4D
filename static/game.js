@@ -216,6 +216,7 @@ socket.on('state', function(players, bullets, itemboxes) {
   for (var id in bullets) {
     var bullet = bullets[id];
     context.beginPath();
+    context.fillStyle = "red"
     context.arc(bullet.x, bullet.y, 2, 0, 2 * Math.PI);
     context.fill();
   }
