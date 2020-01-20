@@ -56,17 +56,6 @@ class object {
   }
 }
 
-socket.on("playerKilled",function(player){
-  console.log("tombstone");
-  deadArray.push([player.x-10,player.y-10]);
-  if(player.teamname=="rebels"){
-    snd2.play();
-  }
-  else if(player.teamname=="swat"){
-    snd5.play();
-  }
-});
-
 var movement = {
     up: false,
     down: false,
@@ -110,10 +99,6 @@ var movement = {
     }
   });
 
-socket.on('playerteam', function(player){
-  clientPlayer=player;
-});
-
 //Functie die kijk op welke positie de muis staat, geeft x en y coordinaat terug
 function getCursorPosition(canvas, event){
   const rect = canvas.getBoundingClientRect()
@@ -150,13 +135,24 @@ canvas.onclick = function(event){
   }
 }
 
-socket.on("ammoBoxPickUp",function(){
-snd8.play();
-console.log("ammo");
+//speelt een geluid af wanneer er een speler gekilled wordt.
+socket.on("playerKilled",function(player){
+  deadArray.push([player.x-10,player.y-10]);
+  if(player.teamname=="rebels"){
+    snd2.play();
+  }
+  else if(player.teamname=="swat"){
+    snd5.play();
+  }
 });
-socket.on("healthBoxPickUp",function(){
-snd9.play();
-console.log("health");
+
+//speelt een geluid af wanneer er een itembox wordt opgepakt.
+socket.on("boxPickUp",function(boxType){
+  if(boxType == 0){//ammobox
+    snd8.play();
+  }else{//healthbox
+    snd9.play();
+  }
 });
 
 socket.on("playSoundEffect",function(gunshot){
@@ -191,6 +187,7 @@ socket.on('state', function(players, bullets, itemboxes) {
     }
   }
 
+  //tekent de grafstenen van de spelers die gedood zijn.
   for(i=0;i<deadArray.length;i++){
     var tombstone = document.getElementById("reddead");
     context.drawImage(tombstone,deadArray[i][0],deadArray[i][1]);

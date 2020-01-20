@@ -269,20 +269,19 @@ socket.on('new player', function( playertype, name) {
 });
     
   function randomFunc(myArr) {      
-            var l = myArr.length, temp, index;  
-            while (l > 0) {  
-               index = Math.floor(Math.random() * l);  
-               l--;  
-               temp = myArr[l];          
-               myArr[l] = myArr[index];          
-               myArr[index] = temp;      
-            }    
-            return myArr;    
-         }     
+    var l = myArr.length, temp, index;  
+    while (l > 0) {  
+      index = Math.floor(Math.random() * l);  
+      l--;  
+      temp = myArr[l];          
+      myArr[l] = myArr[index];          
+      myArr[index] = temp;      
+    }    
+    return myArr;    
+  }     
 
 function calculateWinner(){
   arrayMatchName = []
-  //var winscore = 0
   if(swatscore  >= rebelsCount){
     // return "The SWAT unit has won the match with " + swatscore + " kills & " + rebelsCount + " deaths.";
     for (var id in players){
@@ -370,9 +369,9 @@ socket.on('startGameServer', function(){
 });
 
 //checkt of er een game bezig is of niet
-socket.on('checkIfGameIsGoing', function(){
+socket.on('checkIfGameIsGoing', function(spectator){
   if(Object.entries(players).length !== 0){
-    socket.emit('startSpectating');
+    socket.emit('startSpectating', spectator);
   }
 });
 
@@ -486,10 +485,10 @@ socket.on('movement', function(data, objectArray) {
 function addBoxItems (player, packageData){
   if(packageData[5] == 0){
     calculateAmmo(player, packageData[4]);
-    socket.emit("ammoBoxPickUp");
+    socket.emit("boxPickUp", packageData[5]);
   }else if(packageData[5] == 1){
     calculateHealth(player, packageData[4]);
-    socket.emit("healthBoxPickUp");
+    socket.emit("boxPickUp", packageData[5]);
   }
   boxPlacement(packageData);
 }
