@@ -48,19 +48,27 @@
 <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
 <script>
   var playername='<%= name %>';
-  var gameInProgress = false;
+  //var gameInProgress = false;
   var socket = io();
 
   socket.on('startGame',function(){
-    gameInProgress=true;
+    //gameInProgress=true;
     location.assign('index');
   });
 
   socket.on('playerLobbies', function(allPlayers){
     $('#players').empty();
     for (i = 0; i<allPlayers.length; i++){
-          $('#players').append($('<li>').text(allPlayers[i]));
+          $('#players').append($('<li>').text(allPlayers[i][0]));
     }
+  });
+
+  socket.on('gameAlreadyStarted', function(){
+    alert("There is already a game in progress!");
+  });
+
+  socket.on('startSpectating', function(){
+    location.assign('/index');
   });
 
   $(function () {
@@ -76,7 +84,7 @@
   }); 
 
   function joinedLobby(){
-    socket.emit('playerLobby', '<%= name %>', 'true');
+    socket.emit('playerLobby', '<%= name %>', 'true', socket.id);
     socket.emit('connectedPeopleLobby');
   }
   
@@ -88,8 +96,6 @@
     location.assign('/highscore');
   }
   function loadSpectator(){
-    if(gameInProgress == true){
-      location.assign('/index');
-    } 
+    socket.emit('checkIfGameIsGoing');
   }
 </script>

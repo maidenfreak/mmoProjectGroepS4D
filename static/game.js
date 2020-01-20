@@ -215,7 +215,6 @@ socket.on('state', function(players, bullets, itemboxes) {
     var tombstone = document.getElementById("reddead");
     context.drawImage(tombstone,deadArray[i][0],deadArray[i][1]);
   }
-  
 
   //tekent de verschillende spelers op het canvas.
   for (var id in players) {
@@ -237,6 +236,7 @@ socket.on('state', function(players, bullets, itemboxes) {
   for (var id in bullets) {
     var bullet = bullets[id];
     context.beginPath();
+    context.fillStyle = "red"
     context.arc(bullet.x, bullet.y, 2, 0, 2 * Math.PI);
     context.fill();
   }
