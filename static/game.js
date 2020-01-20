@@ -155,16 +155,42 @@ socket.on("boxPickUp",function(boxType){
   }
 });
 
-socket.on("playSoundEffect",function(gunshot){
- if(gunshot.x+200<clientPlayer.x || gunshot.x-200>clientPlayer.x && gunshot.y+200<clientPlayer.y || gunshot.y-200<clientPlayer.y){
-   play_multi_sound('multiaudio1');
- }
- else{
-   play_multi_sound('multiaudio6');
- }
+socket.on("wallHit",function(bullet){
+  if (bullet.x>-10 && bullet.y>-10){
+    if(bullet.x<clientPlayer.x+100 && bullet.x>clientPlayer.x-100 && bullet.y<clientPlayer.y+100 && bullet.y>clientPlayer.y-100){
+    snd12.play();
+    }
+    else if(bullet.x<clientPlayer.x+300 && bullet.x>clientPlayer.x-300 && bullet.y<clientPlayer.y+300 && bullet.y>clientPlayer.y-300){
+    snd15.play();
+    }
+    else{
+    }
+  }
 });
 
- 
+socket.on("playerHit", function(bullet, player){
+  console.log(player.name, bullet.comesFrom)
+  if (clientPlayer.name==player.name){
+  snd14.play();
+  }
+  if (clientPlayer.name==bullet.comesFrom){
+  snd13.play();
+  }
+});
+
+socket.on("playSoundEffect",function(bullet){
+  if(bullet.x<clientPlayer.x+200 && bullet.x>clientPlayer.x-200 && bullet.y<clientPlayer.y+200 && bullet.y>clientPlayer.y-200){
+    play_multi_sound('multiaudio1');
+  }
+  else{
+    play_multi_sound('multiaudio6');
+  }
+});
+
+socket.on("enemyHit",function(){
+
+});
+
 //deze socket staat op een interval en wordt continu uitgevoerd om het spel te updaten
 socket.on('state', function(players, bullets, itemboxes) {
   clientPlayer=players[socket.id];
@@ -213,6 +239,7 @@ socket.on('state', function(players, bullets, itemboxes) {
   for (var id in bullets) {
     var bullet = bullets[id];
     context.beginPath();
+    context.fillStyle = "red"
     context.arc(bullet.x, bullet.y, 2, 0, 2 * Math.PI);
     context.fill();
   }
