@@ -11,7 +11,7 @@ var iDiv = document.getElementById('ammo');
 socket.on('playerteam', function(player){
     maxHealth = player.hp;
     maxAmmo = player.maxAmmo;
-    playerclass.innerHTML = player.teamname + " - " + player.classname;
+    playerclass.innerHTML = player.teamname + "<br>" + player.classname;
     if (addWeapon==true){
         var weaponWrapper = document.getElementById('weapon');
         var weaponDiv = document.createElement('div');
