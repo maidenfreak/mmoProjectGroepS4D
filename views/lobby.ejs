@@ -68,7 +68,11 @@
   socket.on('startSpectating', function(spectator){
     location.assign('/index');
   });
-
+socket.emit('chatmessage' )   
+socket.on('chatmessage', function(msg){
+      $('#messages').append($('<li>').text(msg));
+    });
+    
   $(function () {
     $('form').submit(function(e){
       e.preventDefault(); // prevents page reloading
