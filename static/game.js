@@ -169,7 +169,6 @@ socket.on("wallHit",function(bullet){
 });
 
 socket.on("playerHit", function(bullet, player){
-  console.log(player.name, bullet.comesFrom)
   if (clientPlayer.name==player.name){
   snd14.play();
   }
@@ -185,10 +184,6 @@ socket.on("playSoundEffect",function(bullet){
   else{
     play_multi_sound('multiaudio6');
   }
-});
-
-socket.on("enemyHit",function(){
-
 });
 
 //deze socket staat op een interval en wordt continu uitgevoerd om het spel te updaten
