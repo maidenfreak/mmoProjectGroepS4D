@@ -352,8 +352,10 @@ socket.on('startGameServer', function(){
   }, {});
 
   if(playersInLobby.length > 1){
+    if(Object.entries(players).length === 0){
     io.emit('startGame');
     playersInLobby.length = 0;
+    }
   }
   boxPlacement(null);
 });
@@ -398,8 +400,7 @@ socket.on('playerLobby', function(playername, joined){
  
 socket.on('disconnect', function(){
   delete players[socket.id];
-  endGame();
-  //calculateWinner(); 
+  endGame(); 
 });
 
 socket.on('leaveGame', function(){
@@ -557,8 +558,6 @@ socket.on('shoot-bullet', function(data, targetX, targetY){
        var bullet = bullets[i]
        var killer;
        if(bullet.x >= player.x - 10 && bullet.x <= player.x + 10 && bullet.y >= player.y - 10 && bullet.y <= player.y + 10 && bullet.comesFrom != player.name && bullet.teamname != player.teamname){
-        console.log("teamname player: " + player.teamname)
-        console.log("teamname bullet: " + bullet.teamname) 
         player.hp -= bullet.damage;
          socket.emit("updatedHP", player.hp);
           if(player.hp <= 0){
