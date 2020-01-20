@@ -59,8 +59,12 @@
   socket.on('playerLobbies', function(allPlayers){
     $('#players').empty();
     for (i = 0; i<allPlayers.length; i++){
-          $('#players').append($('<li>').text(allPlayers[i]));
+          $('#players').append($('<li>').text(allPlayers[i][0]));
     }
+  });
+
+  socket.on('gameAlreadyStarted', function(){
+    alert("There is already a game in progress!");
   });
 
   $(function () {
@@ -76,7 +80,7 @@
   }); 
 
   function joinedLobby(){
-    socket.emit('playerLobby', '<%= name %>', 'true');
+    socket.emit('playerLobby', '<%= name %>', 'true', socket.id);
     socket.emit('connectedPeopleLobby');
   }
   

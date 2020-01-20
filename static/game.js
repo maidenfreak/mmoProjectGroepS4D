@@ -186,7 +186,6 @@ socket.on('state', function(players, bullets, itemboxes) {
     var tombstone = document.getElementById("reddead");
     context.drawImage(tombstone,deadArray[i][0],deadArray[i][1]);
   }
-  
 
   //tekent de verschillende spelers op het canvas.
   for (var id in players) {

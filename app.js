@@ -343,12 +343,23 @@ function endGame(){
 socket.on('startGameServer', function(){
   hussledArray = randomFunc(playersInLobby)     
   teamconfig =  typeplayers.reduce(function(teamconfig, field, index) {
-    teamconfig[hussledArray[index]] = field;
-    return teamconfig;
+    try{
+      teamconfig[hussledArray[index][0]] = field;
+    }
+    finally{
+      return teamconfig;
+    }
   }, {});
 
   if(playersInLobby.length > 1){
-    io.emit('startGame');
+    if(Object.entries(players).length === 0){
+      for(i=0; i<playersInLobby.length; i++){
+        var spelerInLobby = playersInLobby[i];
+        io.to(spelerInLobby[1]).emit('startGame');
+      }
+    }else{
+      socket.emit('gameAlreadyStarted');
+    }
     playersInLobby.length = 0;
   }
   boxPlacement(null);
@@ -373,10 +384,10 @@ socket.on('connectedPeopleLobby', function(){
   io.emit('connectedPeopleLobbyReturn', amountOfPlayers);
 });
 
-socket.on('playerLobby', function(playername, joined){
+socket.on('playerLobby', function(playername, joined, idSocket){
   var playerAlreadyInLobby = false;
   for(i=0; i<playersInLobby.length; i++){
-    if(playersInLobby[i] == playername){
+    if(playersInLobby[i][0] == playername){
       playerAlreadyInLobby = true;
     }
   }
@@ -384,7 +395,7 @@ socket.on('playerLobby', function(playername, joined){
     if(playerAlreadyInLobby == true){
       return console.log('you are already in the lobby!');
     }else{
-      playersInLobby.push(playername);
+      playersInLobby.push([playername, idSocket]);
       io.emit('playerLobbies', playersInLobby);
     }
   }else if(joined == 'false'){
