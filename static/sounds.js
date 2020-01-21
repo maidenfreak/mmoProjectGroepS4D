@@ -20,9 +20,6 @@ var sounds = {
   "Lobbymusic" : {
     url : "sounds/Lobbymusic.mp3"
   }, 
-  "Endgame" : {
-    url : "sounds/endgame.mp3"
-  }, 
   "Join" : {
     url : "sounds/Join.mp3"
 }
