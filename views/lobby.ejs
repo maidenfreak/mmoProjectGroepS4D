@@ -44,6 +44,7 @@
 <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
 <script>
   var playername='<%= name %>';
+  var joinedTheLobby = false;
   var socket = io();
 
   socket.on('startGame',function(){
@@ -54,6 +55,11 @@
     $('#players').empty();
     for (i = 0; i<allPlayers.length; i++){
           $('#players').append($('<li>').text(allPlayers[i][0]));
+    }
+    for(i=0; i<allPlayers.length; i++){
+      if(allPlayers[i][0] == playername){
+        joinedTheLobby = true;
+      }
     }
   });
 
@@ -91,7 +97,9 @@ socket.on('chatmessage', function(msg){
   }
 
   function loadHighscores(){
-    location.assign('/highscore');
+    if(joinedTheLobby == false){
+      location.assign('/highscore');
+    }
   }
   function loadSpectator(){
     socket.emit('checkIfGameIsGoing', 'true');
