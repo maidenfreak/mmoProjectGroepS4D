@@ -138,10 +138,10 @@ canvas.onclick = function(event){
 //speelt een geluid af wanneer er een speler gekilled wordt.
 socket.on("playerKilled",function(player){
   deadArray.push([player.x-10,player.y-10]);
-  if(player.teamname=="rebels"){
+  if(player.teamname=="Rebels"){
     snd2.play();
   }
-  else if(player.teamname=="swat"){
+  else if(player.teamname=="Swat"){
     snd5.play();
   }
 });

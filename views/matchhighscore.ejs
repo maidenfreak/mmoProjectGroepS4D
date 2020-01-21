@@ -6,9 +6,9 @@
       <div id="wrapper">
         <div id="game">
           <h1>Match highscore Ninbo</h1>
-            <div id="matchhighscore"></div>
-            <br>
-            <button id="lobbyButton" type="button" onclick="loadLobby()">Return to lobby</button>
+              <div id="matchhighscore"></div>
+                <br>
+                <button id="lobbyButton" type="button" onclick="loadLobby()">Return to lobby</button>
             </div>
         </div>
     </div>
@@ -16,12 +16,14 @@
 <script>
     var socket = io();
 
+    // Haalt de matchhighscore op van de server en roept de functie aan om dit in een tabel op het scherm te tonen.
     socket.emit('getMatchHighscore');
     socket.on("getMatchHighscoreReturn", function (arrayMatchName) {
         var html2 = makeMatchHighscore(arrayMatchName)
         document.getElementById("matchhighscore").innerHTML = html2;
     });    
     
+    //Deze functie returned aan de hand van een array de teamnaam die gewonnnen heeft
     function getWinnerTeamname(arrayMatchName){
         for (var i in arrayMatchName){
             if(arrayMatchName[i][2] == 1){
@@ -29,7 +31,8 @@
             }
         }
     }    
-                    
+    
+    // Deze functie creëert aan de hand van een array een HTML tabel.
     function makeMatchHighscore(arrayMatchName){
         var playername='<%= name %>';
         var highscoremuziekswat = new Audio('sounds/highscoremuziekswat.mp3');
