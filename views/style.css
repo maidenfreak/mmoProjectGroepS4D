@@ -55,6 +55,11 @@
     height:642px ; 
     overflow: auto;
     }
+    #messageslobby li { padding: 5px 10px; 
+      text-align:left ;
+    }
+    #messageslobby li:nth-child(odd) { background:rgba(105, 105, 105, 0.6);  
+    }
     #messages li { padding: 5px 10px; 
     text-align:left ;
     }
