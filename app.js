@@ -120,7 +120,7 @@ io.on('connection', function(socket) {
     countPlayersInGame();
   });
 
-  //checkt of er een game bezig is of niet
+  //checkt of er een game bezig is of niet.
   socket.on('checkIfGameIsGoing', function(spectator){
     if(Object.entries(players).length !== 0){
       socket.emit('startSpectating', spectator);
@@ -166,13 +166,13 @@ io.on('connection', function(socket) {
     }
   });
   
-  //verwijdert een speler als deze disconect van de game
+  //verwijdert een speler als deze disconect van de game.
   socket.on('disconnect', function(){
     delete players[socket.id];
     countPlayersInGame(); 
   });
 
-  //verwijdert een speler als deze op de leave knop drukt in game
+  //verwijdert een speler als deze op de leave knop drukt in game.
   socket.on('leaveGame', function(){
     delete players[socket.id];
     countPlayersInGame();  
@@ -297,6 +297,7 @@ io.on('connection', function(socket) {
     }
   });
 
+  //controleert waar de bullet zich bevind, aan de hand van die gegevens wordt er bepaald wie de killer is.
   socket.on('checkBullets', function(objectArray){
     var player = players[socket.id] || {};
     for(var i = 0; i < bullets.length; i++){
@@ -407,6 +408,7 @@ io.on('connection', function(socket) {
     boxPlacement(packageData);
   }
 
+  //zorgt ervoor dat de killer een kill erbij krijgt en de bullets van de speler die die gekillt heeft.
   function addKiller(naam, bullets){
     rebelsActive = rebelsCount
     swatActive = swatCount
@@ -497,6 +499,7 @@ http.listen(3000, function(){
   console.log('listening on *:3000');
 });
 
+//berekent de snelheid van de afgevuurde bullets.
 function calculateBulletSpeed(bullet){
     var vx = bullet.targetX - bullet.x
     var vy = bullet.targetY - bullet.y
@@ -508,6 +511,7 @@ function calculateBulletSpeed(bullet){
   return [dx, dy]
 }
 
+//verwijderd de bullets wanneer deze de muur of een vijand raken.
 function serverGameLoop(){
   for( var i = bullets.length - 1; i >= 0; i--){
     if(bullets[i].x === -10 || bullets[i].y === -10 || bullets[i].isHit === true){
