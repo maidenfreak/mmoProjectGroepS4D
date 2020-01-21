@@ -37,7 +37,7 @@ var rebelscore =0;
 var swatscore = 0;
 var rebelsActive = 0;
 var swatActive = 0;
-var typeplayers = ["militant", "grenadier", "guerrilla", "observer", "vigilante" ,"breacher", "separatist", "charger" ];
+var typeplayers = ["militant", "grenadier", "vigilante" ,"breacher", "guerrilla", "observer","separatist", "charger" ];
 var teamconfig = [];
 
 require('dotenv').config();
