@@ -17,12 +17,14 @@
                // var highscoremuziek = new Audio('sounds/endgame.mp3');
                 //highscoremuziek.play();
  
+                // Haalt de matchhighscore op van de server en roept de functie aan om dit in een tabel op het scherm te tonen.
                 socket.emit('getMatchHighscore');
                 socket.on("getMatchHighscoreReturn", function (arrayMatchScore) {
-                    var html2 = makeMatchHighscore(arrayMatchScore)
-                    document.getElementById("matchhighscore").innerHTML = html2;
+                    var html = makeMatchHighscore(arrayMatchScore)
+                    document.getElementById("matchhighscore").innerHTML = html;
                 });    
-                 
+               
+                //Deze functie returned aan de hand van een array de teamnaam die gewonnnen heeft
                 function getWinnerTeamname(arrayMatchScore){
                     for (var i in arrayMatchScore){
                         if(arrayMatchScore[i][2] == 1){
@@ -30,7 +32,7 @@
                         }
                     }
                 }    
-                    
+                // Deze functie creëert aan de hand van een array een HTML tabel.    
                 function makeMatchHighscore(arrayMatchScore){
                     var playername='<%= name %>';
 
