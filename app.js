@@ -568,5 +568,3 @@ function boxPlacement(box){
 }
 
 setInterval(serverGameLoop, 16);
-
-

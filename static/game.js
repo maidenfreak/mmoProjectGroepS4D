@@ -422,10 +422,3 @@ let box35 = new room(11, 320, 560); box35.pushRooms();
 let box31 = new room(11, 400, 560); box31.pushRooms();
 let box28 = new room(10, 480, 560); box28.pushRooms();
 let box29 = new room(10, 560, 560); box29.pushRooms();
-
-
-
-
-
-
-
