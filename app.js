@@ -68,12 +68,19 @@ io.on('connection', function(socket) {
     io.emit('chat message', msg);
   });
  socket.on('chatmessage', function(msg){
-    socket.emit('chatmessage', "Welcome!, click on the Join button to join the lobby."); 
+    socket.emit('chatmessage', "Welcome " + msg + "! Click on the Join button to join the lobby."); 
     socket.emit('chatmessage', "Press the Start button if there are atleast 2 players in the lobby (or wait for more). ");
     socket.emit('chatmessage', "Press on the highscore button to see the top 10 and your rank. ");
     socket.emit('chatmessage', " Use the spectator mode to watch a started match. ");
     socket.emit('chatmessage', " To use the chat, type your message down below.  ");
-  });   
+  }); 
+socket.on('chatgamemessage', function(msg){
+    socket.emit('chatgamemessage', "The Russian rebels (red), hijacked an office building for organized crime. The objective is that either the Rebels or the Swatteam take out eachother."); 
+    socket.emit('chatgamemessage', "Use the WASD keys to move around the office and click to shoot your enemy."); 
+    socket.emit('chatgamemessage', "Each player per team has another class. Each class have there own weapon, firerate, bullets and health. ");
+    socket.emit('chatgamemessage', "Pick up health and ammo boxes hidden in the office building if you need it.");
+    socket.emit('chatgamemessage', " The game ends when all players of a team are taken down. ");
+  });     
 app.use(express.static(__dirname + '/views'));
 
 app.delete('/logout', (req, res) => {

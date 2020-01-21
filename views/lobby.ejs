@@ -65,7 +65,7 @@
   socket.on('startSpectating', function(spectator){
     location.assign('/index');
   });
-socket.emit('chatmessage' )   
+socket.emit('chatmessage', playername)   
 socket.on('chatmessage', function(msg){
       $('#messages').append($('<li>').text(msg));
     });
