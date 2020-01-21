@@ -147,6 +147,7 @@ io.on('connection', function(socket) {
     io.emit('connectedPeopleLobbyReturn', amountOfPlayers);
   });
 
+  //kijkt in de lobby of de juiste hoeveelheid mensen hebben gejoined en zorgt ervoor dat een speler niet 2x kan joinen
   socket.on('playerLobby', function(playername, joined, idSocket){
     var playerAlreadyInLobby = false;
     for(i=0; i<playersInLobby.length; i++){
@@ -160,8 +161,6 @@ io.on('connection', function(socket) {
       }else if(playersInLobby.length < 8){
         playersInLobby.push([playername, idSocket]);
         io.emit('playerLobbies', playersInLobby);
-      }else if(playersInLobby.length > 8){
-        return console.log('there are already 8 players in the game!');
       }
     }else if(joined == 'false'){
       io.emit('playerLobbies', playersInLobby);
