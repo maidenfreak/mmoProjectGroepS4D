@@ -9,10 +9,7 @@
 <div id="content">
   <div id="wrapper">
     <div id="game">
-      
-      <h1>Lobby</h1>
-      <h1>Hi <%= name %></h1>
-      <div id="logo"></div>
+      <div id="whitelogo"></div>
       <div id="test">
           <script>
               var connectedPeople = 0;
@@ -23,15 +20,17 @@
               });   
           </script>
       </div>
+      <div id="start">
       <button id="startButton" type="button" onclick="startTheGame()">Start</button>
-      <br>
+      </div><div id="join">
       <button id="joinButton" type="button" onclick="joinedLobby(); playSound('Join'); playSound('Lobbymusic')">Join</button>
-      <br>    
+      </div>   
       <ul id="players"></ul>
-      <br>
-      <button id="HighscoreButton" type="button" onclick="loadHighscores()">Highscores</button>
-      <br>
+      <div id="highscores">
+      <button id="highscoreButton" type="button" onclick="loadHighscores()">Highscores</button>
+      </div><div id="spectate">
       <button id="spectatorButton" type="button" onclick="loadSpectator()">Spectator mode</button>
+      </div>
     </div>
     <div id="chat">
         <ul id="messages"></ul>
@@ -65,7 +64,7 @@
   socket.on('startSpectating', function(spectator){
     location.assign('/index');
   });
-socket.emit('chatmessage' )   
+socket.emit('chatmessage', playername)   
 socket.on('chatmessage', function(msg){
       $('#messages').append($('<li>').text(msg));
     });
