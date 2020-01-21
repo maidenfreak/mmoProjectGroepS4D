@@ -13,10 +13,6 @@
           <h1>Match highscore Ninbo</h1>
               <div id="matchhighscore">
                 <script>
-                //var playername='<%= name %>';
-               // var highscoremuziek = new Audio('sounds/endgame.mp3');
-                //highscoremuziek.play();
- 
                 // Haalt de matchhighscore op van de server en roept de functie aan om dit in een tabel op het scherm te tonen.
                 socket.emit('getMatchHighscore');
                 socket.on("getMatchHighscoreReturn", function (arrayMatchScore) {
