@@ -412,8 +412,6 @@ io.on('connection', function(socket) {
 
   //zorgt ervoor dat de killer een kill erbij krijgt en de bullets van de speler die die gekillt heeft.
   function addKiller(naam, bullets){
-    rebelsActive = rebelsCount
-    swatActive = swatCount
     for (var id in players) {
       var player = players[id];
       var killer1 = naam
@@ -423,7 +421,7 @@ io.on('connection', function(socket) {
         if(player.teamname == "Swat"){
           swatscore +=1; 
           rebelsActive -=1;         
-        }else{
+        }if(player.teamname == "Rebels"){
           rebelscore +=1;
           swatActive -=1;
         }

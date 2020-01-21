@@ -81,5 +81,5 @@ socket.on('addAmmo', function(oldAmmo, ammoPlayer){
 });
 
 socket.on("updateScoreInHud", function(countrebel, countswat){
-    score.innerHTML = countswat + " VS " + countrebel;
+    score.innerHTML = countrebel + " VS " + countswat;
 });
