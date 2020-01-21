@@ -1,6 +1,6 @@
 <link href="style.css" rel="stylesheet" type="text/css">
 <script src="/socket.io/socket.io.js"></script>
-<script src="/views/sounds.js"></script>
+<script src="sounds.js"type="text/javascript"></script>
 <script>
   var socket = io();
 
@@ -13,8 +13,9 @@
           <h1>Match highscore Ninbo</h1>
               <div id="matchhighscore">
                 <script>
-                var playername='<%= name %>';
-
+                //var playername='<%= name %>';
+               // var highscoremuziek = new Audio('sounds/endgame.mp3');
+                //highscoremuziek.play();
  
                 socket.emit('getMatchHighscore');
                 socket.on("getMatchHighscoreReturn", function (arrayMatchName) {
@@ -31,9 +32,20 @@
                 }    
                     
                 function makeMatchHighscore(arrayMatchName){
-                   var winningTeam =  getWinnerTeamname(arrayMatchName)
-                   var result = "<h3>" + winningTeam + " won the match!</h3>";
+                    var playername='<%= name %>';
+
+                    var highscoremuziekswat = new Audio('sounds/highscoremuziekswat.mp3');
+                    var highscoremuziekrebels = new Audio('sounds/highscoremuziekrebels.mp3');
+
+                    var winningTeam =  getWinnerTeamname(arrayMatchName)
+                    var result = "<h3>" + winningTeam + " won the match!</h3>";
                     result += "<table border=1>";
+                        if(winningTeam=='Swat'){
+                            highscoremuziekswat.play();
+                        }
+                        else{
+                            highscoremuziekrebels.play();
+                        }
                     
                    result += "<tr><th>Rank</th><th>Username</th><th>Total Kills</th><th>Won</th><th>Team</th></tr>"
                    var count = 0;
