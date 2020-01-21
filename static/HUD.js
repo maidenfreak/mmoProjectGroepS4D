@@ -39,6 +39,13 @@ socket.on('playerteam', function(player){
         }
         eenmaalUitvoeren = true;
     }
+    if (player.teamname=="Rebels"){
+        snd11.play();
+    }
+      
+    else if(player.teamname=="Swat"){
+        snd6.play();
+    }
 });
 
 socket.on('updatedHP', function(healthPlayer){
