@@ -8,6 +8,8 @@
     #game { width: 640px;
     height: 690px;
     float: left;
+    background:rgba(150, 150, 150, 0.2); 
+    color: white;
     }
     #gamestats {width: 1001px;
     height: 20px;
@@ -140,7 +142,8 @@
     #wrapper {display: inline-block; 
     margin-top:10px; 
     }
-    button {background-color: lawngreen;
+    button {background-color: #2f414f;
+    color: white;
     width: 100;
     height: 50;  
     }
