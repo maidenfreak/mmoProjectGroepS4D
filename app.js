@@ -119,7 +119,217 @@ io.on('connection', function(socket) {
     socket.emit('playerteam', players[socket.id]);
     countPlayersInGame();
   });
+
+  //checkt of er een game bezig is of niet
+  socket.on('checkIfGameIsGoing', function(spectator){
+    if(Object.entries(players).length !== 0){
+      socket.emit('startSpectating', spectator);
+    }
+  });
+
+  socket.on('teamconfig', function(){
+    socket.emit('teamconfigReturn', teamconfig);
+  });
+
+  socket.on('getHighscore', function(){
+    getHighscore();
+  }); 
+
+  socket.on('getMatchHighscore', function(){ 
+    var sortedArray = arrayMatchName.sort( function(a, b) {
+      return (b[1] - a[1] ) || (b[2] - a[2]);
+    });
+    socket.emit('getMatchHighscoreReturn', sortedArray)
+  });    
     
+  socket.on('connectedPeopleLobby', function(){
+    var amountOfPlayers = playersInLobby.length;
+    io.emit('connectedPeopleLobbyReturn', amountOfPlayers);
+  });
+
+  socket.on('playerLobby', function(playername, joined, idSocket){
+    var playerAlreadyInLobby = false;
+    for(i=0; i<playersInLobby.length; i++){
+      if(playersInLobby[i][0] == playername){
+        playerAlreadyInLobby = true;
+      }
+    }
+    if(joined == 'true'){
+      if(playerAlreadyInLobby == true){
+        return console.log('you are already in the lobby!');
+      }else{
+        playersInLobby.push([playername, idSocket]);
+        io.emit('playerLobbies', playersInLobby);
+      }
+    }else if(joined == 'false'){
+      io.emit('playerLobbies', playersInLobby);
+    }
+  });
+  
+  //verwijdert een speler als deze disconect van de game
+  socket.on('disconnect', function(){
+    delete players[socket.id];
+    countPlayersInGame(); 
+  });
+
+  //verwijdert een speler als deze op de leave knop drukt in game
+  socket.on('leaveGame', function(){
+    delete players[socket.id];
+    countPlayersInGame();  
+    calculateWinner(); 
+  });
+
+  //update de "angle" van de speler dus de kant waar de speler naartoe kijkt.
+  socket.on("anglePush", function(angle){
+    var player = players[socket.id] || {};
+    player.angle = angle;
+  });
+
+  //checkt of de speler een bepaalde kant kan opbewegen en update de coordinaten van de spelers als dit mogelijk is.
+  socket.on('movement', function(data, objectArray) {
+    var player = players[socket.id] || {};
+    if(player.hp <= 0){
+      player.x = -30;
+      player.y = -30;
+      player.isDead = true;
+    }
+    if (data.left && player.x>=10 && collision.checkCollisionLeft(player, players, objectArray, 9) == false ) {
+      var packageValues = collision.checkCollisionPackageLeft(player, itemboxes , 9);
+      if(packageValues[0] == true){
+        addBoxItems(player, packageValues[1]);
+      }
+      if(data.up || data.down){
+        player.x-=1.41;
+      } else {
+        player.x -= 2;
+      }
+    }
+    if (data.up && player.y>=11 && collision.checkCollisionUp(player, players, objectArray, 10) == false) {
+      var packageValues = collision.checkCollisionPackageUp(player, itemboxes , 9);
+      if(packageValues[0] == true){
+        addBoxItems(player, packageValues[1]);
+      }
+      if(data.left || data.right){
+        player.y-=1.41;
+      } else {
+        player.y -= 2;
+      }
+    }
+    if (data.right && player.x<=630 && collision.checkCollisionRight(player, players, objectArray, 10) == false) {
+      var packageValues = collision.checkCollisionPackageRight(player, itemboxes , 9);
+      if(packageValues[0] == true){
+        addBoxItems(player, packageValues[1]);
+      }
+      if(data.up || data.down){
+        player.x+=1.41;
+      } else {
+        player.x += 2;
+      }
+    }
+    if (data.down && player.y<=630 && collision.checkCollisionDown(player, players, objectArray, 10) == false) {
+      var packageValues = collision.checkCollisionPackageDown(player, itemboxes , 9);
+      if(packageValues[0] == true){
+        addBoxItems(player, packageValues[1]);
+      }
+      if(data.left || data.right){
+        player.y+=1.41;
+      } else {
+        player.y += 2;
+      }
+    }
+  });
+    
+  socket.on('startGameServer', function(){
+    hussledArray = randomFunc(playersInLobby)     
+    teamconfig =  typeplayers.reduce(function(teamconfig, field, index) {
+      try{
+        teamconfig[hussledArray[index][0]] = field;
+      }
+      finally{
+        return teamconfig;
+      }
+    }, {});
+  
+    if(playersInLobby.length > 1){
+      if(Object.entries(players).length === 0){
+        for(i=0; i<playersInLobby.length; i++){
+          var spelerInLobby = playersInLobby[i];
+          io.to(spelerInLobby[1]).emit('startGame');
+        }
+      }else{
+        socket.emit('gameAlreadyStarted');
+      }
+      playersInLobby.length = 0;
+    }
+    boxPlacement(null);
+  });  
+
+  //Maakt aan de hand van de meegegeven gegevens een bullet en stopt deze in een array.
+  socket.on('shoot-bullet', function(data, targetX, targetY){
+    var player = players[socket.id] || {};
+    if(players[socket.id] == undefined) return;
+    if(player.currentAmmo > 0){
+      player.currentAmmo -= 1
+      var newBullet = data;
+      if(targetX > player.x){
+        newBullet.x = player.x //+ 11
+      }
+      if(targetX < player.x){
+        newBullet.x = player.x //- 11
+      }
+      if(targetY > player.y){
+        newBullet.y = player.y //+ 11
+      }      
+      if(targetY < player.y){
+        newBullet.y = player.y //- 11
+      }
+      newBullet.targetX = targetX;
+      newBullet.targetY = targetY;
+      newBullet.comesFrom = player.name;
+      newBullet.damage = player.weapondamage;
+      newBullet.teamname = player.teamname
+      var bulletSpeed = calculateBulletSpeed(newBullet);
+      newBullet.xSpeed = bulletSpeed[0];
+      newBullet.ySpeed = bulletSpeed[1];
+      bullets.push(newBullet);
+      socket.emit('updatedAmmo', player.currentAmmo);
+      io.emit("playSoundEffect", player);
+    }
+  });
+
+  socket.on('checkBullets', function(objectArray){
+    var player = players[socket.id] || {};
+    for(var i = 0; i < bullets.length; i++){
+      var bullet = bullets[i]
+      var killer;
+      if(bullet.x >= player.x - 10 && bullet.x <= player.x + 10 && bullet.y >= player.y - 10 && bullet.y <= player.y + 10 && bullet.comesFrom != player.name && bullet.teamname != player.teamname){
+        player.hp -= bullet.damage;
+        io.emit("playerHit", bullet, player);
+        socket.emit("updatedHP", player.hp);
+        if(player.hp <= 0){
+          var lostBullets = player.currentAmmo
+          killer = bullet.comesFrom
+          io.emit("playerKilled",player)
+          addKiller(killer, lostBullets)
+          calculateWinner()
+        }
+        bullet.isHit = true
+      }
+      if(bullet.x >= 0 && bullet.x <= 640 && collision.checkCollisionLeft(bullet, {}, objectArray, 2) == false && collision.checkCollisionRight(bullet, {}, objectArray, 2) == false){
+        bullet.x += bullet.xSpeed  
+      } else {
+        io.emit("wallHit",bullet);
+        bullet.x = -10
+      }
+      if(bullet.y >= 0 && bullet.y <= 640 && collision.checkCollisionUp(bullet, {}, objectArray, 2) == false && collision.checkCollisionDown(bullet, {}, objectArray, 2) == false){
+        bullet.y += bullet.ySpeed
+      } else {
+        io.emit("wallHit",bullet);
+        bullet.y = -10
+      }
+    }
+  });
+
   function randomFunc(myArr) {      
     var l = myArr.length, temp, index;  
     while (l > 0) {  
@@ -132,243 +342,70 @@ io.on('connection', function(socket) {
     return myArr;    
   }     
 
-function calculateWinner(){
-  arrayMatchName = [];
-  if(swatscore  >= rebelsCount){
-    for (var id in players){
-      if(players[id].teamname == "Swat"){
-        players[id].win = 1
+  function calculateWinner(){
+    arrayMatchName = [];
+    if(swatscore  >= rebelsCount){
+      for (var id in players){
+        if(players[id].teamname == "Swat"){
+          players[id].win = 1
+        }
+        updateHighscore(players[id])
       }
+      endGame();
+    }
+    if(rebelscore >= swatCount){
+      for (var id in players){
+        if(players[id].teamname == "Rebels"){
+          players[id].win = 1        
+        }
       updateHighscore(players[id])
-    }
-    endGame();
-  }
-  if(rebelscore >= swatCount){
-    for (var id in players){
-      if(players[id].teamname == "Rebels"){
-        players[id].win = 1        
       }
-    updateHighscore(players[id])
+      endGame(); 
     }
-    endGame(); 
   }
-}
 
-function endGame(){
-  swatCount = 0;
-  rebelsCount = 0;
-  swatscore = 0;
-  rebelscore = 0;
-  itemboxes.length = 0;
-  for(var x in players){
-    arrayMatchName.push ([players[x].name, players[x].score, players[x].win, players[x].teamname ]);
-  }  
-  io.emit('endOfGame');   
-  for(var id in players){
-    delete players[id];
-  } 
-}
+  function endGame(){
+    swatCount = 0;
+    rebelsCount = 0;
+    swatscore = 0;
+    rebelscore = 0;
+    itemboxes.length = 0;
+    for(var x in players){
+      arrayMatchName.push ([players[x].name, players[x].score, players[x].win, players[x].teamname ]);
+    }  
+    io.emit('endOfGame');   
+    for(var id in players){
+      delete players[id];
+    } 
+  }
       
-function countPlayersInGame(){
-     swatCount = 0;
-     rebelsCount = 0;
-      for(var id in players){
-        var player = players[id];
-          if(player.teamname == "Swat"){
-            swatCount += 1;
-          }
-          else if(player.teamname == 'Rebels'){
-            rebelsCount += 1;
-          }
+  function countPlayersInGame(){
+    swatCount = 0;
+    rebelsCount = 0;
+    for(var id in players){
+      var player = players[id];
+      if(player.teamname == "Swat"){
+        swatCount += 1;
       }
-      swatActive = swatCount
-      rebelsActive = rebelsCount
-      return swatCount, rebelsCount; 
-    }    
-    
-socket.on('startGameServer', function(){
-  hussledArray = randomFunc(playersInLobby)     
-  teamconfig =  typeplayers.reduce(function(teamconfig, field, index) {
-    try{
-      teamconfig[hussledArray[index][0]] = field;
-    }
-    finally{
-      return teamconfig;
-    }
-  }, {});
-
-  if(playersInLobby.length > 1){
-    if(Object.entries(players).length === 0){
-      for(i=0; i<playersInLobby.length; i++){
-        var spelerInLobby = playersInLobby[i];
-        io.to(spelerInLobby[1]).emit('startGame');
+      else if(player.teamname == 'Rebels'){
+        rebelsCount += 1;
       }
-    }else{
-      socket.emit('gameAlreadyStarted');
     }
-    playersInLobby.length = 0;
-  }
-  boxPlacement(null);
-});
+    swatActive = swatCount
+    rebelsActive = rebelsCount
+    return swatCount, rebelsCount; 
+  }    
 
-//checkt of er een game bezig is of niet
-socket.on('checkIfGameIsGoing', function(spectator){
-  if(Object.entries(players).length !== 0){
-    socket.emit('startSpectating', spectator);
+  function addBoxItems (player, packageData){
+    if(packageData[5] == 0){
+      calculateAmmo(player, packageData[4]);
+      socket.emit("boxPickUp", packageData[5]);
+    }else if(packageData[5] == 1){
+      calculateHealth(player, packageData[4]);
+      socket.emit("boxPickUp", packageData[5]);
+    }
+    boxPlacement(packageData);
   }
-});
-
-socket.on('teamconfig', function(){
-  socket.emit('teamconfigReturn', teamconfig);
-});
-socket.on('getHighscore', function(){
-  getHighscore();
-});  
-socket.on('getMatchHighscore', function(){ 
- var sortedArray = arrayMatchName.sort( function(a, b) {
-  return (b[1] - a[1] ) || (b[2] - a[2]);
-});
-    
-    socket.emit('getMatchHighscoreReturn', sortedArray)
-});    
-    
-socket.on('connectedPeopleLobby', function(){
-  var amountOfPlayers = playersInLobby.length;
-  io.emit('connectedPeopleLobbyReturn', amountOfPlayers);
-});
-
-socket.on('playerLobby', function(playername, joined, idSocket){
-  var playerAlreadyInLobby = false;
-  for(i=0; i<playersInLobby.length; i++){
-    if(playersInLobby[i][0] == playername){
-      playerAlreadyInLobby = true;
-    }
-  }
-  if(joined == 'true'){
-    if(playerAlreadyInLobby == true){
-      return console.log('you are already in the lobby!');
-    }else{
-      playersInLobby.push([playername, idSocket]);
-      io.emit('playerLobbies', playersInLobby);
-    }
-  }else if(joined == 'false'){
-    io.emit('playerLobbies', playersInLobby);
-  }
-});
- 
-socket.on('disconnect', function(){
-  delete players[socket.id];
-  countPlayersInGame(); 
-});
-
-socket.on('leaveGame', function(){
-  delete players[socket.id];
-  countPlayersInGame();  
-  calculateWinner(); 
-});
-
-socket.on("anglePush", function(angle){
-  var player = players[socket.id] || {};
-  player.angle = angle;
-});
-
-socket.on('movement', function(data, objectArray) {
-  var player = players[socket.id] || {};
-  if(player.hp <= 0){
-    player.x = -30;
-    player.y = -30;
-    player.isDead = true;
-  }
-  if (data.left && player.x>=10 && collision.checkCollisionLeft(player, players, objectArray, 9) == false ) {
-    var packageValues = collision.checkCollisionPackageLeft(player, itemboxes , 9);
-    if(packageValues[0] == true){
-      addBoxItems(player, packageValues[1]);
-    }
-    if(data.up || data.down){
-      player.x-=1.41;
-    } else {
-      player.x -= 2;
-    }
-  }
-  if (data.up && player.y>=11 && collision.checkCollisionUp(player, players, objectArray, 10) == false) {
-    var packageValues = collision.checkCollisionPackageUp(player, itemboxes , 9);
-    if(packageValues[0] == true){
-      addBoxItems(player, packageValues[1]);
-    }
-    if(data.left || data.right){
-      player.y-=1.41;
-    } else {
-      player.y -= 2;
-    }
-  }
-  if (data.right && player.x<=630 && collision.checkCollisionRight(player, players, objectArray, 10) == false) {
-    var packageValues = collision.checkCollisionPackageRight(player, itemboxes , 9);
-    if(packageValues[0] == true){
-      addBoxItems(player, packageValues[1]);
-    }
-    if(data.up || data.down){
-      player.x+=1.41;
-    } else {
-      player.x += 2;
-    }
-  }
-  if (data.down && player.y<=630 && collision.checkCollisionDown(player, players, objectArray, 10) == false) {
-    var packageValues = collision.checkCollisionPackageDown(player, itemboxes , 9);
-    if(packageValues[0] == true){
-      addBoxItems(player, packageValues[1]);
-    }
-    if(data.left || data.right){
-      player.y+=1.41;
-    } else {
-      player.y += 2;
-    }
-  }
-});
-
-function addBoxItems (player, packageData){
-  if(packageData[5] == 0){
-    calculateAmmo(player, packageData[4]);
-    socket.emit("boxPickUp", packageData[5]);
-  }else if(packageData[5] == 1){
-    calculateHealth(player, packageData[4]);
-    socket.emit("boxPickUp", packageData[5]);
-  }
-  boxPlacement(packageData);
-}
-
-//Maakt aan de hand van de meegegeven gegevens een bullet en stopt deze in een array.
-socket.on('shoot-bullet', function(data, targetX, targetY){
-  var player = players[socket.id] || {};
-  if(players[socket.id] == undefined) return;
-
-  if(player.currentAmmo > 0){
-    player.currentAmmo -= 1
-    var newBullet = data;
-    if(targetX > player.x){
-      newBullet.x = player.x //+ 11
-    }
-    if(targetX < player.x){
-      newBullet.x = player.x //- 11
-    }
-    if(targetY > player.y){
-      newBullet.y = player.y //+ 11
-    }      
-    if(targetY < player.y){
-      newBullet.y = player.y //- 11
-    }
-    newBullet.targetX = targetX;
-    newBullet.targetY = targetY;
-    newBullet.comesFrom = player.name;
-    newBullet.damage = player.weapondamage;
-    newBullet.teamname = player.teamname
-    var bulletSpeed = calculateBulletSpeed(newBullet);
-    newBullet.xSpeed = bulletSpeed[0];
-    newBullet.ySpeed = bulletSpeed[1];
-    bullets.push(newBullet);
-    socket.emit('updatedAmmo', player.currentAmmo);
-    io.emit("playSoundEffect", player);
-  }
-});
 
   function addKiller(naam, bullets){
     rebelsActive = rebelsCount
@@ -382,7 +419,6 @@ socket.on('shoot-bullet', function(data, targetX, targetY){
         if(player.teamname == "Swat"){
           swatscore +=1; 
           rebelsActive -=1;         
-
         }else{
           rebelscore +=1;
           swatActive -=1;
@@ -390,7 +426,6 @@ socket.on('shoot-bullet', function(data, targetX, targetY){
         calculateAmmo(player, bullets);       
       }
     }  
-
   }
 
   function calculateAmmo(player, bullets){
@@ -411,61 +446,22 @@ socket.on('shoot-bullet', function(data, targetX, targetY){
     }
     io.to(player.id).emit("updatedHP", player.hp);
   }
-
-  socket.on('checkBullets', function(objectArray){
-    var player = players[socket.id] || {};
-    for(var i = 0; i < bullets.length; i++){
-       var bullet = bullets[i]
-       var killer;
-       if(bullet.x >= player.x - 10 && bullet.x <= player.x + 10 && bullet.y >= player.y - 10 && bullet.y <= player.y + 10 && bullet.comesFrom != player.name && bullet.teamname != player.teamname){
-        player.hp -= bullet.damage;
-        io.emit("playerHit", bullet, player);
-        socket.emit("updatedHP", player.hp);
-        if(player.hp <= 0){
-            var lostBullets = player.currentAmmo
-            killer = bullet.comesFrom
-            io.emit("playerKilled",player)
-            addKiller(killer, lostBullets)
-            calculateWinner()
-        }
-        bullet.isHit = true
-        }
-      var wallHit
-      if(bullet.x >= 0 && bullet.x <= 640 && collision.checkCollisionLeft(bullet, {}, objectArray, 2) == false && collision.checkCollisionRight(bullet, {}, objectArray, 2) == false){
-        bullet.x += bullet.xSpeed
-        
-      }
-      else {
-        io.emit("wallHit",bullet);
-        bullet.x = -10
-      }
-      if(bullet.y >= 0 && bullet.y <= 640 && collision.checkCollisionUp(bullet, {}, objectArray, 2) == false && collision.checkCollisionDown(bullet, {}, objectArray, 2) == false){
-        bullet.y += bullet.ySpeed
-        
-      }
-      else {
-        io.emit("wallHit",bullet);
-        bullet.y = -10
-      }
-    }
-  })
   
-function updateHighscore(player){
-   var currentPlayer = player
-   newModel.find({name: currentPlayer.name},function(err, doc) {
-     if (doc.length){
-        var newHighscore = doc[0].highscore + currentPlayer.score
-        var newWinscore = doc[0].winscore + currentPlayer.win
-        newModel.update({name: currentPlayer.name}, {$set: { highscore: newHighscore, winscore: newWinscore}}, function (err, user) {
-        })
-     }else{
-        const newDocument = newModel({name: currentPlayer.name, highscore: currentPlayer.score, winscore: currentPlayer.win})
-        newDocument.save()
-    }
-  })
- }
+  function updateHighscore(player){
+    var currentPlayer = player;
+    newModel.find({name: currentPlayer.name},function(err, doc) {
+      if (doc.length){
+        var newHighscore = doc[0].highscore + currentPlayer.score;
+        var newWinscore = doc[0].winscore + currentPlayer.win;
+        newModel.update({name: currentPlayer.name}, {$set: { highscore: newHighscore, winscore: newWinscore}}, function (err, user) {});
+      }else{
+        const newDocument = newModel({name: currentPlayer.name, highscore: currentPlayer.score, winscore: currentPlayer.win});
+        newDocument.save();
+      }
+    });
+  }
 
-//return complete highscore in een array, gesorteerd op de highscore en winscore.
+  //return complete highscore in een array, gesorteerd op de highscore en winscore.
   function getHighscore(){
     var MongoClient = require('mongodb').MongoClient;
     var url = "mongodb://localhost:27017/";
@@ -490,6 +486,7 @@ function updateHighscore(player){
     });
   };  
 });
+//einde socket.io
 
 setInterval(function() {
   io.sockets.emit('state', players, bullets, itemboxes);
