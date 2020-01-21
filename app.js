@@ -68,7 +68,7 @@ io.on('connection', function(socket) {
     io.emit('chat message', msg);
   });
  socket.on('chatmessage', function(msg){
-    socket.emit('chatmessage', "Welcome!, click on the Join button to join the lobby."); 
+    socket.emit('chatmessage', "Welcome! Click on the Join button to join the lobby."); 
     socket.emit('chatmessage', "Press the Start button if there are atleast 2 players in the lobby (or wait for more). ");
     socket.emit('chatmessage', "Press on the highscore button to see the top 10 and your rank. ");
     socket.emit('chatmessage', " Use the spectator mode to watch a started match. ");
