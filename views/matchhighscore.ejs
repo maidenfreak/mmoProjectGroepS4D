@@ -37,6 +37,8 @@
         var playername='<%= name %>';
         var highscoremuziekswat = new Audio('sounds/highscoremuziekswat.mp3');
         var highscoremuziekrebels = new Audio('sounds/highscoremuziekrebels.mp3');
+        var Youwin = new Audio('sounds/youwin.mp3');
+        var Youlose = new Audio('sounds/youlose.mp3');
         var winningTeam =  getWinnerTeamname(arrayMatchName)
         var result = "<h3>" + winningTeam + " won the match!</h3>";
         result += "<table border=1>";
@@ -51,10 +53,11 @@
             if( arrayMatchName[id][0] == playername){
                 result += "<tr style='font-weight:bold'>";
                 if (arrayMatchName[id][2]==1){
-                    console.log("won")
+                    Youwin.play();
+                    console.log("win")
                 }
                 else{
-                    console.log("lost")
+                    Youlose.play();
                 }   
             }else{
                 result += "<tr>";  
