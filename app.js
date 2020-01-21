@@ -27,18 +27,18 @@ const { charger, observer, breacher, grenadier, separatist, vigilante, guerrilla
 
 //globale variabelen
 var players = {}; // spelersobjecten hierin geplaatst als deze aangemaakt worden als het spel start.
-var arrayMatchScore = [] // 
-const playersInLobby = [];
+var arrayMatchScore = [] // De spelers met bijbehorende scores van de laatste match worden bijgehouden in dit array
+const playersInLobby = []; // In dit array staan de spelers die zich in de lobby bevinden
 const itemboxes = [];
 const bullets = [];
-var swatCount = 0;
-var rebelsCount = 0 ;
-var rebelscore =0;
-var swatscore = 0;
+var swatCount = 0; // In deze count staan het aantal swat spelers
+var rebelsCount = 0 ; // In deze count staan het aantal rebel spelers
+var rebelscore =0; // In deze count staan het aantal kills van de rebels
+var swatscore = 0; // In deze count staan het aantal kills van de swat
 var rebelsActive = 0;
 var swatActive = 0;
-var typeplayers = ["militant", "grenadier", "vigilante" ,"breacher", "guerrilla", "observer","separatist", "charger" ];
-var teamconfig = [];
+var typeplayers = ["militant", "grenadier", "vigilante" ,"breacher", "guerrilla", "observer","separatist", "charger" ]; // Lijst met alle mogelijke classes
+var teamconfig = []; // 
 
 require('dotenv').config();
 
