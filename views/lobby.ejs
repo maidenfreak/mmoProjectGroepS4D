@@ -82,7 +82,7 @@ socket.on('chatmessage', function(msg){
   }); 
 
   function joinedLobby(){
-    socket.emit('playerLobby', '<%= name %>', /*'true',*/ socket.id);
+    socket.emit('playerLobby', '<%= name %>', 'true', socket.id);
     socket.emit('connectedPeopleLobby');
   }
   

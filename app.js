@@ -147,14 +147,14 @@ io.on('connection', function(socket) {
     io.emit('connectedPeopleLobbyReturn', amountOfPlayers);
   });
 
-  socket.on('playerLobby', function(playername, /*joined,*/ idSocket){
+  socket.on('playerLobby', function(playername, joined, idSocket){
     var playerAlreadyInLobby = false;
     for(i=0; i<playersInLobby.length; i++){
       if(playersInLobby[i][0] == playername){
         playerAlreadyInLobby = true;
       }
     }
-    //if(joined == 'true'){
+    if(joined == 'true'){
       if(playerAlreadyInLobby == true){
         return console.log('you are already in the lobby!');
       }else if(playersInLobby.length < 8){
@@ -163,9 +163,9 @@ io.on('connection', function(socket) {
       }else if(playersInLobby.length > 8){
         return console.log('there are already 8 players in the game!');
       }
-    /*}else if(joined == 'false'){
+    }else if(joined == 'false'){
       io.emit('playerLobbies', playersInLobby);
-    }*/
+    }
   });
   
   //verwijdert een speler als deze disconect van de game.
