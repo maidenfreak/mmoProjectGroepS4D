@@ -17,27 +17,29 @@
                // var highscoremuziek = new Audio('sounds/endgame.mp3');
                 //highscoremuziek.play();
  
+                // Haalt de matchhighscore op van de server en roept de functie aan om dit in een tabel op het scherm te tonen.
                 socket.emit('getMatchHighscore');
-                socket.on("getMatchHighscoreReturn", function (arrayMatchName) {
-                    var html2 = makeMatchHighscore(arrayMatchName)
-                    document.getElementById("matchhighscore").innerHTML = html2;
+                socket.on("getMatchHighscoreReturn", function (arrayMatchScore) {
+                    var html = makeMatchHighscore(arrayMatchScore)
+                    document.getElementById("matchhighscore").innerHTML = html;
                 });    
-                 
-                function getWinnerTeamname(arrayMatchName){
-                    for (var i in arrayMatchName){
-                        if(arrayMatchName[i][2] == 1){
-                            return arrayMatchName[i][3]
+               
+                //Deze functie returned aan de hand van een array de teamnaam die gewonnnen heeft
+                function getWinnerTeamname(arrayMatchScore){
+                    for (var i in arrayMatchScore){
+                        if(arrayMatchScore[i][2] == 1){
+                            return arrayMatchScore[i][3]
                         }
                     }
                 }    
-                    
-                function makeMatchHighscore(arrayMatchName){
+                // Deze functie creëert aan de hand van een array een HTML tabel.    
+                function makeMatchHighscore(arrayMatchScore){
                     var playername='<%= name %>';
 
                     var highscoremuziekswat = new Audio('sounds/highscoremuziekswat.mp3');
                     var highscoremuziekrebels = new Audio('sounds/highscoremuziekrebels.mp3');
 
-                    var winningTeam =  getWinnerTeamname(arrayMatchName)
+                    var winningTeam =  getWinnerTeamname(arrayMatchScore)
                     var result = "<h3>" + winningTeam + " won the match!</h3>";
                     result += "<table border=1>";
                         if(winningTeam=='Swat'){
@@ -49,21 +51,21 @@
                     
                    result += "<tr><th>Rank</th><th>Username</th><th>Total Kills</th><th>Won</th><th>Team</th></tr>"
                    var count = 0;
-                    for( var id = 0; id < arrayMatchName.length; id++){
-                        if( arrayMatchName[id][0] == playername){
+                    for( var id = 0; id < arrayMatchScore.length; id++){
+                        if( arrayMatchScore[id][0] == playername){
                       result += "<tr style='font-weight:bold'>";
                         }else{
                           result += "<tr>";  
                         }
                         count +=1
                         result += "<td>" + count +"</td>";
-                        for(var b = 0; b < arrayMatchName[id].length; b++){
-                            if((arrayMatchName[id][b]) == 1 && b == 2){
+                        for(var b = 0; b < arrayMatchScore[id].length; b++){
+                            if((arrayMatchScore[id][b]) == 1 && b == 2){
                                 result += "<td>Winner!</td>";
-                                }else if((arrayMatchName[id][b]) == 0 && b == 2){
+                                }else if((arrayMatchScore[id][b]) == 0 && b == 2){
                                     result += "<td>Loser</td>";
                                 }else{
-                                    result += "<td>"+arrayMatchName[id][b]+"</td>";
+                                    result += "<td>"+arrayMatchScore[id][b]+"</td>";
                                 }
                         
                             

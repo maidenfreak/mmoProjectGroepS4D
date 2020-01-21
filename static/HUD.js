@@ -53,7 +53,7 @@ socket.on('updatedHP', function(healthPlayer){
     var pixelsForHealth = 560/maxHealth;
     var x = (maxHealth - currentHealth)*pixelsForHealth;
     if (x > 560){
-      x = 560;
+        x = 560;
     }
     document.getElementById("health-bar").style.height = x + "px";
 });
