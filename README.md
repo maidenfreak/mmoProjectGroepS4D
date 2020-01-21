@@ -1,5 +1,5 @@
 # mmoProjectGroepS4D
-project for S4D
+Project for the minor Scripting 4 Designers.
 
 # Prerequisites
 Ubuntu 18.04 LTS version, Nodejs and Mongodb and Git needs to be installed.
@@ -23,7 +23,7 @@ Then clone the github repository to your own folder.
 
 Install the packages that are used by the application.
 
-> npm install i express passport connect-flash morgan cookie-parser express-session socket.io mongoose ejs
+> npm install i express passport connect-flash morgan cookie-parser express-session socket.io mongoose ejs dotenv
 
 # Running the app
 If everything is installed you can run the app, go to the directory where it is stored and run the following:
