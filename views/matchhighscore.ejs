@@ -50,6 +50,12 @@
         for( var id = 0; id < arrayMatchName.length; id++){
             if( arrayMatchName[id][0] == playername){
                 result += "<tr style='font-weight:bold'>";
+                if (arrayMatchName[id][2]==1){
+                    console.log("won")
+                }
+                else{
+                    console.log("lost")
+                }   
             }else{
                 result += "<tr>";  
             }

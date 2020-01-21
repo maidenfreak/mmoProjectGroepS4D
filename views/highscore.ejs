@@ -16,7 +16,6 @@
 
                 socket.emit('getHighscore');
                 socket.on("getHighscoreReturn", function (nameArray, highArray, winArray) {
-                    console.log(nameArray)
                     var topTenNameArray = nameArray.slice(0, 10);
                     var topTenHighArray = highArray.slice(0, 10);
                     var topTenWinArray = winArray.slice(0, 10);
