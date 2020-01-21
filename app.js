@@ -67,6 +67,13 @@ io.on('connection', function(socket) {
   socket.on('chat message', function(msg){
     io.emit('chat message', msg);
   });
+ socket.on('chatmessage', function(msg){
+    socket.emit('chatmessage', "Welcome!, click on the Join button to join the lobby."); 
+    socket.emit('chatmessage', "Press the Start button if there are atleast 2 players in the lobby (or wait for more). ");
+    socket.emit('chatmessage', "Press on the highscore button to see the top 10 and your rank. ");
+    socket.emit('chatmessage', " Use the spectator mode to watch a started match. ");
+    socket.emit('chatmessage', " To use the chat, type your message down below.  ");
+  });   
 app.use(express.static(__dirname + '/views'));
 
 app.delete('/logout', (req, res) => {
@@ -265,7 +272,7 @@ socket.on('new player', function( playertype, name) {
   else if(playertype == "observer"){players[socket.id] = new observer(socket.id, name)}
   else if(playertype == "charger"){players[socket.id] = new charger(socket.id, name)}
   socket.emit('playerteam', players[socket.id]);
-  endGame();
+  countPlayersInGame();
 });
     
   function randomFunc(myArr) {      
@@ -281,52 +288,43 @@ socket.on('new player', function( playertype, name) {
   }     
 
 function calculateWinner(){
-  arrayMatchName = []
+  arrayMatchName = [];
   if(swatscore  >= rebelsCount){
-    // return "The SWAT unit has won the match with " + swatscore + " kills & " + rebelsCount + " deaths.";
     for (var id in players){
       if(players[id].teamname == "Swat"){
         players[id].win = 1
       }
       updateHighscore(players[id])
     }
-    swatCount = 0;
-    rebelsCount = 0;
-    swatscore = 0;
-    rebelscore = 0;
-    itemboxes.length = 0;
-    for(var x in players){
-          arrayMatchName.push ([players[x].name, players[x].score, players[x].win, players[x].teamname ]);
-        }  
-    io.emit('endOfGame');   
-    for(var test in players){
-      delete players[test];
-     } 
+    endGame();
   }
-    if(rebelscore >= swatCount){
-      for (var id in players){
-        if(players[id].teamname == "Rebels"){
-          players[id].win = 1        
-        }
-      updateHighscore(players[id])
+  if(rebelscore >= swatCount){
+    for (var id in players){
+      if(players[id].teamname == "Rebels"){
+        players[id].win = 1        
+      }
+    updateHighscore(players[id])
     }
-     swatCount = 0;
-     rebelsCount = 0;
-     swatscore = 0;
-     rebelscore = 0;
-     itemboxes.length = 0;
-     for(var x in players){
-          arrayMatchName.push ([players[x].name, players[x].score, players[x].win, players[x].teamname ]);
-    }
-     io.emit('endOfGame');   
-     for(var test in players){
-      delete players[test];
-     }  
-    }
+    endGame(); 
+  }
 }
 
-      
 function endGame(){
+  swatCount = 0;
+  rebelsCount = 0;
+  swatscore = 0;
+  rebelscore = 0;
+  itemboxes.length = 0;
+  for(var x in players){
+    arrayMatchName.push ([players[x].name, players[x].score, players[x].win, players[x].teamname ]);
+  }  
+  io.emit('endOfGame');   
+  for(var id in players){
+    delete players[id];
+  } 
+}
+      
+function countPlayersInGame(){
      swatCount = 0;
      rebelsCount = 0;
       for(var id in players){
@@ -415,12 +413,12 @@ socket.on('playerLobby', function(playername, joined, idSocket){
  
 socket.on('disconnect', function(){
   delete players[socket.id];
-  endGame(); 
+  countPlayersInGame(); 
 });
 
 socket.on('leaveGame', function(){
   delete players[socket.id];
-  endGame();  
+  countPlayersInGame();  
   calculateWinner(); 
 });
 
