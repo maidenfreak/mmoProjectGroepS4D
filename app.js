@@ -26,8 +26,8 @@ const collision = require('./collisionDetection.js');
 const { charger, observer, breacher, grenadier, separatist, vigilante, guerrilla, militant } = require('./playerClass');
 
 //globale variabelen
-var players = {};
-var arrayMatchName = []
+var players = {}; // spelersobjecten hierin geplaatst als deze aangemaakt worden als het spel start.
+var arrayMatchScore = [] // 
 const playersInLobby = [];
 const itemboxes = [];
 const bullets = [];
@@ -136,7 +136,7 @@ io.on('connection', function(socket) {
   }); 
 
   socket.on('getMatchHighscore', function(){ 
-    var sortedArray = arrayMatchName.sort( function(a, b) {
+    var sortedArray = arrayMatchScore.sort( function(a, b) {
       return (b[1] - a[1] ) || (b[2] - a[2]);
     });
     socket.emit('getMatchHighscoreReturn', sortedArray)
@@ -343,7 +343,7 @@ io.on('connection', function(socket) {
   }     
 
   function calculateWinner(){
-    arrayMatchName = [];
+    arrayMatchScore = [];
     if(swatscore  >= rebelsCount){
       for (var id in players){
         if(players[id].teamname == "Swat"){
@@ -371,7 +371,7 @@ io.on('connection', function(socket) {
     rebelscore = 0;
     itemboxes.length = 0;
     for(var x in players){
-      arrayMatchName.push ([players[x].name, players[x].score, players[x].win, players[x].teamname ]);
+      arrayMatchScore.push ([players[x].name, players[x].score, players[x].win, players[x].teamname ]);
     }  
     io.emit('endOfGame');   
     for(var id in players){
