@@ -398,6 +398,7 @@ io.on('connection', function(socket) {
     return swatCount, rebelsCount; 
   }    
 
+  //bekijkt wat voor soort box er is opgepakt en stuurt deze informatie door naar de client.
   function addBoxItems (player, packageData){
     if(packageData[5] == 0){
       calculateAmmo(player, packageData[4]);
@@ -431,6 +432,7 @@ io.on('connection', function(socket) {
     }  
   }
 
+  //berekend de ammo van een speler en stuurt dit vervolgens naar de client om te updaten
   function calculateAmmo(player, bullets){
     var oldAmmo = player.currentAmmo;
     player.currentAmmo += bullets;
@@ -441,8 +443,8 @@ io.on('connection', function(socket) {
 
   }
 
+  //berekend de health van een speler en stuurt dit vervolgens naar de client door om te updaten
   function calculateHealth(player, health){
-    var oldHealth = player.hp;
     player.hp += health;
     if(player.hp > player.maxHP){
       player.hp = player.maxHP;
@@ -450,6 +452,7 @@ io.on('connection', function(socket) {
     io.to(player.id).emit("updatedHP", player.hp);
   }
   
+  //update de highscore van de spelers als een game is afgelopen.
   function updateHighscore(player){
     var currentPlayer = player;
     newModel.find({name: currentPlayer.name},function(err, doc) {
@@ -493,7 +496,7 @@ io.on('connection', function(socket) {
 
 setInterval(function() {
   io.sockets.emit('state', players, bullets, itemboxes);
-  io.sockets.emit("updateScoreInHud", rebelsActive, swatActive);
+  io.sockets.emit('updateScoreInHud', rebelsActive, swatActive);
 }, 1000 / 60);
 
 http.listen(3000, function(){
@@ -521,6 +524,7 @@ function serverGameLoop(){
   }
 }
 
+//pakt uit een vooropgestelde array een random positie
 function randomBoxPlacement(){
   var coordinates = [[20, 610],[100,490],[88, 385],[605,9],[514, 11],[526,230],[288,611],[307,307],[330,8],[448,527],[170,91]];
   var randomBox = Math.floor((Math.random() * coordinates.length) )
@@ -529,6 +533,7 @@ function randomBoxPlacement(){
   return [x,y];
 }
 
+//zorgt ervoor dat er 3 random boxes op het veld worden geplaatst
 function boxPlacement(box){
   if(itemboxes.length == 0){
     var coordinatesBox1 = randomBoxPlacement();
